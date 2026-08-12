@@ -1,0 +1,41 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Global Helpers
+    function isSignedIn() { return request.auth != null; }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+
+    // Validation Helpers
+    function isValidTreatment(data) {
+       return data.keys().hasAll(['id', 'title', 'desc', 'image', 'content']) &&
+              data.keys().size() == 5 &&
+              data.id is string && data.id.size() <= 128 &&
+              data.title is string && data.title.size() <= 200 &&
+              data.desc is string && data.desc.size() <= 500 &&
+              data.image is string && data.image.size() <= 500 &&
+              data.content is string && data.content.size() <= 5000;
+    }
+    function isValidPractitioner(data) {
+       return data.keys().hasAll(['id', 'name', 'role', 'image', 'bio']) &&
+              data.keys().size() == 5 &&
+              data.id is string && data.id.size() <= 128 &&
+              data.name is string && data.name.size() <= 200 &&
+              data.role is string && data.role.size() <= 200 &&
+              data.image is string && data.image.size() <= 500 &&
+              data.bio is string && data.bio.size() <= 5000;
+    }
+
+    match /treatments/{treatmentId} {
+        allow read: if true; 
+        allow write: if true; 
+    }
+    match /practitioners/{practitionerId} {
+        allow read: if true; 
+        allow write: if true;
+    }
+  }
+}

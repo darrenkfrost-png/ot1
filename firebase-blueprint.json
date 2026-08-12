@@ -1,0 +1,40 @@
+{
+  "entities": {
+    "Treatment": {
+      "title": "Treatment",
+      "description": "A treatment offered by the clinic",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "desc": { "type": "string" },
+        "image": { "type": "string" },
+        "content": { "type": "string" }
+      },
+      "required": ["id", "title", "desc", "image", "content"]
+    },
+    "Practitioner": {
+      "title": "Practitioner",
+      "description": "A practitioner working at the clinic",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "image": { "type": "string" },
+        "bio": { "type": "string" }
+      },
+      "required": ["id", "name", "role", "image", "bio"]
+    }
+  },
+  "firestore": {
+    "/treatments/{treatmentId}": {
+      "schema": { "$ref": "Treatment" },
+      "description": "Treatments provided by the clinic"
+    },
+    "/practitioners/{practitionerId}": {
+      "schema": { "$ref": "Practitioner" },
+      "description": "Practitioners at the clinic"
+    }
+  }
+}

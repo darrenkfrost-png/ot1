@@ -1,0 +1,11 @@
+{
+  "name": "Remix: Remix: Osteopathy \u0026 Wellbeing @ CT6",
+  "description": "A professional clinic website clone for Osteopathy \u0026 Wellbeing, featuring various health treatments and practitioner profiles.",
+  "requestFramePermissions": [
+    "microphone",
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
