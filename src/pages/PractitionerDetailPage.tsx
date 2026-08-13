@@ -1,6 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
 import { PRACTITIONERS } from '../data';
 import { BOOKING_URL } from '../constants';
+import { REVIEWS } from '../data/reviews';
 import { Award, Stethoscope, Mail, CheckCircle2, ChevronRight, Home, Calendar, MapPin, Star, Shield, Briefcase } from 'lucide-react';
 import { motion } from 'motion/react';
 import PractitionerAIAnalytics from '../components/PractitionerAIAnalytics';
@@ -270,8 +271,7 @@ export default function PractitionerDetailPage() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {[
-                  { quote: "An incredibly thorough assessment. I felt heard and the results speak for themselves.", author: "James T." },
-                  { quote: "Professional, friendly, and highly effective. Best osteopathic care in Canterbury.", author: "Emma L." }
+                  ...REVIEWS.slice(3, 5)
                 ].map((testimonial, i) => (
                   <div key={i} className="bg-white p-8 rounded-[2rem] shadow-sm border border-white/50 space-y-4">
                     <p className="text-slate-600 font-light italic leading-relaxed">"{testimonial.quote}"</p>

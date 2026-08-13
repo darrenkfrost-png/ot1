@@ -22,6 +22,7 @@ import {
 import { cn } from '../lib/utils';
 import { Logo } from '../components/Logo';
 import { BOOKING_URL } from '../constants';
+import { REVIEWS, REVIEWS_SOURCE } from '../data/reviews';
 
 export default function TreatmentsPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -212,30 +213,25 @@ export default function TreatmentsPage() {
       <section className="py-24 space-y-16">
         <div className="text-center space-y-4 max-w-3xl mx-auto">
           <span className="text-teal-600 font-bold text-xs uppercase tracking-[0.3em]">Patient Voices</span>
-          <h2 className="text-4xl md:text-5xl font-display font-medium text-slate-900 tracking-tight">Real People. <span className="text-teal-600">Real Results.</span></h2>
-          <p className="text-lg text-slate-500 font-light leading-relaxed">What patients in Herne Bay say about their treatment.</p>
+          <h2 className="text-4xl md:text-5xl font-display font-medium text-slate-900 tracking-tight">What patients <span className="text-teal-600">actually said.</span></h2>
+          <p className="text-lg text-slate-500 font-light leading-relaxed">
+            Unedited, from our{' '}
+            <a
+              href={REVIEWS_SOURCE.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-teal-600 font-medium hover:underline focus-visible:outline-teal-500"
+            >
+              {REVIEWS_SOURCE.label}
+            </a>
+            .
+          </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {[
-            { 
-              quote: "The combination of osteopathy and sports massage here literally saved my marathon season. Professional, insightful, and results-driven.",
-              author: "Mark S.",
-              role: "Club Runner",
-              tag: "Sports Therapy"
-            },
-            { 
-              quote: "As a desk worker, my chronic neck pain was unbearable. Just three sessions in and my posture has transformed. Highly recommended.",
-              author: "Emma L.",
-              role: "Software Engineer",
-              tag: "Osteopathy"
-            },
-            { 
-              quote: "The team really takes the time to explain the 'why' behind the pain. I feel more in control of my health than ever before.",
-              author: "David R.",
-              role: "Retiree",
-              tag: "Rehabilitation"
-            }
-          ].map((item, i) => (
+          {/* Real reviews from the practice's Google listing, in the reviewers'
+              own words. The invented ones that were here read like marketing
+              because they were written as marketing. */}
+          {REVIEWS.slice(0, 3).map((item, i) => (
             <div key={i} className="p-10 bg-white rounded-[3rem] border border-slate-100 shadow-sm hover:shadow-premium transition-all space-y-6 relative overflow-hidden group">
                <div className="flex items-center gap-2 mb-2">
                  {[...Array(5)].map((_, j) => <Star key={j} size={14} className="fill-amber-400 text-amber-400" />)}
@@ -247,11 +243,8 @@ export default function TreatmentsPage() {
                  </div>
                  <div>
                    <h4 className="font-bold text-slate-900 text-sm">{item.author}</h4>
-                   <p className="text-[10px] text-slate-400 uppercase tracking-widest">{item.role}</p>
+                   <p className="text-[10px] text-slate-400 uppercase tracking-widest">Google review</p>
                  </div>
-               </div>
-               <div className="absolute top-8 right-10 text-teal-50 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span className="text-[10px] font-black uppercase tracking-widest bg-teal-500 text-white px-3 py-1 rounded-full">{item.tag}</span>
                </div>
             </div>
           ))}
@@ -316,8 +309,8 @@ export default function TreatmentsPage() {
                  <Heart className="text-teal-400 fill-teal-400" size={24} />
                  <span className="text-white font-bold text-xs uppercase tracking-[0.3em]">Patient Spotlight</span>
               </div>
-              <p className="text-white text-lg font-medium italic leading-relaxed">"The therapists at CT6 really take the time to understand your journey. It's not just a clinic; it's a partner in your recovery."</p>
-              <div className="mt-4 text-teal-400 font-bold text-xs uppercase tracking-widest">— James T., Local Resident</div>
+              <p className="text-white text-lg font-medium italic leading-relaxed">"{REVIEWS[5].quote}"</p>
+              <div className="mt-4 text-teal-400 font-bold text-xs uppercase tracking-widest">— {REVIEWS[5].author}, Google review</div>
             </div>
           </div>
         </div>
