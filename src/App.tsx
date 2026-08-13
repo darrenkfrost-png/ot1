@@ -53,7 +53,7 @@ import MobileNavDock from './components/MobileNavDock';
 import Breadcrumbs from './components/Breadcrumbs';
 import VoiceController from './components/VoiceController';
 import { Logo } from './components/Logo';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { ToastProvider, useToast } from './components/ToastSystem';
 import { FirebaseInitializer } from './components/FirebaseInitializer';
 import { SettingsProvider } from './context/SettingsContext';
@@ -358,17 +358,32 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile }: { isColla
   );
 };
 
-const PageWrapper = ({ children }: { children: React.ReactNode }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 10 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: -10 }}
-    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-    className="w-full"
-  >
-    {children}
-  </motion.div>
-);
+const PageWrapper = ({ children }: { children: React.ReactNode }) => {
+  const reduceMotion = useReducedMotion();
+
+  // Routes animate with mode="wait", so the outgoing page has to finish before
+  // the incoming one starts: exit and entrance durations are paid one after the
+  // other on every navigation. The exit is therefore kept short and the
+  // entrance carries the character.
+  return (
+    <motion.div
+      initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
+      animate={{
+        opacity: 1,
+        y: 0,
+        transition: { duration: reduceMotion ? 0.12 : 0.34, ease: [0.22, 1, 0.36, 1] },
+      }}
+      exit={{
+        opacity: 0,
+        y: reduceMotion ? 0 : -6,
+        transition: { duration: reduceMotion ? 0.08 : 0.16, ease: 'easeIn' },
+      }}
+      className="w-full"
+    >
+      {children}
+    </motion.div>
+  );
+};
 
 const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () => void }) => {
   const [isMobile, setIsMobile] = useState(false);
@@ -576,11 +591,19 @@ function AppContent() {
             <FloatingAI />
             <VoiceController />
             <Suspense fallback={
-              <div className="fixed inset-0 flex items-center justify-center bg-white/50 backdrop-blur-sm z-[9999]">
-                <div className="flex flex-col items-center gap-6">
-                  <div className="w-16 h-16 border-4 border-teal-500/20 border-t-teal-500 rounded-full animate-spin" />
-                  <div className="text-[10px] font-black uppercase tracking-[0.4em] text-teal-600 animate-pulse">Syncing Clinic Data...</div>
-                </div>
+              /*
+               * A page's code arrives in well under a second on any normal
+               * connection. A full-screen blocking overlay for that is heavier
+               * than the wait it covers - and it whited out a dark estate. A
+               * thread of light along the top edge says "working" without
+               * taking the site away from the visitor.
+               */
+              <div
+                className="fixed top-0 inset-x-0 z-[9999] h-[3px] overflow-hidden pointer-events-none"
+                role="status"
+                aria-label="Loading page"
+              >
+                <div className="route-progress h-full w-1/3 bg-gradient-to-r from-transparent via-teal-400 to-transparent shadow-[0_0_12px_rgba(45,212,191,0.9)]" />
               </div>
             }>
             <AnimatePresence mode="wait">
