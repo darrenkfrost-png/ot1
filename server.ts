@@ -48,6 +48,62 @@ async function startServer() {
     });
   });
 
+  /**
+   * Patient enquiries.
+   *
+   * The contact form used to wait two seconds and then tell the patient
+   * "Message sent successfully. Our clinical team will respond within 24
+   * hours." Nothing was sent anywhere. Every enquiry was discarded while the
+   * person went away expecting a reply.
+   *
+   * This endpoint forwards the enquiry to whatever CONTACT_WEBHOOK_URL points
+   * at - a Zapier, Make or Formspree hook, a mailer, an inbox integration. If
+   * nothing is configured it says so plainly and refuses, so the interface can
+   * tell the truth instead of inventing a confirmation.
+   */
+  app.post("/api/contact", async (req, res) => {
+    const { name, email, phone, subject, message } = req.body ?? {};
+
+    if (!name?.trim() || !email?.trim() || !message?.trim()) {
+      return res.status(400).json({ ok: false, error: "missing_fields" });
+    }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(email))) {
+      return res.status(400).json({ ok: false, error: "invalid_email" });
+    }
+
+    const webhook = process.env.CONTACT_WEBHOOK_URL;
+    if (!webhook) {
+      console.warn("Contact form submitted but CONTACT_WEBHOOK_URL is not set — nowhere to deliver it.");
+      return res.status(503).json({ ok: false, error: "not_configured" });
+    }
+
+    try {
+      const delivery = await fetch(webhook, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: String(name).slice(0, 200),
+          email: String(email).slice(0, 200),
+          phone: String(phone ?? "").slice(0, 60),
+          subject: String(subject ?? "General Inquiry").slice(0, 120),
+          message: String(message).slice(0, 5000),
+          receivedAt: new Date().toISOString(),
+          source: "ct6-website-contact-form",
+        }),
+      });
+
+      if (!delivery.ok) {
+        console.error(`Contact webhook rejected the enquiry: ${delivery.status}`);
+        return res.status(502).json({ ok: false, error: "delivery_failed" });
+      }
+
+      return res.json({ ok: true });
+    } catch (error: any) {
+      console.error("Contact webhook unreachable:", error?.message);
+      return res.status(502).json({ ok: false, error: "delivery_failed" });
+    }
+  });
+
   // API Route for Clinical System Audit (Autonomous AI self-diagnostic)
   app.post("/api/system-audit", async (req, res) => {
     try {

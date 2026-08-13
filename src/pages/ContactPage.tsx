@@ -1,14 +1,16 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { useState } from 'react';
-import { Mail, Phone, MapPin, Send, MessageSquare, CheckCircle2, ChevronRight, ArrowRight, Clock, ShieldCheck } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, MessageSquare, CheckCircle2, ChevronRight, ArrowRight, Clock, ShieldCheck, AlertTriangle, Calendar, ExternalLink } from 'lucide-react';
 import { useAnalytics } from '../context/AnalyticsContext';
 import { useToast } from '../components/ToastSystem';
+import { BOOKING_URL } from '../constants';
 
 export default function ContactPage() {
   const { trackClick } = useAnalytics();
   const { showToast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [sendFailed, setSendFailed] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -17,18 +19,46 @@ export default function ContactPage() {
     message: ''
   });
 
+  /*
+   * This used to wait two seconds and then announce "Message sent
+   * successfully. Our clinical team will respond within 24 hours." Nothing was
+   * ever sent. Patients were told their enquiry had arrived and then heard
+   * nothing back, because there was nothing to hear back from.
+   *
+   * Success is now claimed only when the server confirms delivery. Anything
+   * else says so and offers a route that does work.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSendFailed(false);
     trackClick("Contact Form Submission Started");
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
 
-    setIsSubmitting(false);
-    setIsSuccess(true);
-    showToast("Message sent successfully. Our clinical team will respond within 24 hours.", "success");
-    trackClick("Contact Form Submission Success");
+      const result = await response.json().catch(() => ({ ok: false }));
+
+      if (response.ok && result.ok) {
+        setIsSuccess(true);
+        showToast('Message sent. We will come back to you as soon as we can.', 'success');
+        trackClick('Contact Form Submission Success');
+      } else {
+        setSendFailed(true);
+        showToast('That message could not be sent. Please use online booking or call the clinic.', 'error');
+        trackClick(`Contact Form Submission Failed: ${result.error ?? response.status}`);
+      }
+    } catch {
+      setSendFailed(true);
+      showToast('That message could not be sent. Please use online booking or call the clinic.', 'error');
+      trackClick('Contact Form Submission Failed: network');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -192,8 +222,36 @@ export default function ContactPage() {
                     />
                   </div>
 
+                  {sendFailed && (
+                    <div
+                      role="alert"
+                      className="rounded-[1.5rem] border border-amber-200 bg-amber-50 p-6 flex gap-4"
+                    >
+                      <AlertTriangle className="text-amber-600 shrink-0 mt-0.5" size={20} aria-hidden="true" />
+                      <div className="space-y-3">
+                        <p className="font-bold text-amber-900">
+                          We could not send that message
+                        </p>
+                        <p className="text-sm text-amber-900/80 leading-relaxed font-light">
+                          Nothing has reached us, so please do not wait for a reply to this. Booking
+                          online works and reaches the clinic directly — or call us if it is urgent.
+                        </p>
+                        <a
+                          href={BOOKING_URL}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-amber-900 text-white text-sm font-bold hover:bg-amber-800 transition-colors focus-visible:outline-amber-700"
+                          aria-label="Book online instead — opens our booking system in a new tab"
+                        >
+                          <Calendar size={16} /> Book online instead
+                          <ExternalLink size={12} className="opacity-70" aria-hidden="true" />
+                        </a>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="pt-4">
-                    <button 
+                    <button
                       disabled={isSubmitting}
                       className="w-full py-6 bg-teal-600 hover:bg-teal-700 text-white rounded-3xl font-bold text-xl transition-all shadow-xl shadow-teal-600/20 active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-50 disabled:grayscale group"
                     >
