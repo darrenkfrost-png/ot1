@@ -134,7 +134,12 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
                 {tiles.map((img, index) => (
                   <div
                     key={`${rowIndex}-${index}`}
-                    className="shrink-0 w-[180px] sm:w-[210px] aspect-[788/1400] rounded-[1.5rem] overflow-hidden shadow-2xl relative border border-white/5 crystal-glass"
+                    /* No backdrop blur on these tiles. Each one is a full-bleed
+                       image, so a blur of what sits behind it is invisible —
+                       but the browser still composites one per tile, and a few
+                       hundred of those over moving artwork makes the whole
+                       page, text included, repaint badly. */
+                    className="shrink-0 w-[180px] sm:w-[210px] aspect-[788/1400] rounded-[1.5rem] overflow-hidden shadow-2xl relative border border-white/10 bg-white/5"
                   >
                     <img
                       src={img}
@@ -173,8 +178,8 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
                     key={`${colIndex}-${index}`}
                     className={
                       mode === 'wall'
-                        ? 'w-full shrink-0 aspect-[788/1400] rounded-[1rem] overflow-hidden shadow-xl relative border border-white/5 crystal-glass'
-                        : 'w-full shrink-0 aspect-[788/1400] rounded-[2rem] overflow-hidden shadow-2xl relative border border-white/5 crystal-glass'
+                        ? 'w-full shrink-0 aspect-[788/1400] rounded-[1rem] overflow-hidden shadow-xl relative border border-white/10 bg-white/5'
+                        : 'w-full shrink-0 aspect-[788/1400] rounded-[2rem] overflow-hidden shadow-2xl relative border border-white/10 bg-white/5'
                     }
                   >
                     <img
@@ -200,7 +205,10 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_45%_at_center,_rgba(2,6,23,0.92)_0%,_rgba(2,6,23,0.55)_55%,_transparent_100%)] pointer-events-none" />
       {/* Darkened top and bottom keep the headline readable without washing the
           artwork out across the whole screen. */}
-      <div className="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-transparent to-slate-950/70 backdrop-blur-[1px]" />
+      {/* Plain gradient, no backdrop blur: a full-screen blur over continuously
+          moving artwork is one of the most expensive things a page can ask for,
+          and it was being recomputed every frame beneath the type. */}
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-transparent to-slate-950/70" />
 
       {/* Ultra subtle background logo watermark */}
       <Logo size={800} variant="dark" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] scale-150 pointer-events-none" />

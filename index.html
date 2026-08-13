@@ -44,20 +44,16 @@
     />
     <meta name="twitter:image" content="https://example.com/og-image.png" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://images.unsplash.com" />
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
 
     <!--
-      Linked here rather than @import-ed from index.css so the browser can start
-      fetching the typefaces while it is still reading the head, instead of
-      waiting for the stylesheet to arrive first.
+      The typefaces are served from this site (see src/index.css). These two
+      carry the first screenful — the headings and the body text — so they are
+      fetched at the same moment as the stylesheet rather than after it, which
+      is what stops the writing rendering in a fallback and then reflowing.
     -->
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
-    />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/outfit-500-normal.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-400-normal.woff2" crossorigin />
 
     <!--
       Structured data. This is what lets Google show the practice as a local
