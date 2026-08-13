@@ -415,7 +415,16 @@ PLAN (P):
 
     const distPath = path.dirname(indexFile);
     console.log(`Serving built client from ${distPath}`);
-    app.use(express.static(distPath));
+    app.use(express.static(distPath, {
+      setHeaders: (res, filePath) => {
+        // Some hosts hand .webm back as text/plain, which browsers refuse to
+        // play. State the media types explicitly rather than rely on the
+        // platform's mime table.
+        if (filePath.endsWith('.webm')) res.setHeader('Content-Type', 'video/webm');
+        else if (filePath.endsWith('.mp4')) res.setHeader('Content-Type', 'video/mp4');
+        else if (filePath.endsWith('.webp')) res.setHeader('Content-Type', 'image/webp');
+      },
+    }));
     app.get('*', (req, res) => {
       res.sendFile(indexFile);
     });

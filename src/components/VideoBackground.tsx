@@ -71,8 +71,10 @@ const VideoBackground: React.FC = () => {
                     className="w-full h-full object-cover opacity-50"
                     style={{ filter: `brightness(${settings.wallpaperBrightness})` }}
                 >
-                    <source src={wallpaper.webm} type="video/webm" />
+                    {/* MP4 first: the host serves .webm as text/plain, which
+                        makes the browser discard that source. */}
                     <source src={wallpaper.mp4} type="video/mp4" />
+                    <source src={wallpaper.webm} type="video/webm" />
                 </video>
             )}
             <div className="absolute inset-0 bg-black/30" />

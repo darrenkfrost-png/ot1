@@ -91,8 +91,10 @@ export const Logo: React.FC<LogoProps> = ({
                 aria-hidden="true"
                 className="w-full h-full object-cover"
               >
-                <source src="/video/logo-mark.webm" type="video/webm" />
+                {/* MP4 first: the host serves .webm as text/plain, which makes
+                    the browser discard that source. MP4 plays everywhere. */}
                 <source src="/video/logo-mark.mp4" type="video/mp4" />
+                <source src="/video/logo-mark.webm" type="video/webm" />
               </video>
             )}
           </div>
