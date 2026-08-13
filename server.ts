@@ -280,29 +280,16 @@ async function startServer() {
       const result = await chat.sendMessage({ message: prompt });
       res.json({ soapNote: result.text || "Failed to generate diagnostic documentation." });
     } catch (error: any) {
-      console.warn("Generating SOAP fallback triggered:", error.message);
-      res.json({
-        soapNote: `[CLINICAL SOAP DRAFT - LOCAL RECOVERY ACTIVE]
-
-SUBJECTIVE (S):
-- Patient presents with localized joint strain and muscular bracing.
-- Subjective discomfort rated as ${req.body.painLevel || 4}/10 on the VAS scale.
-- Reports restricted motion during physical exertion.
-
-OBJECTIVE (O):
-- Cervical flexion evaluated at ${req.body.romFlexion || 65}° showing local tightness.
-- Cervical rotation measured at ${req.body.romRotation || 55}° indicating biomechanical guarding.
-- Slight myofascial trigger points palpated at upper trapezius and levator scapulae.
-
-ASSESSMENT (A):
-- Moderate muscular guarding restricting physiological joint excursion.
-- Mild joint compression causing nerve pathway sensitization.
-- Nominal pelvic/shoulder alignment with active protective posture.
-
-PLAN (P):
-- Gentle cervical retraction movements (isometric) targeting local stability.
-- Continuous 4-7-8 acoustic vagal neural downregulation cycle.
-- Hydration, soft stretching, and practitioner follow-up recommended in 5-7 days.`
+      /*
+       * This used to answer with a complete, invented SOAP note: subjective
+       * findings, palpated trigger points, an assessment and a plan, none of it
+       * produced by any model or examined by anyone. A clinical record that
+       * nobody wrote is worse than no record, so it now fails plainly.
+       */
+      console.error("SOAP generation unavailable:", error?.message);
+      res.status(503).json({
+        error: "unavailable",
+        message: "Clinical documentation could not be generated. Please write this note manually.",
       });
     }
   });
@@ -342,27 +329,20 @@ PLAN (P):
       const cleanedText = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
       res.json(JSON.parse(cleanedText));
     } catch (error: any) {
-      console.warn("Exercise prescription fallback triggered:", error.message);
-      // Consistent, smart fallback based on pain levels
-      const severity = (req.body.painIndex || 4) >= 7 ? "gentle" : "active";
-      res.json({
-        exercises: [
-          {
-            title: severity === "gentle" ? "Decompression Cervical Traction" : "Progressive Cervical Retraction",
-            sets: severity === "gentle" ? "2 bouts of 45 seconds" : "3 sets of 12 reps",
-            instructions: severity === "gentle" ? "Using a soft towel at the base of your skull, pull gently upward to create spacing between vertebrae." : "Slowly tuck your chin backwards in a level plane, holding the contraction for 3 seconds."
-          },
-          {
-            title: severity === "gentle" ? "Vagal Diaphragmatic Downregulation" : "Levator Scapulae Active Soft-Pull stretch",
-            sets: "5 slow minutes",
-            instructions: severity === "gentle" ? "Focus on deep nasal inhales for 4 seconds and prolonged vocalized exhales to lower heart rate." : "Tilt your chin down and toward your opposite armpit, applying a light overpressure with your hand."
-          },
-          {
-            title: severity === "gentle" ? "Symmetric Cervical Isometric Holds" : "Thoracic Extension Mobilisation",
-            sets: severity === "gentle" ? "3 sets of 8 seconds" : "15 reps over foam roller",
-            instructions: severity === "gentle" ? "Press your forehead gently into your palm without letting your neck move, activating front extensors." : "Support your head with your hands while arching back over a foam roller placed mid-spine."
-          }
-        ]
+      /*
+       * This handed out three hardcoded neck exercises - traction, overpressure
+       * stretches, extension over a foam roller - chosen by an if/else on the
+       * reported pain score and presented as a prescription generated for that
+       * patient. Someone with acute neck pain could have followed instructions
+       * that no clinician and no model ever produced for them.
+       *
+       * If the prescriber is unavailable, say so. Nobody is harmed by an error
+       * message.
+       */
+      console.error("Exercise prescription unavailable:", error?.message);
+      res.status(503).json({
+        error: "unavailable",
+        message: "Exercise guidance is unavailable right now. Please ask your practitioner rather than following generic advice.",
       });
     }
   });

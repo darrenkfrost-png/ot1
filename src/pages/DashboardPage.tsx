@@ -163,6 +163,21 @@ export default function DashboardPage() {
           painIndex: painLevel
         })
       });
+      /*
+       * Only real guidance is displayed. The server used to answer failures
+       * with hardcoded neck exercises dressed up as a personalised
+       * prescription; showing an error is the safe outcome here, not a
+       * degraded one.
+       */
+      if (!res.ok) {
+        const problem = await res.json().catch(() => ({}));
+        showToast(
+          problem.message || 'Exercise guidance is unavailable right now. Please ask your practitioner.',
+          'error'
+        );
+        return;
+      }
+
       const data = await res.json();
       if (data.exercises && data.exercises.length > 0) {
         const mapped = data.exercises.map((ex: any, index: number) => ({
@@ -174,11 +189,13 @@ export default function DashboardPage() {
         }));
         setExercises(mapped);
         setIsAiPrescribedMode(true);
-        showToast("Hyper-personalized physical therapy routine generated!", "success");
+        showToast("Personalised routine generated. Check it with your practitioner before starting.", "success");
+      } else {
+        showToast('No exercises were returned. Please ask your practitioner.', 'error');
       }
     } catch (err) {
-      console.warn("PT prescription error, fallback configured:", err);
-      showToast("Triggered clinical PT fallback algorithm.", "info");
+      console.error("Exercise prescription failed:", err);
+      showToast('Exercise guidance is unavailable right now. Please ask your practitioner.', 'error');
     } finally {
       setIsPrescribing(false);
     }
@@ -212,11 +229,20 @@ export default function DashboardPage() {
           painLevel: painLevel
         })
       });
+      if (!res.ok) {
+        const problem = await res.json().catch(() => ({}));
+        showToast(
+          problem.message || 'Clinical documentation could not be generated. Please write this note manually.',
+          'error'
+        );
+        return;
+      }
       const data = await res.json();
       setSoapNoteResult(data.soapNote);
-      showToast("Clinical SOAP Note drafted. Appended to pre-visit packet.", "success");
+      showToast("Clinical SOAP Note drafted. Review before it goes in any record.", "success");
     } catch (err) {
-      console.warn("SOAP generator error, fallback active:", err);
+      console.error("SOAP generation failed:", err);
+      showToast('Clinical documentation could not be generated. Please write this note manually.', 'error');
     } finally {
       setIsGeneratingSoap(false);
     }
