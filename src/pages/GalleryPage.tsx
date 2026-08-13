@@ -1,7 +1,7 @@
 import { GALLERY_IMAGES } from '../data/images';
 import { motion, AnimatePresence } from 'motion/react';
 import { useState, useCallback, useEffect, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, X, Download, Home, Play, Sparkles, Maximize2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Download, Home, Play, Sparkles, Maximize2, RotateCw } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Link } from 'react-router-dom';
 import { useToast } from '../components/ToastSystem';
@@ -26,18 +26,33 @@ export default function GalleryPage() {
   const [isTourOpen, setIsTourOpen] = useState(false);
   const tourVideoUrl = "https://drive.google.com/file/d/1WyllusrCUOg_Vo7qmkwZPhlI74PaOfug/preview";
 
+  /*
+   * Some of the artwork was saved on its side, so it opens portrait when the
+   * content is landscape. Rotation is per-image and resets when you move on,
+   * so turning one does not leave the next one crooked.
+   */
+  const [rotation, setRotation] = useState(0);
+
+  const rotate = useCallback((e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setRotation((current) => (current + 90) % 360);
+  }, []);
+
   const close = useCallback(() => {
     setSelectedIndex(null);
     setIsTourOpen(false);
+    setRotation(0);
   }, []);
 
   const next = useCallback((e?: React.MouseEvent) => {
     e?.stopPropagation();
+    setRotation(0);
     setSelectedIndex((prev) => (prev === null ? null : (prev + 1) % GALLERY_IMAGES.length));
   }, []);
 
   const prev = useCallback((e?: React.MouseEvent) => {
     e?.stopPropagation();
+    setRotation(0);
     setSelectedIndex((prev) => (prev === null ? null : (prev - 1 + GALLERY_IMAGES.length) % GALLERY_IMAGES.length));
   }, []);
 
@@ -62,10 +77,11 @@ export default function GalleryPage() {
       if (e.key === 'Escape') close();
       if (e.key === 'ArrowRight') next();
       if (e.key === 'ArrowLeft') prev();
+      if (e.key === 'r' || e.key === 'R') rotate();
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedIndex, close, next, prev]);
+  }, [selectedIndex, close, next, prev, rotate]);
 
   return (
     <div className="max-w-7xl mx-auto p-4 md:p-8 space-y-16">
@@ -210,6 +226,14 @@ export default function GalleryPage() {
           >
             <button aria-label="Close guide" className="absolute top-4 right-4 text-white hover:text-teal-400 p-2 transition" onClick={close}><X size={28} /></button>
             <button aria-label="Download this guide" className="absolute top-4 right-16 text-white hover:text-teal-400 p-2 transition" onClick={download}><Download size={28} /></button>
+            <button
+              aria-label={`Rotate this guide (currently ${rotation} degrees)`}
+              title="Rotate — or press R"
+              className="absolute top-4 right-28 text-white hover:text-teal-400 p-2 transition"
+              onClick={rotate}
+            >
+              <RotateCw size={28} />
+            </button>
 
             <div className="absolute top-4 left-4 text-white font-mono text-sm tracking-widest bg-slate-900/50 px-3 py-1 rounded-full">
                 {selectedIndex + 1} / {GALLERY_IMAGES.length}
@@ -221,10 +245,22 @@ export default function GalleryPage() {
             <motion.img
               key={selectedIndex}
               initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
+              /* Rotation goes through motion, not an inline style: motion owns
+                 the transform on this element and would overwrite it. */
+              animate={{ scale: 1, opacity: 1, rotate: rotation }}
+              transition={{ rotate: { duration: 0.35, ease: [0.22, 1, 0.36, 1] } }}
               src={GALLERY_IMAGES[selectedIndex]}
               alt={`CT6 Wellbeing patient guide ${selectedIndex + 1} of ${GALLERY_IMAGES.length}`}
-              className="max-w-full max-h-full object-contain shadow-2xl border border-white/5 rounded-lg"
+              /*
+               * A rotated element keeps its original layout box, so at 90 or
+               * 270 degrees the picture would spill off the screen unless the
+               * limits are swapped: its width is now bound by the height of
+               * the viewport, and vice versa.
+               */
+              className={cn(
+                'object-contain shadow-2xl border border-white/5 rounded-lg',
+                rotation % 180 === 0 ? 'max-w-full max-h-full' : 'max-w-[88vh] max-h-[88vw]'
+              )}
               onClick={(e) => e.stopPropagation()}
             />
           </motion.div>
