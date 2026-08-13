@@ -75,6 +75,37 @@ const NAV_ITEMS = [
   { id: 'ai-clinic', label: 'AI Voice Clinic', icon: Sparkles, path: '/ai-consultant' },
 ];
 
+/**
+ * Ornament for the foot of the navigation.
+ *
+ * Deliberately carries no figures. The estate already displays statistics that
+ * nobody can substantiate; decoration that looks like a readout would be one
+ * more. This is a rhythm, not a reading.
+ */
+const PulseRibbon = () => {
+  const reduceMotion = useReducedMotion();
+  return (
+    <div className="px-5 pb-4 shrink-0" aria-hidden="true">
+      <div className="relative h-16 rounded-2xl overflow-hidden bg-slate-950 border border-slate-800/80 shadow-inner">
+        <div className="absolute inset-0 bg-[radial-gradient(120%_100%_at_0%_50%,rgba(45,212,191,0.22),transparent_70%)]" />
+        <div className="absolute inset-0 neural-grid opacity-40" />
+        <svg viewBox="0 0 240 64" preserveAspectRatio="none" className="absolute inset-0 w-full h-full">
+          <polyline
+            points="0,34 44,34 56,14 68,52 80,34 116,34 128,24 140,44 152,34 240,34"
+            fill="none"
+            stroke="rgb(45,212,191)"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className={reduceMotion ? 'opacity-70' : 'pulse-trace'}
+            style={{ filter: 'drop-shadow(0 0 6px rgba(45,212,191,0.7))' }}
+          />
+        </svg>
+      </div>
+    </div>
+  );
+};
+
 const Sidebar = ({ isCollapsed, onToggle, isMobile, isOpenMobile, onCloseMobile }: { isCollapsed: boolean; onToggle: () => void; isMobile: boolean; isOpenMobile: boolean; onCloseMobile: () => void }) => (
   <>
     {/* Mobile backdrop */}
@@ -177,6 +208,7 @@ const Sidebar = ({ isCollapsed, onToggle, isMobile, isOpenMobile, onCloseMobile 
           ))}
         </AnimatePresence>
       </nav>
+      {!isMobile && !isCollapsed && <PulseRibbon />}
       {!isMobile && (
         <div className="p-4 border-t border-slate-100 shrink-0">
           <button 

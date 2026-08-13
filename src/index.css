@@ -157,6 +157,19 @@
     @apply bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black;
   }
 
+  /* Traced pulse line at the foot of the navigation. */
+  @keyframes pulse-trace {
+    from { stroke-dashoffset: 520; }
+    to   { stroke-dashoffset: 0; }
+  }
+  .pulse-trace {
+    stroke-dasharray: 260 260;
+    animation: pulse-trace 3.4s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pulse-trace { animation: none; stroke-dasharray: none; opacity: 0.7; }
+  }
+
   /* Sweep of light along the top edge while a page's code loads. */
   @keyframes route-progress {
     0%   { transform: translateX(-120%); }
