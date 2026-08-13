@@ -512,7 +512,7 @@ export default function HomePage() {
                           </ul>
                       </div>
                       <Link to={`/treatments/${t.id}`} className="mt-6 inline-flex items-center justify-between w-full p-4 bg-white/5 rounded-2xl border border-white/5 text-xs font-black uppercase tracking-widest text-white group-hover:bg-teal-500 group-hover:text-slate-950 group-hover:border-teal-400 transition-all duration-500">
-                        <span>Enter portal</span>
+                        <span>Read about this treatment</span>
                         <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-slate-950 group-hover:text-teal-400 transition-colors">
                             <ArrowRight size={14} className="-rotate-45 group-hover:rotate-0 transition-transform duration-500" />
                         </div>
@@ -740,7 +740,7 @@ export default function HomePage() {
                 </p>
                 <div className="flex flex-wrap gap-6 pt-4">
                     <Link to="/ai-consultant" className="bg-white text-slate-950 px-10 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest border border-transparent hover:bg-teal-50 transition-all flex items-center gap-3 shadow-xl hover:-translate-y-1">
-                       AI Diagnostic Triage <Brain size={18} className="text-teal-600" />
+                       Describe your symptoms <Brain size={18} className="text-teal-600" />
                     </Link>
                     <a
                       href={BOOKING_URL}
@@ -812,7 +812,7 @@ export default function HomePage() {
               className="group w-full sm:w-auto h-24 px-16 bg-teal-500 text-slate-950 rounded-[3rem] font-black text-xl uppercase tracking-widest shadow-[0_0_60px_rgba(20,184,166,0.3)] hover:shadow-[0_0_80px_rgba(20,184,166,0.5)] hover:bg-teal-400 hover:-translate-y-2 transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-5 border border-teal-300/50"
               aria-label="Book an appointment — opens our booking system in a new tab"
             >
-              Book Priority Access <ArrowRight size={28} className="group-hover:translate-x-2 transition-transform" />
+              Book an appointment <ArrowRight size={28} className="group-hover:translate-x-2 transition-transform" />
             </a>
             <Link to="/ai-consultant" className="w-full sm:w-auto h-24 px-14 bg-white/5 backdrop-blur-3xl text-white border border-white/15 hover:border-white/30 rounded-[3rem] font-bold text-xl hover:bg-white/10 transition-all flex items-center justify-center gap-5 group shadow-2xl hover:-translate-y-1">
               Voice Diagnostic <Brain size={26} className="text-teal-400 group-hover:rotate-12 transition-transform opacity-80 group-hover:opacity-100" />

@@ -68,7 +68,7 @@ export default function MobileNavDock() {
           {/* Voice Command Button */}
           <button
             onClick={handleVoiceTrigger}
-            aria-label="Launch Custom Voice AI"
+            aria-label="Talk to the symptom guide"
             className="flex flex-col items-center justify-center p-2 rounded-2xl text-teal-400 hover:text-teal-300 transition-all hover:bg-white/5 cursor-pointer relative group shrink-0"
           >
             <div className="relative">

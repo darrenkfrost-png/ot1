@@ -133,14 +133,18 @@ export default function SettingsPanel() {
 
   return (
     <>
-      <button 
-        onClick={handleOpen}
-        className="fixed top-24 sm:top-20 right-4 sm:right-8 p-3.5 bg-white/90 backdrop-blur-md rounded-2xl shadow-premium border border-slate-200/60 hover:bg-white transition-all hover:scale-105 active:scale-95 group focus-visible:outline-teal-500"
-        style={{ zIndex: 'calc(var(--z-overlay) - 5)' }}
-        aria-label="Open Settings"
-      >
-        <SettingsIcon size={20} className="text-slate-600 group-hover:rotate-90 transition-transform duration-500" />
-      </button>
+      {/* The cog goes with the rest of the floating furniture when the view is
+          collapsed; the pill by the microphone brings it all back. */}
+      {!settings.hideOverlays && (
+        <button
+          onClick={handleOpen}
+          className="fixed top-24 sm:top-20 right-4 sm:right-8 p-3.5 bg-white/90 backdrop-blur-md rounded-2xl shadow-premium border border-slate-200/60 hover:bg-white transition-all hover:scale-105 active:scale-95 group focus-visible:outline-teal-500"
+          style={{ zIndex: 'calc(var(--z-overlay) - 5)' }}
+          aria-label="Open Settings"
+        >
+          <SettingsIcon size={20} className="text-slate-600 group-hover:rotate-90 transition-transform duration-500" />
+        </button>
+      )}
 
       <AnimatePresence>
         {isOpen && (
@@ -399,11 +403,17 @@ export default function SettingsPanel() {
                                       enabled={settings.parallaxEnabled} 
                                       onToggle={() => updateSetting('parallaxEnabled', !settings.parallaxEnabled)} 
                                    />
-                                   <ToggleOption 
-                                      label="Motion Transitions" 
-                                      description="Fluid page and route animations for a cohesive clinical experience." 
-                                      enabled={settings.animationsEnabled} 
-                                      onToggle={() => updateSetting('animationsEnabled', !settings.animationsEnabled)} 
+                                   <ToggleOption
+                                      label="Motion Transitions"
+                                      description="Fluid page and route animations for a cohesive clinical experience."
+                                      enabled={settings.animationsEnabled}
+                                      onToggle={() => updateSetting('animationsEnabled', !settings.animationsEnabled)}
+                                   />
+                                   <ToggleOption
+                                      label="Clean View"
+                                      description="Hide the microphone, assistant and this settings button, leaving the page on its own. A small control by the microphone brings them back."
+                                      enabled={settings.hideOverlays}
+                                      onToggle={() => updateSetting('hideOverlays', !settings.hideOverlays)}
                                    />
                                </div>
                            </div>

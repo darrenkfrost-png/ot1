@@ -46,6 +46,12 @@ interface Settings {
   dashboardLayout: 'grid' | 'list' | 'dense';
   colorAccent: string;
   enableVoiceWake: boolean;
+  /**
+   * Hides the floating controls — microphone, assistant, settings — so the page
+   * is the only thing on screen. A small restore control stays, because a
+   * clean view that cannot be undone is a trap rather than a feature.
+   */
+  hideOverlays: boolean;
   holographicEffects: boolean;
   parallaxEnabled: boolean;
   experimentalFeatures: boolean;
@@ -91,6 +97,7 @@ const defaultSettings: Settings = {
   dashboardLayout: 'grid',
   colorAccent: '#14b8a6',
   enableVoiceWake: false,
+  hideOverlays: false,
   holographicEffects: true,
   parallaxEnabled: true,
   experimentalFeatures: false,

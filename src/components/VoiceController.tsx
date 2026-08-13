@@ -2,12 +2,12 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useCommand } from '../context/CommandContext';
 import { useSettings } from '../context/SettingsContext';
 import { useToast } from './ToastSystem';
-import { Mic, MicOff, Waves } from 'lucide-react';
+import { Mic, MicOff, Waves, ChevronDown, ChevronUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 
 export default function VoiceController() {
-    const { settings } = useSettings();
+    const { settings, updateSetting } = useSettings();
     const { executeVoicePhrase } = useCommand();
     const { showToast } = useToast();
     
@@ -112,6 +112,26 @@ export default function VoiceController() {
     // But since it's an elite app, we should provide a subtle mic trigger or integration into FloatingAI
     // For now we will provide a small floating subtle dock bottom left.
 
+    /*
+     * When the floating controls are hidden, this corner keeps a single small
+     * pill to bring them back. Hiding the way out along with everything else
+     * would leave a visitor stuck with no obvious route back.
+     */
+    if (settings.hideOverlays) {
+        return (
+            <div className="fixed bottom-6 left-6 z-[var(--z-toast)] hidden lg:block">
+                <button
+                    onClick={() => updateSetting('hideOverlays', false)}
+                    aria-label="Show the microphone, assistant and settings controls"
+                    title="Show controls"
+                    className="pointer-events-auto p-2.5 rounded-xl bg-white/10 border border-white/15 text-slate-400 hover:text-white hover:bg-white/20 transition-all shadow-lg focus-visible:outline-teal-400"
+                >
+                    <ChevronUp size={16} />
+                </button>
+            </div>
+        );
+    }
+
     return (
         <div className="fixed bottom-6 left-6 z-[var(--z-toast)] hidden lg:flex flex-col gap-2 items-start pointer-events-none">
             <AnimatePresence>
@@ -145,6 +165,17 @@ export default function VoiceController() {
                 ) : (
                     <Mic size={20} />
                 )}
+            </button>
+
+            {/* Collapse everything floating, so the page has the screen to
+                itself. Sits beside the microphone, as asked. */}
+            <button
+                onClick={() => updateSetting('hideOverlays', true)}
+                aria-label="Hide the microphone, assistant and settings controls"
+                title="Hide controls for a clean view"
+                className="pointer-events-auto p-2.5 rounded-xl bg-white/5 border border-white/10 text-slate-500 hover:text-white hover:bg-white/15 transition-all shadow-lg focus-visible:outline-teal-400"
+            >
+                <ChevronDown size={16} />
             </button>
         </div>
     );

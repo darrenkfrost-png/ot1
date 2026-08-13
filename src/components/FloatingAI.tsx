@@ -169,6 +169,9 @@ export default function FloatingAI() {
     }
   };
 
+  // Part of the floating furniture, so it goes when the view is collapsed.
+  if (settings.hideOverlays) return null;
+
   return (
     <div className="fixed bottom-24 lg:bottom-8 right-4 lg:right-8 z-[calc(var(--z-overlay)-10)] flex flex-col items-end gap-4 pointer-events-none">
       <AnimatePresence>

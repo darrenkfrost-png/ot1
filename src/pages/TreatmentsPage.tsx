@@ -296,7 +296,7 @@ export default function TreatmentsPage() {
                 className="px-12 py-6 bg-teal-600 text-white rounded-2xl font-bold text-lg hover:bg-teal-500 transition-all shadow-2xl shadow-teal-900/40 active:scale-95 flex items-center justify-center gap-3 group"
                 aria-label="Book an appointment — opens our booking system in a new tab"
               >
-                Book Triage Call <ChevronRight size={22} className="group-hover:translate-x-1 transition-transform" />
+                Book an assessment <ChevronRight size={22} className="group-hover:translate-x-1 transition-transform" />
               </a>
               {/* There is no clinic guide PDF. This used to claim, in a success
                   message, that one was downloading. The patient guides do exist,
