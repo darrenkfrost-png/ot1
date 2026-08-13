@@ -1,0 +1,73 @@
+# CT6 Wellbeing — static hosting rules
+#
+# This file matters when the built site is served directly by Apache or
+# LiteSpeed (Hostinger's default) rather than by the Node server in server.ts.
+# In that mode nothing routes requests, so /treatments and every other page
+# returned 404 — to visitors refreshing the page, to anyone opening a shared
+# link, and to search engines, which could therefore index only the homepage.
+#
+# If the Node app is running instead, Apache never sees these requests and this
+# file is simply ignored. It is safe in both modes.
+
+# ----------------------------------------------------------------------
+# Media types the default server table gets wrong or omits
+# ----------------------------------------------------------------------
+<IfModule mod_mime.c>
+  AddType video/webm                    .webm
+  AddType video/mp4                     .mp4
+  AddType image/webp                    .webp
+  AddType image/svg+xml                 .svg
+  AddType application/manifest+json     .webmanifest
+  AddType image/x-icon                  .ico
+</IfModule>
+
+# ----------------------------------------------------------------------
+# Single-page application fallback
+# Anything that is not a real file or directory is handed to index.html so the
+# client router can resolve it.
+# ----------------------------------------------------------------------
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Leave real files, directories and the API alone.
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# ----------------------------------------------------------------------
+# Caching. Hashed assets never change under the same name, so they can be held
+# for a year. The HTML shell must not be, or visitors keep an old app.
+# ----------------------------------------------------------------------
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css                "access plus 1 year"
+  ExpiresByType application/javascript  "access plus 1 year"
+  ExpiresByType image/webp              "access plus 1 year"
+  ExpiresByType image/png               "access plus 1 year"
+  ExpiresByType image/jpeg              "access plus 1 year"
+  ExpiresByType video/mp4               "access plus 1 year"
+  ExpiresByType video/webm              "access plus 1 year"
+  ExpiresByType text/html               "access plus 0 seconds"
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|webmanifest)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+  <FilesMatch "^sw\.js$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+# ----------------------------------------------------------------------
+# Compression
+# ----------------------------------------------------------------------
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml
+  AddOutputFilterByType DEFLATE application/javascript application/json
+  AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>

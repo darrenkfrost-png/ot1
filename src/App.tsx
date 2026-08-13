@@ -26,7 +26,8 @@ import {
   Mail,
   Maximize,
   Minimize,
-  ExternalLink
+  ExternalLink,
+  HelpCircle
 } from 'lucide-react';
 import { cn } from './lib/utils';
 const TreatmentsPage = lazy(() => import('./pages/TreatmentsPage'));
@@ -40,6 +41,7 @@ const AIConsultantPage = lazy(() => import('./pages/AIConsultantPage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const LocationsPage = lazy(() => import('./pages/LocationsPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
+const FaqPage = lazy(() => import('./pages/FaqPage'));
 
 import Screensaver from './components/Screensaver';
 import ScrollToTop from './components/ScrollToTop';
@@ -72,6 +74,7 @@ const NAV_ITEMS = [
   { id: 'gallery', label: 'Gallery', icon: ImageIcon, path: '/gallery' },
   { id: 'resources', label: 'Resources', icon: BookOpen, path: '/resources' },
   { id: 'locations', label: 'Locations', icon: MapPin, path: '/locations' },
+  { id: 'faq', label: 'Questions', icon: HelpCircle, path: '/faq' },
   { id: 'contact', label: 'Contact', icon: Mail, path: '/contact' },
   { id: 'ai-clinic', label: 'AI Voice Clinic', icon: Sparkles, path: '/ai-consultant' },
 ];
@@ -648,6 +651,7 @@ function AppContent() {
                 <Route path="/resources" element={<PageWrapper><ResourcesPage /></PageWrapper>} />
                 <Route path="/locations" element={<PageWrapper><LocationsPage /></PageWrapper>} />
                 <Route path="/contact" element={<PageWrapper><ContactPage /></PageWrapper>} />
+                <Route path="/faq" element={<PageWrapper><FaqPage /></PageWrapper>} />
                 <Route path="/ai-consultant" element={<PageWrapper><AIConsultantPage /></PageWrapper>} />
                 <Route path="*" element={
                   <PageWrapper>
