@@ -749,12 +749,15 @@ export default function HomePage() {
                     <Link to="/ai-consultant" className="bg-white text-slate-950 px-10 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest border border-transparent hover:bg-teal-50 transition-all flex items-center gap-3 shadow-xl hover:-translate-y-1">
                        AI Diagnostic Triage <Brain size={18} className="text-teal-600" />
                     </Link>
-                    <button 
-                      onClick={() => window.open(BOOKING_URL, '_blank')}
+                    <a
+                      href={BOOKING_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="bg-white/10 backdrop-blur-md text-white border border-white/20 px-10 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-white hover:text-slate-950 hover:border-white transition-all shadow-lg flex items-center gap-3 hover:-translate-y-1"
+                      aria-label="Book a video consultation — opens our booking system in a new tab"
                     >
                        Book Secure Video <Video size={18} />
-                    </button>
+                    </a>
                 </div>
             </div>
             <div className="relative lg:w-1/3 aspect-[4/5] rounded-[3rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 group cursor-pointer z-10">
@@ -809,12 +812,15 @@ export default function HomePage() {
           </div>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-8 pt-6">
-            <button 
-              onClick={() => window.open(BOOKING_URL, '_blank')}
+            <a
+              href={BOOKING_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="group w-full sm:w-auto h-24 px-16 bg-teal-500 text-slate-950 rounded-[3rem] font-black text-xl uppercase tracking-widest shadow-[0_0_60px_rgba(20,184,166,0.3)] hover:shadow-[0_0_80px_rgba(20,184,166,0.5)] hover:bg-teal-400 hover:-translate-y-2 transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-5 border border-teal-300/50"
+              aria-label="Book an appointment — opens our booking system in a new tab"
             >
               Book Priority Access <ArrowRight size={28} className="group-hover:translate-x-2 transition-transform" />
-            </button>
+            </a>
             <Link to="/ai-consultant" className="w-full sm:w-auto h-24 px-14 bg-white/5 backdrop-blur-3xl text-white border border-white/15 hover:border-white/30 rounded-[3rem] font-bold text-xl hover:bg-white/10 transition-all flex items-center justify-center gap-5 group shadow-2xl hover:-translate-y-1">
               Voice Diagnostic <Brain size={26} className="text-teal-400 group-hover:rotate-12 transition-transform opacity-80 group-hover:opacity-100" />
             </Link>

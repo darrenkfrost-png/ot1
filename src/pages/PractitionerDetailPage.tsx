@@ -290,16 +290,17 @@ export default function PractitionerDetailPage() {
                 <p className="text-slate-400 max-w-md mx-auto font-light">
                   Book a direct session or initial assessment to begin your tailored health journey today.
                 </p>
-                <button 
-                  onClick={() => {
-                    trackClick(`Book Practitioner: ${practitioner.name}`);
-                    window.open(BOOKING_URL, '_blank');
-                  }}
+                <a
+                  href={BOOKING_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => trackClick(`Book Practitioner: ${practitioner.name}`)}
                   className="w-full sm:w-auto px-12 py-5 bg-teal-600 text-white rounded-2xl font-bold text-lg hover:bg-teal-500 transition-all shadow-xl shadow-teal-900/40 active:scale-[0.98] cursor-pointer inline-flex items-center justify-center gap-3 group"
+                  aria-label={`Book an appointment with ${practitioner.name} — opens our booking system in a new tab`}
                 >
-                  Book Now 
+                  Book Now
                   <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                </button>
+                </a>
                </div>
                <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500/10 rounded-full blur-[100px] -mr-32 -mt-32"></div>
             </div>

@@ -51,6 +51,7 @@ import VideoBackground from './components/VideoBackground';
 import SettingsPanel from './components/SettingsPanel';
 import IntroPage from './components/IntroPage';
 import IntroVideo from './components/IntroVideo';
+import PageMeta from './components/PageMeta';
 import FloatingAI from './components/FloatingAI';
 import MobileNavDock from './components/MobileNavDock';
 import Breadcrumbs from './components/Breadcrumbs';
@@ -616,6 +617,7 @@ function AppContent() {
             <AnimatePresence>
               {!showIntroVideo && showIntro && <IntroPage onComplete={() => setShowIntro(false)} />}
             </AnimatePresence>
+            <PageMeta />
             <StaticBackground />
             <VideoBackground />
             <WallpaperCanvas />

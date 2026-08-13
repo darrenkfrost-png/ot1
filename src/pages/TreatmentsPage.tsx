@@ -288,12 +288,15 @@ export default function TreatmentsPage() {
             </div>
 
             <div className="pt-8 flex flex-col sm:flex-row gap-6">
-              <button 
-                onClick={() => window.open(BOOKING_URL, '_blank')}
+              <a
+                href={BOOKING_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="px-12 py-6 bg-teal-600 text-white rounded-2xl font-bold text-lg hover:bg-teal-500 transition-all shadow-2xl shadow-teal-900/40 active:scale-95 flex items-center justify-center gap-3 group"
+                aria-label="Book an appointment — opens our booking system in a new tab"
               >
                 Book Triage Call <ChevronRight size={22} className="group-hover:translate-x-1 transition-transform" />
-              </button>
+              </a>
               <button 
                 onClick={() => showToast('Downloading Clinic Guide PDF...', 'success')}
                 className="px-12 py-6 bg-white/5 text-white rounded-2xl font-bold text-lg border border-white/10 hover:bg-white/10 transition-all flex items-center justify-center gap-3"
