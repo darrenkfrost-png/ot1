@@ -56,7 +56,8 @@ import FloatingAI from './components/FloatingAI';
 import MobileNavDock from './components/MobileNavDock';
 import Breadcrumbs from './components/Breadcrumbs';
 import VoiceController from './components/VoiceController';
-import { Logo } from './components/Logo';
+import { Logo, REPLAY_INTRO_EVENT } from './components/Logo';
+import { EmblemWatermark, SpineMotif } from './components/AnatomyMotif';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { ToastProvider, useToast } from './components/ToastSystem';
 import { FirebaseInitializer } from './components/FirebaseInitializer';
@@ -144,7 +145,7 @@ const Sidebar = ({ isCollapsed, onToggle, isMobile, isOpenMobile, onCloseMobile 
         <div className="absolute inset-0 bg-gradient-to-r from-teal-500/5 to-transparent -translate-x-full group-hover/header:translate-x-0 transition-transform duration-700"></div>
         <div className="flex items-center gap-4 relative z-10">
           <div className="relative">
-             <Logo size={42} className="shrink-0 shadow-lg shadow-teal-500/10 group-hover/sidebar:rotate-[360deg] transition-transform duration-1000" variant="gradient" />
+             <Logo size={42} replayIntroOnClick className="shrink-0 shadow-lg shadow-teal-500/10 group-hover/sidebar:rotate-[360deg] transition-transform duration-1000" variant="gradient" />
              <div className="absolute -inset-2 bg-teal-400/20 blur-xl rounded-full opacity-0 group-hover/sidebar:opacity-100 transition-opacity"></div>
           </div>
           {(!isCollapsed || isMobile) && <span className="font-display font-bold text-slate-900 tracking-tighter whitespace-nowrap text-2xl">CT6</span>}
@@ -478,7 +479,7 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 lg:gap-12 mb-24">
               <div className="space-y-8">
                 <div className="flex items-center gap-3">
-                  <Logo size={44} variant="gradient" />
+                  <Logo size={44} variant="gradient" replayIntroOnClick />
                   <span className="font-display font-medium text-slate-900 text-2xl tracking-tighter">CT6 Wellbeing</span>
                 </div>
                 <p className="text-slate-500 text-lg leading-relaxed font-light">
@@ -624,6 +625,9 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
             </div>
           </div>
           <div className="absolute bottom-0 right-0 w-96 h-96 bg-teal-500/5 rounded-full blur-[100px] -mr-32 -mb-32" />
+          {/* The mark, watermarked into the foot of the page. */}
+          <EmblemWatermark className="absolute -bottom-16 right-10 w-72 h-72 text-slate-900 hidden md:block" opacity={4} />
+          <SpineMotif className="absolute top-10 left-6 w-16 h-[300px] text-slate-900 hidden lg:block" opacity={4} />
         </footer>
 
       </div>
@@ -651,6 +655,13 @@ function AppContent() {
     } catch { /* private mode — just carry on */ }
     setShowIntroVideo(false);
   };
+
+  // The emblem in the header and the footer plays the opening film again.
+  useEffect(() => {
+    const replay = () => setShowIntroVideo(true);
+    window.addEventListener(REPLAY_INTRO_EVENT, replay);
+    return () => window.removeEventListener(REPLAY_INTRO_EVENT, replay);
+  }, []);
 
   return (
     <AnalyticsProvider>

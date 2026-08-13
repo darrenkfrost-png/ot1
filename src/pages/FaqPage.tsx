@@ -2,6 +2,7 @@ import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { Home, ChevronRight, HelpCircle, ShieldCheck, Calendar, ExternalLink, AlertTriangle } from 'lucide-react';
 import { FAQS, FaqItem } from '../data/faq';
+import { SpineMotif } from '../components/AnatomyMotif';
 import { BOOKING_URL } from '../constants';
 import { useAnalytics } from '../context/AnalyticsContext';
 
@@ -41,6 +42,9 @@ export default function FaqPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
+
+      {/* Quiet anatomy in the margin — texture, not illustration. */}
+      <SpineMotif className="hidden xl:block fixed top-24 right-10 w-24 h-[460px] text-teal-700" opacity={7} />
 
       <nav aria-label="Breadcrumb">
         <ol className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-400">
