@@ -13,3 +13,32 @@ export const BOOKING_URL = "https://ob.rushcliff.com/holding-page/555088";
 
 /** Shown next to booking links so nobody is surprised by a new tab. */
 export const BOOKING_PROVIDER = "Rushcliff";
+
+/**
+ * Social profiles.
+ *
+ * The footer used to show Instagram, Twitter and LinkedIn buttons that opened
+ * nothing — they popped a message saying "Opening Instagram…" and stopped
+ * there. Buttons are only rendered for entries with a real address, so an
+ * empty string means the icon simply is not shown.
+ */
+export const SOCIAL_LINKS: { label: string; url: string }[] = [
+  { label: 'Instagram', url: '' },
+  { label: 'Facebook', url: '' },
+  { label: 'LinkedIn', url: '' },
+];
+
+/**
+ * Governance documents.
+ *
+ * These were listed as clickable items that did nothing. A practice does need
+ * to be able to produce them — a privacy notice in particular, since this site
+ * collects personal details through the contact form — so they are listed
+ * honestly: linked when there is something to link to, and otherwise shown as
+ * available on request rather than pretending to open.
+ */
+export const GOVERNANCE_DOCS: { title: string; url: string }[] = [
+  { title: 'Patient Charter', url: '' },
+  { title: 'Privacy Notice', url: '' },
+  { title: 'Complaints Procedure', url: '' },
+];

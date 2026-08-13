@@ -1,5 +1,5 @@
 import { useState, useEffect, lazy, Suspense, useMemo, useCallback } from 'react';
-import { BOOKING_URL } from './constants';
+import { BOOKING_URL, SOCIAL_LINKS, GOVERNANCE_DOCS } from './constants';
 import { BrowserRouter, Routes, Route, Outlet, Link, NavLink, useLocation } from 'react-router-dom';
 import { 
   Home, 
@@ -484,18 +484,25 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
                 <p className="text-slate-500 text-lg leading-relaxed font-light">
                   Expert clinical care and anatomical rehabilitation in the heart of Canterbury. Committed to your long-term health and mobility.
                 </p>
-                <div className="flex gap-4">
-                  {['Instagram', 'Twitter', 'LinkedIn'].map((platform) => (
-                    <button 
-                      key={platform} 
-                      onClick={() => showToast(`Opening ${platform}...`, 'info')}
-                      className="w-11 h-11 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-teal-600 hover:text-white hover:scale-110 transition-all shadow-sm focus-visible:outline-teal-500"
-                      aria-label={`Visit our ${platform} page`}
-                    >
-                      <Zap size={18} />
-                    </button>
-                  ))}
-                </div>
+                {/* Only profiles with a real address appear. An icon that
+                    announces "Opening Instagram…" and then does nothing is
+                    worse than no icon. */}
+                {SOCIAL_LINKS.some((s) => s.url) && (
+                  <div className="flex gap-4">
+                    {SOCIAL_LINKS.filter((s) => s.url).map((social) => (
+                      <a
+                        key={social.label}
+                        href={social.url}
+                        target="_blank"
+                        rel="noopener noreferrer me"
+                        className="w-11 h-11 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-teal-600 hover:text-white hover:scale-110 transition-all shadow-sm focus-visible:outline-teal-500"
+                        aria-label={`Visit our ${social.label} page — opens in a new tab`}
+                      >
+                        <Zap size={18} />
+                      </a>
+                    ))}
+                  </div>
+                )}
               </div>
               
               <div className="space-y-8">
@@ -568,10 +575,29 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
               <div className="text-[10px] text-slate-300 font-bold uppercase tracking-widest mt-4 md:mt-0 italic max-w-md text-center md:text-right">
                 *Clinical diagnosis requires in-person assessment.
               </div>
+              {/* Linked when the document exists; otherwise a plain request
+                  route, rather than a button that pops a message and stops. */}
               <div className="flex gap-8">
-                <button onClick={() => showToast('Compliance documentation is maintained by our clinical governance board.', 'info')} className="hover:text-teal-600 transition-colors focus-visible:outline-teal-500">Compliance</button>
-                <button onClick={() => showToast('Privacy Policy (GDPR v2.0) available on request at the clinic desk.', 'info')} className="hover:text-teal-600 transition-colors focus-visible:outline-teal-500">Privacy</button>
-                <button onClick={() => showToast('Our Patient Charter outlines our absolute commitment to your care.', 'info')} className="hover:text-teal-600 transition-colors focus-visible:outline-teal-500">Charter</button>
+                {GOVERNANCE_DOCS.map((doc) =>
+                  doc.url ? (
+                    <a
+                      key={doc.title}
+                      href={doc.url}
+                      className="hover:text-teal-600 transition-colors focus-visible:outline-teal-500"
+                    >
+                      {doc.title}
+                    </a>
+                  ) : (
+                    <Link
+                      key={doc.title}
+                      to="/contact"
+                      className="hover:text-teal-600 transition-colors focus-visible:outline-teal-500"
+                      title={`${doc.title} — request a copy from the clinic`}
+                    >
+                      {doc.title}
+                    </Link>
+                  )
+                )}
               </div>
             </div>
           </div>

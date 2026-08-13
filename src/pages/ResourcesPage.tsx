@@ -1,4 +1,5 @@
 import { PDFs, VIDEOS } from '../data/resources';
+import { GOVERNANCE_DOCS } from '../constants';
 import { 
   Download, 
   PlayCircle, 
@@ -248,21 +249,37 @@ export default function ResourcesPage() {
                 <h3 className="text-lg font-bold">Governance & Rights</h3>
               </div>
               <div className="space-y-3">
-                {[
-                  { title: "Patient Charter", url: "#" },
-                  { title: "Privacy Policy (GDPR)", url: "#" },
-                  { title: "Complaints Procedure", url: "#" },
-                  { title: "CQC Registration Info", url: "#" }
-                ].map((item, i) => (
-                  <button 
-                    key={i} 
-                    onClick={() => showToast(`Opening ${item.title}...`, 'info')}
-                    className="w-full flex items-center justify-between p-4 rounded-xl hover:bg-slate-50 text-slate-600 text-sm font-medium transition-all group focus-visible:outline-teal-500"
-                  >
-                    {item.title}
-                    <ExternalLink size={16} className="text-slate-300 group-hover:text-teal-500 opacity-0 group-hover:opacity-100 transition-all" />
-                  </button>
-                ))}
+                {/*
+                  These were four buttons that popped "Opening …" and did
+                  nothing. One of them offered CQC registration information —
+                  a regulatory claim that should only appear if it is true.
+                  The list now comes from a single place, links where there is
+                  a document, and otherwise routes to the clinic to ask.
+                */}
+                {GOVERNANCE_DOCS.map((item) =>
+                  item.url ? (
+                    <a
+                      key={item.title}
+                      href={item.url}
+                      className="w-full flex items-center justify-between p-4 rounded-xl hover:bg-slate-50 text-slate-600 text-sm font-medium transition-all group focus-visible:outline-teal-500"
+                    >
+                      {item.title}
+                      <ExternalLink size={16} className="text-slate-300 group-hover:text-teal-500 opacity-0 group-hover:opacity-100 transition-all" />
+                    </a>
+                  ) : (
+                    <Link
+                      key={item.title}
+                      to="/contact"
+                      className="w-full flex items-center justify-between p-4 rounded-xl hover:bg-slate-50 text-slate-600 text-sm font-medium transition-all group focus-visible:outline-teal-500"
+                    >
+                      <span>
+                        {item.title}
+                        <span className="block text-[11px] font-normal text-slate-400">Request a copy</span>
+                      </span>
+                      <ChevronRight size={16} className="text-slate-300 group-hover:text-teal-500 transition-all" />
+                    </Link>
+                  )
+                )}
               </div>
             </section>
 
@@ -272,12 +289,12 @@ export default function ResourcesPage() {
                 <p className="text-teal-50/80 text-sm leading-relaxed font-light">
                   If you cannot find the resource you are looking for, please contact our administration team.
                 </p>
-                <button 
-                  onClick={() => showToast('Connecting to administration portal...', 'system')}
-                  className="w-full py-4 bg-white text-teal-700 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl active:scale-[0.98] focus-visible:outline-teal-500"
+                <Link
+                  to="/contact"
+                  className="w-full py-4 bg-white text-teal-700 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl active:scale-[0.98] focus-visible:outline-teal-500 flex items-center justify-center"
                 >
-                  Contact Clinics
-                </button>
+                  Contact the clinic
+                </Link>
                </div>
                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-16 -mt-16"></div>
             </section>

@@ -297,12 +297,15 @@ export default function TreatmentsPage() {
               >
                 Book Triage Call <ChevronRight size={22} className="group-hover:translate-x-1 transition-transform" />
               </a>
-              <button 
-                onClick={() => showToast('Downloading Clinic Guide PDF...', 'success')}
+              {/* There is no clinic guide PDF. This used to claim, in a success
+                  message, that one was downloading. The patient guides do exist,
+                  so it points at those instead. */}
+              <Link
+                to="/gallery"
                 className="px-12 py-6 bg-white/5 text-white rounded-2xl font-bold text-lg border border-white/10 hover:bg-white/10 transition-all flex items-center justify-center gap-3"
               >
-                Download Clinic Guide
-              </button>
+                Read the Patient Guides
+              </Link>
             </div>
           </div>
           <div className="relative aspect-[4/5] rounded-[4rem] overflow-hidden shadow-[0_0_100px_rgba(20,184,166,0.15)] group">

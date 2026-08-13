@@ -709,12 +709,13 @@ export default function HomePage() {
                   </div>
 
                   <div className="flex flex-col xl:flex-row gap-4 mt-auto">
-                    <button 
-                      onClick={() => showToast(`Dialing ${clinic.location} clinical intake...`, 'info')}
+                    {/* Said "Dialing … clinical intake" and dialled nothing. */}
+                    <Link
+                      to="/contact"
                       className="flex-1 py-5 bg-teal-600 hover:bg-teal-500 text-white rounded-2xl font-bold uppercase tracking-widest text-[#10px] transition-all shadow-[0_10px_20px_rgba(20,184,166,0.2)] hover:-translate-y-1 flex items-center justify-center gap-3 group/btn"
                     >
                       Contact Intake <Phone size={16} className="group-hover/btn:rotate-12 transition-transform" />
-                    </button>
+                    </Link>
                     <Link 
                       to="/locations"
                       className="flex-1 py-5 bg-slate-100 hover:bg-slate-200 text-slate-900 rounded-2xl font-bold uppercase tracking-widest text-[#10px] transition-all flex items-center justify-center gap-3 group/btn"
