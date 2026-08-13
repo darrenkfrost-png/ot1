@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { TREATMENTS } from '../data';
+import { TREATMENTS, PRACTITIONERS } from '../data';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { useToast } from '../components/ToastSystem';
@@ -84,7 +84,7 @@ export default function TreatmentsPage() {
           <div className="flex flex-wrap gap-6 pt-4">
             <div className="flex items-center gap-3 px-6 py-3 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-xl">
               <ShieldCheck size={20} className="text-teal-400" />
-              <span className="text-sm font-bold uppercase tracking-widest text-slate-200">Gosc & BCA Certified</span>
+              <span className="text-sm font-bold uppercase tracking-widest text-slate-200">GOsC Registered</span>
             </div>
             <div className="flex items-center gap-3 px-6 py-3 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-xl">
               <Zap size={20} className="text-amber-400" />
@@ -97,11 +97,17 @@ export default function TreatmentsPage() {
 
       {/* Expanded Quick Stats for Treatments */}
       <section className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        {/*
+          Every figure here can be checked. It previously read 99% patient
+          retention, a 94.2% success rate and 12+ specialists — none of which
+          came from anywhere, and the last of which contradicted the practice's
+          own team page.
+        */}
         {[
-          { label: "Clinic Trust", val: "99%", sub: "Patient Retention", icon: Heart },
-          { label: "Lead Time", val: "< 24h", sub: "Priority Triage", icon: Clock },
-          { label: "Success Rate", val: "94.2%", sub: "Direct Results", icon: Activity },
-          { label: "Specialists", val: "12+", sub: "Registered Experts", icon: Users }
+          { label: "Google rating", val: "5.0", sub: "from 56 reviews", icon: Heart },
+          { label: "Practising since", val: "2012", sub: "in Herne Bay", icon: Clock },
+          { label: "Treatments", val: "15", sub: "across 8 disciplines", icon: Activity },
+          { label: "Practitioners", val: `${PRACTITIONERS.length}`, sub: "at one clinic", icon: Users }
         ].map((stat, i) => (
           <div key={i} className="relative bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] crystal-glass holographic-border flex flex-col items-center text-center group hover:-translate-y-2 transition-all overflow-hidden">
              <div className="absolute inset-0 neural-grid opacity-[0.03] pointer-events-none mix-blend-screen mix-blend-lighten z-0"></div>

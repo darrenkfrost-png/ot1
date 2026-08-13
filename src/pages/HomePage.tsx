@@ -322,10 +322,13 @@ export default function HomePage() {
                 </div>
 
                 <div className="space-y-8 bg-white/50 backdrop-blur-md p-8 rounded-[2rem] border border-white shadow-sm">
+                    {/* Checkable figures only. A 98.4% recovery rate and a
+                        4.9/5 satisfaction score were stated here with nothing
+                        behind them; the real Google rating is better anyway. */}
                     {[
-                      { label: "Clinic Recovery Rate", value: "98.4%", color: "teal", delay: 0.2 },
-                      { label: "Patient Satisfaction", value: "4.9/5", color: "emerald", delay: 0.4 },
-                      { label: "Emergency Availability", value: "Every 2hrs", color: "blue", delay: 0.6 }
+                      { label: "Google rating", value: "5.0", color: "teal", delay: 0.2 },
+                      { label: "Reviews", value: "56", color: "emerald", delay: 0.4 },
+                      { label: "Practising since", value: "2012", color: "blue", delay: 0.6 }
                     ].map((stat, i) => (
                       <div key={i} className="space-y-3">
                          <div className="flex justify-between text-sm font-bold uppercase tracking-[0.2em] text-slate-400">
@@ -366,9 +369,9 @@ export default function HomePage() {
                </div>
 
                {[
-                 { icon: Award, label: "Registered", val: "BCA Certified", desc: "Top tiered board approval." },
-                 { icon: ShieldCheck, label: "Insurance", val: "AXA/Bupa Ready", desc: "Direct billing partners." },
-                 { icon: Clock, label: "Wait Time", val: "< 24 Hours", desc: "Rapid clinical triage." },
+                 { icon: Award, label: "Regulated", val: "GOsC Registered", desc: "General Osteopathic Council." },
+                 { icon: ShieldCheck, label: "Insurance", val: "Check your policy", desc: "Many insurers cover osteopathy." },
+                 { icon: Clock, label: "Open", val: "Mon–Sat", desc: "Weekdays 8am–8pm." },
                  { icon: MapPin, label: "Location", val: "Herne Bay", desc: "180 High Street, CT6 5AJ." }
                ].map((item, i) => (
                  <div key={i} className="bg-white/80 backdrop-blur-sm border border-slate-100 p-8 rounded-[2.5rem] hover:bg-white hover:shadow-[0_20px_40px_rgba(0,0,0,0.05)] hover:border-teal-100 hover:-translate-y-1 transition-all duration-500 group relative overflow-hidden">
@@ -528,11 +531,10 @@ export default function HomePage() {
                    {PRACTITIONERS.slice(0, 5).map((p, idx) => (
                      <img key={idx} src={p.image} alt={p.name} loading="lazy" decoding="async" width={56} height={56} className="w-14 h-14 rounded-full border-2 border-slate-900 object-cover shadow-xl hover:scale-110 hover:z-10 transition-transform relative cursor-pointer" />
                    ))}
-                   <div className="w-14 h-14 rounded-full border-2 border-slate-900 bg-teal-600 flex items-center justify-center text-[10px] font-black tracking-widest text-white shadow-xl">+12</div>
                 </div>
                 <div className="pr-6">
-                   <p className="text-sm font-bold text-white uppercase tracking-widest mb-1">Elite Collaboration</p>
-                   <p className="text-xs text-slate-400 font-light tracking-wide">Cases reviewed by 17+ Specialists.</p>
+                   <p className="text-sm font-bold text-white uppercase tracking-widest mb-1">One team</p>
+                   <p className="text-xs text-slate-400 font-light tracking-wide">{PRACTITIONERS.length} practitioners, all at the Herne Bay clinic.</p>
                 </div>
              </div>
              <Link to="/treatments" className="px-14 py-6 bg-white/10 backdrop-blur-md border border-white/20 hover:border-white/40 text-white font-black uppercase tracking-[0.2em] text-sm rounded-[2rem] hover:bg-white hover:text-slate-950 transition-all shadow-xl shadow-slate-950/50 active:scale-95 leading-none flex items-center gap-4 group">
@@ -826,13 +828,13 @@ export default function HomePage() {
              </div>
              <div className="hidden sm:block w-px h-16 bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
              <div className="flex flex-col items-center gap-3">
-                <span className="text-white font-display font-medium text-3xl tracking-tight">CT1 <span className="opacity-40">&</span> CT6</span>
-                <span className="text-teal-500/80 text-[10px] uppercase tracking-[0.3em] font-black">Multi-Node Coverage</span>
+                <span className="text-white font-display font-medium text-3xl tracking-tight">CT6 5AJ</span>
+                <span className="text-teal-500/80 text-[10px] uppercase tracking-[0.3em] font-black">Herne Bay High Street</span>
              </div>
              <div className="hidden sm:block w-px h-16 bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
              <div className="flex flex-col items-center gap-3">
-                <span className="text-white font-display font-medium text-3xl tracking-tight">BCA Certified</span>
-                <span className="text-teal-500/80 text-[10px] uppercase tracking-[0.3em] font-black">Fully Licensed Experts</span>
+                <span className="text-white font-display font-medium text-3xl tracking-tight">GOsC</span>
+                <span className="text-teal-500/80 text-[10px] uppercase tracking-[0.3em] font-black">Registered Osteopaths</span>
              </div>
           </div>
         </div>

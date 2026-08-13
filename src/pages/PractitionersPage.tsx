@@ -49,7 +49,7 @@ export default function PractitionersPage() {
   const FAQS = [
     {
       question: "What qualifications do your practitioners hold?",
-      answer: "All practitioners at CT6 hold a Master of Osteopathy (M.Ost) or equivalent university degree. They are registered with regulatory bodies such as the General Osteopathic Council (GOsC) and the British Chiropractic Association (BCA) or equivalent, completing extensive clinical audits annually."
+      answer: "Our osteopaths have each completed a four-year degree in osteopathy and are registered with the General Osteopathic Council, the profession's regulator. Our acupuncturist, massage therapists, foot care specialist and hypnotherapist hold their own qualifications and registrations in their fields — each practitioner's page sets out their training."
     },
     {
       question: "How do I secure and book an appointment?",
@@ -69,7 +69,7 @@ export default function PractitionersPage() {
     if (command === 'read_faq') {
       setExpandedFaqIndex(0);
       setVoiceFeedback("Reading FAQ aloud...");
-      speak("Reading frequent questions. Question 1: What qualifications do your practitioners hold? Answer: All practitioners at CT6 hold a Master of Osteopathy or equivalent degree. They are registered with the General Osteopathic Council and British Chiropractic Association.");
+      speak("Reading frequent questions. Question 1: What qualifications do your practitioners hold? Answer: Our osteopaths have each completed a four year degree in osteopathy and are registered with the General Osteopathic Council. Our other practitioners hold their own qualifications in their fields.");
     } else if (command === 'navigate_booking') {
       setVoiceFeedback("Redirecting to booking portal...");
       speak("Navigating to our secure electronic booking portal. Direct link is initiating now.");
@@ -78,7 +78,7 @@ export default function PractitionersPage() {
       }, 3000);
     } else if (command === 'summarize_qualifications') {
       setVoiceFeedback("Summarizing qualifications...");
-      speak("Our domain consists of highly certified practitioners with over one hundred years of combined clinic experience. All leads are GOsC and BCA registered with premium post-graduate qualifications.");
+      speak("The clinic has practised in Herne Bay since twenty twelve. Our osteopaths hold four year degrees and are registered with the General Osteopathic Council, and each practitioner's page sets out their own training.");
     }
   }, [speak]);
 
@@ -147,7 +147,7 @@ export default function PractitionersPage() {
           <div className="flex flex-wrap gap-6 pt-4">
             <div className="flex items-center gap-3 px-6 py-3 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-xl">
               <ShieldCheck size={20} className="text-white" />
-              <span className="text-sm font-bold uppercase tracking-widest text-slate-200">Gosc & BCA Regulated</span>
+              <span className="text-sm font-bold uppercase tracking-widest text-slate-200">GOsC Regulated</span>
             </div>
             <div className="flex items-center gap-3 px-6 py-3 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-xl">
               <Award size={20} className="text-white" />
@@ -320,18 +320,20 @@ export default function PractitionersPage() {
           <p className="text-xl text-slate-400 font-light leading-relaxed">
             Every member of our team is fully registered with their respective clinical bodies and maintains ongoing professional development.
           </p>
+          {/* 15+ specialists, 10k+ patients and a 4.9 average were all stated
+              without a source. These three can each be checked. */}
           <div className="flex flex-wrap justify-center gap-12 pt-8">
             <div className="space-y-2">
-               <div className="text-4xl font-display font-bold text-teal-400">15+</div>
-               <div className="text-xs font-bold uppercase tracking-widest text-slate-500">Clinical Specialists</div>
+               <div className="text-4xl font-display font-bold text-teal-400">{PRACTITIONERS.length}</div>
+               <div className="text-xs font-bold uppercase tracking-widest text-slate-500">Practitioners</div>
             </div>
             <div className="space-y-2">
-               <div className="text-4xl font-display font-bold text-teal-400">10k+</div>
-               <div className="text-xs font-bold uppercase tracking-widest text-slate-500">Patients Treated</div>
+               <div className="text-4xl font-display font-bold text-teal-400">2012</div>
+               <div className="text-xs font-bold uppercase tracking-widest text-slate-500">Practising Since</div>
             </div>
             <div className="space-y-2">
-               <div className="text-4xl font-display font-bold text-teal-400">4.9/5</div>
-               <div className="text-xs font-bold uppercase tracking-widest text-slate-500">Average Rating</div>
+               <div className="text-4xl font-display font-bold text-teal-400">5.0</div>
+               <div className="text-xs font-bold uppercase tracking-widest text-slate-500">From 56 Google Reviews</div>
             </div>
           </div>
         </div>
@@ -550,7 +552,7 @@ export default function PractitionersPage() {
 
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {[
-          { icon: ShieldCheck, title: "Regulated Care", desc: "All practitioners are BCA or GOsC registered specialists." },
+          { icon: ShieldCheck, title: "Regulated Care", desc: "Our osteopaths are registered with the General Osteopathic Council." },
           { icon: Zap, title: "Modern Science", desc: "We use evidence-based methods and state-of-the-art tech." },
           { icon: Heart, title: "Patient First", desc: "We prioritize your comfort and long-term joint health." },
           { icon: Sparkles, title: "One clinic", desc: "180 High Street, Herne Bay — the same team every visit." }
