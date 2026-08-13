@@ -1,7 +1,8 @@
 import express from "express";
 import fs from "fs";
 import path from "path";
-import { createServer as createViteServer } from "vite";
+// NOTE: vite is deliberately NOT imported here. See the development branch at
+// the foot of this file.
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
 
@@ -386,8 +387,19 @@ PLAN (P):
     }
   });
 
-  // Vite middleware for development
+  // Vite middleware for development.
+  //
+  // Imported here rather than at the top of the file. The build bundles this
+  // server to CommonJS with its packages left external, so a top-level import
+  // becomes a require() that runs the instant the process starts - in
+  // production too, where vite has no part to play. Vite ships as ESM only, and
+  // require()-ing an ESM package throws on Node builds without require(esm)
+  // support. The server then dies at startup and the host quietly falls back to
+  // serving the static folder, which is exactly what happened: /api/* gone and
+  // no obvious reason why. Loading it inside this branch means production never
+  // reaches for it at all.
   if (process.env.NODE_ENV !== "production") {
+    const { createServer: createViteServer } = await import("vite");
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",

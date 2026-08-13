@@ -30,10 +30,15 @@
   RewriteEngine On
   RewriteBase /
 
-  # Leave real files, directories and the API alone.
+  # Leave real files and directories alone.
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
+
+  # Never answer an API call with the app shell. If the Node server is not
+  # running, /api/* should fail plainly rather than return a page of HTML that
+  # the client will try to parse as JSON.
+  RewriteRule ^api/ - [R=404,L]
 
   RewriteRule ^ index.html [L]
 </IfModule>
