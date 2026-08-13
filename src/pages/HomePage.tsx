@@ -75,8 +75,10 @@ export default function HomePage() {
             initial={{ scale: 1.15, opacity: 0 }}
             animate={{ scale: 1, opacity: 0.65 }}
             transition={{ duration: 2.5, ease: "easeOut" }}
-            src="https://images.unsplash.com/photo-1544126592-807daa2b567b?auto=format&fit=crop&q=80&w=2000" 
-            alt="Clinic atmosphere" 
+            src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=2000"
+            alt="A calm treatment room at the CT6 Wellbeing clinic"
+            fetchPriority="high"
+            decoding="async"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[40s] ease-linear"
           />
           <div className="absolute inset-0 neural-grid opacity-[0.15] mix-blend-screen mix-blend-lighten pointer-events-none"></div>
@@ -411,7 +413,7 @@ export default function HomePage() {
             >
                <Link to={`/practitioners/${p.id}`} className="block">
                   <div className="relative aspect-[3/4] rounded-[3rem] overflow-hidden mb-6 shadow-[0_15px_40px_-10px_rgba(0,0,0,0.15)] group-hover:shadow-[0_25px_50px_-12px_rgba(20,184,166,0.3)] transition-all duration-700">
-                      <img src={p.image} alt={p.name} className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-[1.5s] ease-out" />
+                      <img src={p.image} alt={p.name} loading="lazy" decoding="async" className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-[1.5s] ease-out" />
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-700"></div>
                       
                       <div className="absolute bottom-8 left-8 right-8 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
@@ -483,7 +485,7 @@ export default function HomePage() {
               >
                   <div className="lg:w-56 overflow-hidden shrink-0 relative">
                       <div className="absolute inset-0 bg-teal-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700 mix-blend-overlay z-10"></div>
-                      <img src={t.image} alt={t.title} className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-1000" />
+                      <img src={t.image} alt={t.title} loading="lazy" decoding="async" className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-1000" />
                   </div>
                   <div className="p-10 space-y-6 flex-1 flex flex-col justify-between relative z-20">
                       <div>
@@ -515,7 +517,7 @@ export default function HomePage() {
              <div className="flex items-center gap-10 p-6 bg-slate-900/50 rounded-[2.5rem] border border-slate-800/50 backdrop-blur-md">
                 <div className="flex -space-x-4">
                    {PRACTITIONERS.slice(0, 5).map((p, idx) => (
-                     <img key={idx} src={p.image} alt="team" className="w-14 h-14 rounded-full border-2 border-slate-900 object-cover shadow-xl hover:scale-110 hover:z-10 transition-transform relative cursor-pointer" />
+                     <img key={idx} src={p.image} alt={p.name} loading="lazy" decoding="async" width={56} height={56} className="w-14 h-14 rounded-full border-2 border-slate-900 object-cover shadow-xl hover:scale-110 hover:z-10 transition-transform relative cursor-pointer" />
                    ))}
                    <div className="w-14 h-14 rounded-full border-2 border-slate-900 bg-teal-600 flex items-center justify-center text-[10px] font-black tracking-widest text-white shadow-xl">+12</div>
                 </div>
@@ -596,7 +598,7 @@ export default function HomePage() {
           className="relative group h-full min-h-[600px] flex items-center"
         >
            <div className="w-full aspect-[4/5] rounded-[4rem] overflow-hidden shadow-2xl shadow-slate-900/10 border-8 border-white relative z-10">
-              <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=1000" alt="Specialist Consulting" className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-[2s] ease-out" />
+              <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=1000" alt="Specialist Consulting" loading="lazy" decoding="async" className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-[2s] ease-out" />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
               
               {/* Floating Review Card - Glassmorphism */}
@@ -747,7 +749,7 @@ export default function HomePage() {
                 </div>
             </div>
             <div className="relative lg:w-1/3 aspect-[4/5] rounded-[3rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 group cursor-pointer z-10">
-                <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=800" alt="Video Consult" className="w-full h-full object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000 ease-out" />
+                <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=800" alt="Video Consult" loading="lazy" decoding="async" className="w-full h-full object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000 ease-out" />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-teal-900/40 to-transparent mix-blend-overlay group-hover:opacity-50 transition-opacity"></div>
                 <div className="absolute inset-0 flex items-center justify-center">
                    <div className="w-20 h-20 bg-white/20 backdrop-blur-md border border-white/40 rounded-full flex items-center justify-center text-white group-hover:bg-teal-500 group-hover:border-teal-400 transition-all shadow-[0_0_30px_rgba(0,0,0,0.3)]">

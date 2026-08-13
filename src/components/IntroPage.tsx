@@ -54,7 +54,7 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
             {/* Array doubled for seamless looping */}
             {[...cascadingImages, ...cascadingImages, ...cascadingImages].map((img, index) => (
               <div key={`${colIndex}-${index}`} className="w-full aspect-[3/4] rounded-[2rem] overflow-hidden shadow-2xl relative border border-white/5 crystal-glass">
-                <img src={img} className="w-full h-full object-cover opacity-80" alt="" />
+                <img src={img} className="w-full h-full object-cover opacity-80" alt="" loading="lazy" decoding="async" />
                 <div className="absolute inset-0 bg-gradient-to-tr from-slate-950/80 to-transparent" />
               </div>
             ))}

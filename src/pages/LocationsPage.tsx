@@ -12,7 +12,7 @@ const LOCATIONS = [
     phone: '+44 1227 123456',
     email: 'canterbury@ct6wellbeing.co.uk',
     hours: 'Mon-Fri: 8am - 8pm | Sat: 9am - 4pm',
-    image: 'https://images.unsplash.com/photo-1576091160550-217359f4ecf8?auto=format&fit=crop&q=80&w=800',
+    image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=800',
     tags: ['Main Clinic', 'Diagnostic Suite', 'On-site Parking']
   },
   {
@@ -32,7 +32,7 @@ const LOCATIONS = [
     phone: '+44 1227 987654',
     email: 'whitstable@ct6wellbeing.co.uk',
     hours: 'Wed, Fri: 9am - 6pm',
-    image: 'https://images.unsplash.com/photo-1629909613654-28a3a7c4d459?auto=format&fit=crop&q=80&w=800',
+    image: 'https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&q=80&w=800',
     tags: ['Rehabilitation', 'Sea View']
   }
 ];
@@ -65,7 +65,7 @@ export default function LocationsPage() {
             className="group bg-white rounded-[3rem] border border-slate-100 shadow-premium hover:shadow-2xl transition-all overflow-hidden flex flex-col"
           >
             <div className="relative aspect-video overflow-hidden">
-              <img src={loc.image} alt={loc.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+              <img src={loc.image} alt={loc.name} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
               <div className="absolute top-6 left-6 flex flex-wrap gap-2">
                 {loc.tags.map(tag => (
                   <span key={tag} className="px-3 py-1 bg-white/20 backdrop-blur-md text-white text-[10px] font-black uppercase tracking-widest rounded-lg border border-white/20">
@@ -149,7 +149,7 @@ export default function LocationsPage() {
            </div>
            <div className="relative">
               <div className="aspect-[4/3] rounded-[3rem] overflow-hidden border border-white/10">
-                 <img src="https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&q=80&w=800" className="w-full h-full object-cover opacity-50" alt="Clinical Hub" />
+                 <img src="https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&q=80&w=800" loading="lazy" decoding="async" className="w-full h-full object-cover opacity-50" alt="Clinical Hub" />
                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
               </div>
               <div className="absolute -bottom-6 -left-6 bg-teal-600 p-8 rounded-[2.5rem] shadow-2xl text-white">

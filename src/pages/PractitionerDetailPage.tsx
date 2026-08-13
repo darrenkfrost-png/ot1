@@ -71,7 +71,7 @@ export default function PractitionerDetailPage() {
             animate={{ scale: 1, opacity: 1 }}
             className="aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-premium border border-slate-100"
           >
-            <img src={practitioner.image} alt={practitioner.name} className="w-full h-full object-cover" />
+            <img src={practitioner.image} alt={practitioner.name} fetchPriority="high" decoding="async" className="w-full h-full object-cover" />
           </motion.div>
           
           <motion.div 

@@ -67,7 +67,7 @@ Unlike deep tissue or sports massage, Swedish massage uses moderate pressure and
     id: 'therapeutic-massage',
     title: 'Therapeutic Full-Body & Back Massage',
     desc: 'Customised clinical massage targeting specific regions or conditions like chronic pain and postural imbalances.',
-    image: 'https://images.unsplash.com/photo-1544161515-4ae6ce6db87e?auto=format&fit=crop&q=80&w=800',
+    image: 'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&q=80&w=800',
     content: `Therapeutic massage is distinguished by its customised approach to target specific regions or conditions. While Swedish massage is generalised, therapeutic massage uses a combination of strokes to address chronic pain, postural imbalances, or recent injuries. 
 
 Sessions begin with a detailed assessment of your daily habits, such as desk work or physical labour, that might contribute to muscle imbalances. The therapist then designs a session plan targeting specific muscle groups like the erector spinae, trapezius, or gluteal muscles.`,
@@ -199,7 +199,7 @@ The treatment involves rhythmic movements and pressure point work on the scalp, 
     id: 'thai-foot-massage',
     title: 'Thai Foot Massage',
     desc: 'Invigorating reflexology treatment using hands and wooden sticks to balance energy lines.',
-    image: 'https://images.unsplash.com/photo-1519415510236-8657b223315f?auto=format&fit=crop&q=80&w=800',
+    image: 'https://osteopathyandwellbeing.co.uk/wp-content/uploads/2018/02/foot.jpg',
     content: `Thai foot massage combines elements of reflexology and Thai acupressure. According to traditional Thai medicine, stimulating reflex points on the feet can influence the corresponding organs and systems throughout the body. 
 
 Using hands, fingers, and a traditional wooden stick, the therapist applies pressure to specific points and stretches the foot and lower leg. The treatment is both grounding and refreshing, leaving you with a sense of all-over vitality.`,
@@ -221,7 +221,7 @@ Using hands, fingers, and a traditional wooden stick, the therapist applies pres
     id: 'hot-stone-massage',
     title: 'Hot Stone Massage',
     desc: 'Luxurious deep relaxation using heated basalt stones to soften muscle tissue and relieve stress.',
-    image: 'https://images.unsplash.com/photo-1544161515-4ae6ce6db87e?auto=format&fit=crop&q=80&w=800',
+    image: 'https://osteopathyandwellbeing.co.uk/wp-content/uploads/2018/02/4590924.jpg',
     content: `Hot stone massage uses smooth, heated basalt stones placed on key points of the body to permeate deep into the muscles. The heat dilates blood vessels, increasing circulation and allowing the therapist to work deeply without needing intense pressure. 
 
 Stones are also used as extensions of the therapist’s hands to perform long, gliding strokes. The combination of heat and massage provides a sense of profound relaxation and can be particularly beneficial for chronic conditions like fibromyalgia or multiple sclerosis.`,

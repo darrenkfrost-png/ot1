@@ -121,7 +121,7 @@ export default function TreatmentDetailPage() {
 
       <div className="relative rounded-[3rem] overflow-hidden aspect-[21/9] shadow-3xl holographic-border group">
         <div className="absolute inset-0 neural-grid opacity-30 mix-blend-screen pointer-events-none z-10"></div>
-        <img src={t.image} alt={t.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[30s]" />
+        <img src={t.image} alt={t.title} fetchPriority="high" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[30s]" />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent flex items-end p-12 md:p-16 z-20">
           <h1 className="text-5xl md:text-6xl font-display font-medium text-white tracking-tight">{t.title}</h1>
         </div>
@@ -283,7 +283,7 @@ export default function TreatmentDetailPage() {
               {PRACTITIONERS.slice(0, 2).map((p, i) => (
                 <Link key={i} to={`/practitioners/${p.id}`} className="flex items-center gap-6 p-6 bg-white rounded-[2rem] border border-slate-100 hover:shadow-premium transition-all group">
                    <div className="w-20 h-20 rounded-[1.5rem] overflow-hidden shrink-0 shadow-inner">
-                      <img src={p.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                      <img src={p.image} alt={p.name} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                    </div>
                    <div>
                       <h4 className="font-bold text-slate-900 group-hover:text-teal-600 transition-colors uppercase tracking-tight">{p.name}</h4>
@@ -318,7 +318,7 @@ export default function TreatmentDetailPage() {
                  </div>
               </div>
               <div className="relative aspect-video rounded-[2rem] overflow-hidden border border-white/10 group-hover:border-teal-500/30 transition-colors">
-                <img src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&q=80&w=800" className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-1000" />
+                <img src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&q=80&w=800" alt="Patient training during an active rehabilitation session" loading="lazy" decoding="async" className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-1000" />
                 <div className="absolute inset-0 flex items-center justify-center">
                    <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center">
                       <ArrowRight className="text-white" />
