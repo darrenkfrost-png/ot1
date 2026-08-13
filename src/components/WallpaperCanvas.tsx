@@ -19,7 +19,7 @@ const WallpaperCanvas: React.FC = () => {
     console.log("WallpaperCanvas: initializing for mode:", settings.activeWallpaper);
     if (!canvasRef.current) return;
     
-    if (settings.activeWallpaper === 'none' || settings.activeWallpaper === 'static-image') {
+    if (settings.activeWallpaper === 'none' || settings.activeWallpaper === 'static-image' || settings.activeWallpaper === 'video') {
         const ctx = canvasRef.current.getContext('2d');
         ctx?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
         if (animationRef.current) cancelAnimationFrame(animationRef.current);
@@ -505,7 +505,7 @@ const WallpaperCanvas: React.FC = () => {
   }, [settings.activeWallpaper, settings.wallpaperColor, settings.wallpaperSpeed, settings.wallpaperBrightness, settings.wallpaperQuality]);
 
   return (
-    settings.activeWallpaper === 'static-image' ? null : (
+    settings.activeWallpaper === 'static-image' || settings.activeWallpaper === 'video' ? null : (
     <canvas 
         ref={canvasRef} 
         className="fixed inset-0 pointer-events-none"

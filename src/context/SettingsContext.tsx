@@ -1,11 +1,12 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
-type WallpaperType = 'none' | 'fluid' | 'hyperspace' | 'network' | 'waves' | 'grid' | 'matrix' | 'rain' | 'circuit' | 'aurora' | 'particles' | 'constellation' | 'orbs' | 'ripple' | 'polyrhythm' | 'dna' | 'polymetric' | 'static-image';
+type WallpaperType = 'none' | 'fluid' | 'hyperspace' | 'network' | 'waves' | 'grid' | 'matrix' | 'rain' | 'circuit' | 'aurora' | 'particles' | 'constellation' | 'orbs' | 'ripple' | 'polyrhythm' | 'dna' | 'polymetric' | 'static-image' | 'video';
 
 interface Settings {
   // Theme & Wallpaper
   activeWallpaper: WallpaperType;
   staticWallpaper?: string;
+  videoWallpaper?: string;
   wallpaperColor: string;
   wallpaperSpeed: number;
   wallpaperBrightness: number;
@@ -57,7 +58,8 @@ interface SettingsContextType {
 }
 
 const defaultSettings: Settings = {
-  activeWallpaper: 'polymetric',
+  activeWallpaper: 'video',
+  videoWallpaper: 'emblem-close',
   wallpaperColor: '#14b8a6', // Teal
   wallpaperSpeed: 1,
   wallpaperBrightness: 1,

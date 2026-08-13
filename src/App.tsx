@@ -44,8 +44,10 @@ import Screensaver from './components/Screensaver';
 import ScrollToTop from './components/ScrollToTop';
 import WallpaperCanvas from './components/WallpaperCanvas';
 import StaticBackground from './components/StaticBackground';
+import VideoBackground from './components/VideoBackground';
 import SettingsPanel from './components/SettingsPanel';
 import IntroPage from './components/IntroPage';
+import IntroVideo from './components/IntroVideo';
 import FloatingAI from './components/FloatingAI';
 import MobileNavDock from './components/MobileNavDock';
 import Breadcrumbs from './components/Breadcrumbs';
@@ -257,8 +259,9 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile }: { isColla
           )}
           <div className="relative group w-full md:w-[320px] lg:w-[400px] flex-1 z-50">
             <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors" size={18} />
-            <input 
-              type="text" 
+            <input
+              type="text"
+              aria-label="Search treatments or type a command"
               placeholder="Search treatments or type a command..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -438,7 +441,7 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
                     <button 
                       key={platform} 
                       onClick={() => showToast(`Opening ${platform}...`, 'info')}
-                      className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-teal-600 hover:text-white hover:scale-110 transition-all shadow-sm focus-visible:outline-teal-500"
+                      className="w-11 h-11 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-teal-600 hover:text-white hover:scale-110 transition-all shadow-sm focus-visible:outline-teal-500"
                       aria-label={`Visit our ${platform} page`}
                     >
                       <Zap size={18} />
@@ -449,7 +452,7 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
               
               <div className="space-y-8">
                 <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Navigation</h4>
-                <nav className="flex flex-col gap-4">
+                <nav className="flex flex-col gap-1 -my-2">
                   {[
                     { label: 'Home', path: '/' },
                     { label: 'Treatments', path: '/treatments' },
@@ -459,7 +462,7 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
                     { label: 'Locations', path: '/locations' },
                     { label: 'Contact Us', path: '/contact' }
                   ].map((link) => (
-                    <Link key={link.path} to={link.path} className="text-slate-600 hover:text-teal-600 font-medium transition-colors flex items-center gap-2 group">
+                    <Link key={link.path} to={link.path} className="text-slate-600 hover:text-teal-600 font-medium transition-colors flex items-center gap-2 group min-h-11 py-2">
                       <ChevronRight size={14} className="opacity-0 group-hover:opacity-100 -ml-4 group-hover:ml-0 transition-all" />
                       {link.label}
                     </Link>
@@ -533,8 +536,25 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
 };
 function AppContent() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  // The brand film opens the app, then hands over to the entry door.
+  // Shown once per browser session so returning visitors aren't made to sit
+  // through it again — change to useState(true) to play it on every load.
+  const [showIntroVideo, setShowIntroVideo] = useState(() => {
+    try {
+      return sessionStorage.getItem('ct6-intro-film-seen') !== 'true';
+    } catch {
+      return true;
+    }
+  });
   const [showIntro, setShowIntro] = useState(true);
   const location = useLocation();
+
+  const completeIntroVideo = () => {
+    try {
+      sessionStorage.setItem('ct6-intro-film-seen', 'true');
+    } catch { /* private mode — just carry on */ }
+    setShowIntroVideo(false);
+  };
 
   return (
     <AnalyticsProvider>
@@ -544,9 +564,13 @@ function AppContent() {
           <CommandProvider>
             <PageContextBridgeProvider>
             <AnimatePresence>
-              {showIntro && <IntroPage onComplete={() => setShowIntro(false)} />}
+              {showIntroVideo && <IntroVideo key="intro-film" onComplete={completeIntroVideo} />}
+            </AnimatePresence>
+            <AnimatePresence>
+              {!showIntroVideo && showIntro && <IntroPage onComplete={() => setShowIntro(false)} />}
             </AnimatePresence>
             <StaticBackground />
+            <VideoBackground />
             <WallpaperCanvas />
             <SettingsPanel />
             <FloatingAI />

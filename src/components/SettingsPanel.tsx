@@ -3,6 +3,7 @@ import { Settings as SettingsIcon, X, SlidersHorizontal, Image as ImageIcon, Vol
 import { cn } from '../lib/utils';
 import { useState, useEffect } from 'react';
 import { GALLERY_IMAGES } from '../data/images';
+import { VIDEO_WALLPAPERS } from '../data/videoWallpapers';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAnalytics } from '../context/AnalyticsContext';
 import { useToast } from './ToastSystem';
@@ -101,7 +102,7 @@ export default function SettingsPanel() {
     showToast("Diagnostics Pass Complete", "success");
   };
 
-  const wallpaperOptions = ['none', 'fluid', 'polymetric', 'hyperspace', 'network', 'waves', 'grid', 'matrix', 'rain', 'circuit', 'aurora', 'particles', 'constellation', 'orbs', 'ripple', 'polyrhythm', 'dna', 'static-image'];
+  const wallpaperOptions = ['none', 'video', 'fluid', 'polymetric', 'hyperspace', 'network', 'waves', 'grid', 'matrix', 'rain', 'circuit', 'aurora', 'particles', 'constellation', 'orbs', 'ripple', 'polyrhythm', 'dna', 'static-image'];
 
   const handleOpen = () => {
      setIsOpen(true);
@@ -230,6 +231,39 @@ export default function SettingsPanel() {
                               </div>
                            </div>
 
+                           {settings.activeWallpaper === 'video' && (
+                              <div className="space-y-6 pt-10 border-t border-slate-100">
+                                 <div className="flex items-baseline justify-between gap-4">
+                                    <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-600 block">Motion Signature</label>
+                                    <span className="text-[10px] font-medium text-slate-400 tracking-wide">Silent · seamless loop</span>
+                                 </div>
+                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                                    {VIDEO_WALLPAPERS.map((clip) => {
+                                       const isActive = (settings.videoWallpaper ?? VIDEO_WALLPAPERS[0].id) === clip.id;
+                                       return (
+                                          <button
+                                             key={clip.id}
+                                             onClick={() => updateSetting('videoWallpaper', clip.id)}
+                                             aria-pressed={isActive}
+                                             className={cn(
+                                                "group relative w-full aspect-video rounded-[1.5rem] overflow-hidden border-4 transition-all shadow-lg",
+                                                isActive ? "border-teal-500 scale-95 shadow-teal-500/20" : "border-white hover:border-slate-100"
+                                             )}
+                                          >
+                                             <img src={clip.poster} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover" />
+                                             <span className="absolute inset-x-0 bottom-0 bg-slate-950/70 backdrop-blur-sm text-white text-[10px] font-black uppercase tracking-[0.2em] py-2 px-2 truncate">
+                                                {clip.label}
+                                             </span>
+                                             {isActive && (
+                                                <span className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-teal-400 shadow-[0_0_10px_rgba(45,212,191,0.9)] animate-pulse" />
+                                             )}
+                                          </button>
+                                       );
+                                    })}
+                                 </div>
+                              </div>
+                           )}
+
                            {settings.activeWallpaper === 'static-image' && (
                               <div className="space-y-6 pt-10 border-t border-slate-100">
                                  <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-600 block">Select Master Asset</label>
@@ -240,7 +274,7 @@ export default function SettingsPanel() {
                                           onClick={() => updateSetting('staticWallpaper', img)}
                                           className={cn("w-full aspect-square rounded-[2rem] overflow-hidden border-4 transition-all shadow-lg", settings.staticWallpaper === img ? "border-teal-500 scale-95 shadow-teal-500/20" : "border-white hover:border-slate-100")}
                                        >
-                                          <img src={img} alt="wallpaper" className="w-full h-full object-cover" />
+                                          <img src={img} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover" />
                                        </button>
                                     ))}
                                  </div>
