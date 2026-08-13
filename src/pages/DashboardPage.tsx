@@ -352,23 +352,14 @@ export default function DashboardPage() {
       setAuditResult(data);
       showToast("Clinical AI self-audit completed successfully.", "success");
     } catch (err) {
-      console.warn("Server-side audit failed or bypassed, sliding into resilient local audit backup:", err);
-      // Resilient local backup so it NEVER crashes
-      setAuditResult({
-        overallHealth: 97,
-        architecturalInsights: [
-          "Clinical-grade design systems leveraging high negative accessibility bounds and contrast scales.",
-          "Reactive local configurations caching patient parameters to maintain full session persistence.",
-          "Dynamic Web Audio APIs running offline logic matrices for instant low-latency audio coaching."
-        ],
-        nextStepRoadmap: [
-          "Sync raw wearable biometric sensors (Apple Watch / Garmin SDKs) into the charting grid.",
-          "Develop end-to-end encrypted telehealth consultation video links within standard router views.",
-          "Deploy custom clinical OCR scanning tools for patients to directly ingest historic radiology PDFs."
-        ],
-        upgradeReview: "The newly deployed clinical features—including the Interactive Range of Motion (ROM) Simulator, local-storage linked Rehab Exercise Checklist, Multi-zone Human Body Hotspots schematic, Bi-aural Vagus Sound Frequency Breath Coach, and Patient Telehealth Prep Triage export—form a complete visual diagnostics stack. This dramatically reduces provider intake loops and optimizes musculoskeletal care precision."
-      });
-      showToast("Local system audit compiled and verified successfully.", "info");
+      /*
+       * The "resilient local backup" here produced a 97% health score and a
+       * glowing review whenever the audit failed, then announced it had
+       * "compiled and verified successfully". An audit that cannot run has no
+       * result to report.
+       */
+      console.error("System audit failed:", err);
+      showToast("The system audit could not run. Nothing has been scored.", "error");
     } finally {
       setIsAuditing(false);
     }

@@ -144,40 +144,26 @@ async function startServer() {
         const cleanedText = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
         parsedResponse = JSON.parse(cleanedText);
       } catch (parseError) {
-        console.error('Failed to parse Server Audit AI response as JSON, falling back to backup JSON structure:', responseText);
-        parsedResponse = {
-          overallHealth: 98,
-          architecturalInsights: [
-            "Clinical-grade design systems leveraging high accessibility bounds and high-contrast scales.",
-            "Reactive local configurations caching patient parameters to maintain full session persistence.",
-            "Dynamic Web Audio APIs running custom low-latency acoustic vagal regulation pathways."
-          ],
-          nextStepRoadmap: [
-            "Synchronize raw wearable biometric sensors (Apple HealthKit / Garmin telemetry SDK) in real-time.",
-            "Implement high-resolution Computer Vision for real-time skeletal tracking of joint expansion angles.",
-            "Establish secure end-to-end encrypted telehealth WebRTC video channels directly within the patient portal."
-          ],
-          upgradeReview: "The newly deployed clinical features form a complete visual diagnostics stack. This dramatically reduces provider intake loops and optimizes musculoskeletal care precision."
-        };
+        // An unparseable answer is a failed audit, not a 98% one.
+        console.error('System audit returned unparseable JSON:', responseText?.slice(0, 200));
+        return res.status(502).json({
+          error: 'bad_response',
+          message: 'The audit did not return a readable result.',
+        });
       }
 
       res.json(parsedResponse);
     } catch (error: any) {
-      console.warn("System audit endpoint fallback activated due to API or initialization error:", error.message);
-      // Resilient clinical fallback
-      res.json({
-        overallHealth: 97,
-        architecturalInsights: [
-          "Clinical-grade design systems leveraging high accessibility bounds and high-contrast scales.",
-          "Reactive local configurations caching patient parameters to maintain full session persistence.",
-          "Dynamic Web Audio APIs running offline logic matrices to ensure no network delay during acoustic coaching."
-        ],
-        nextStepRoadmap: [
-          "Sync raw wearable biometric sensors (Apple Watch / Garmin SDKs) into the charting grid.",
-          "Develop end-to-end encrypted telehealth consultation video links within standard router views.",
-          "Deploy custom clinical OCR scanning tools for patients to directly ingest historic radiology PDFs."
-        ],
-        upgradeReview: "The newly deployed features—including the Range of Motion (ROM) Simulator, local-rehab checksheets, multi-zone hotspot mapping, bi-aural vagal coach, and telehealth prep triage export—form a complete visual diagnostics stack. This dramatically reduces provider intake loops and optimizes musculoskeletal care precision."
+      /*
+       * This answered every failure with a fixed "97% overall health" and three
+       * confident paragraphs about architecture and roadmap - a glowing report
+       * on a system that had just failed to report at all. It was the last of
+       * the invented outputs on this server.
+       */
+      console.error("System audit unavailable:", error?.message);
+      res.status(503).json({
+        error: 'unavailable',
+        message: 'The system audit could not run.',
       });
     }
   });
