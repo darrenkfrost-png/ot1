@@ -152,6 +152,59 @@ export default function PageMeta() {
       return el;
     }, 'content', meta.title);
 
+    /*
+     * Breadcrumb trail for search results. Google renders this as a path under
+     * the link instead of a bare URL, and it gives crawlers the hierarchy of a
+     * site that has no server-rendered navigation.
+     */
+    const crumbs: { name: string; path: string }[] = [{ name: 'Home', path: '/' }];
+    const segments = pathname.split('/').filter(Boolean);
+    if (segments.length) {
+      const sectionLabels: Record<string, string> = {
+        treatments: 'Treatments',
+        practitioners: 'Practitioners',
+        gallery: 'Patient Guides',
+        resources: 'Resources',
+        locations: 'Locations',
+        contact: 'Contact',
+        faq: 'Questions',
+        'ai-consultant': 'AI Symptom Guide',
+        dashboard: 'Your Progress',
+      };
+      crumbs.push({
+        name: sectionLabels[segments[0]] ?? segments[0],
+        path: `/${segments[0]}`,
+      });
+      if (segments.length > 1) {
+        // Leaf pages are named after the thing itself, not the id in the URL.
+        const leaf =
+          TREATMENTS.find((t) => t.id === segments[1])?.title ??
+          PRACTITIONERS.find((p) => p.id === segments[1])?.name ??
+          segments[1];
+        crumbs.push({ name: leaf, path: pathname });
+      }
+    }
+
+    const breadcrumbSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: crumbs.map((c, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: c.name,
+        item: `${window.location.origin}${c.path}`,
+      })),
+    };
+
+    let crumbScript = document.head.querySelector('script[data-breadcrumb]') as HTMLScriptElement | null;
+    if (!crumbScript) {
+      crumbScript = document.createElement('script');
+      crumbScript.type = 'application/ld+json';
+      crumbScript.setAttribute('data-breadcrumb', '');
+      document.head.appendChild(crumbScript);
+    }
+    crumbScript.textContent = JSON.stringify(breadcrumbSchema);
+
     // Keep private views out of search results.
     const robots = document.head.querySelector('meta[name="robots"]');
     if (meta.noindex) {
