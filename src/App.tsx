@@ -52,6 +52,7 @@ import SettingsPanel from './components/SettingsPanel';
 import IntroPage from './components/IntroPage';
 import IntroVideo from './components/IntroVideo';
 import PageMeta from './components/PageMeta';
+import ThemePicker from './components/ThemePicker';
 import FloatingAI from './components/FloatingAI';
 import MobileNavDock from './components/MobileNavDock';
 import Breadcrumbs from './components/Breadcrumbs';
@@ -130,7 +131,7 @@ const Sidebar = ({ isCollapsed, onToggle, isMobile, isOpenMobile, onCloseMobile 
     </AnimatePresence>
     <aside 
       id="main-sidebar"
-      className="fixed left-0 top-0 h-full bg-white/80 backdrop-blur-3xl border-r border-slate-100/50 flex flex-col overflow-hidden origin-left will-change-transform shadow-premium group/sidebar"
+      className="fixed left-0 top-0 h-full bg-[var(--panel-bg)] backdrop-blur-3xl border-r border-[var(--panel-border)] text-[var(--panel-text)] flex flex-col overflow-hidden origin-left will-change-transform shadow-premium group/sidebar"
       style={{
         zIndex: 'var(--z-sidebar)',
         width: isMobile ? 'var(--layout-mobile-sidebar-width)' : (isCollapsed ? 'var(--layout-sidebar-collapsed-width)' : 'var(--layout-sidebar-width)'),
@@ -141,14 +142,14 @@ const Sidebar = ({ isCollapsed, onToggle, isMobile, isOpenMobile, onCloseMobile 
       }}
       aria-expanded={isMobile ? isOpenMobile : !isCollapsed}
     >
-      <div className="h-[var(--layout-header-height)] flex items-center px-6 border-b border-slate-100 flex-none justify-between relative group/header overflow-hidden">
+      <div className="h-[var(--layout-header-height)] flex items-center px-6 border-b border-[var(--panel-border)] flex-none justify-between relative group/header overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-teal-500/5 to-transparent -translate-x-full group-hover/header:translate-x-0 transition-transform duration-700"></div>
         <div className="flex items-center gap-4 relative z-10">
           <div className="relative">
              <Logo size={42} replayIntroOnClick className="shrink-0 shadow-lg shadow-teal-500/10 group-hover/sidebar:rotate-[360deg] transition-transform duration-1000" variant="gradient" />
              <div className="absolute -inset-2 bg-teal-400/20 blur-xl rounded-full opacity-0 group-hover/sidebar:opacity-100 transition-opacity"></div>
           </div>
-          {(!isCollapsed || isMobile) && <span className="font-display font-bold text-slate-900 tracking-tighter whitespace-nowrap text-2xl">CT6</span>}
+          {(!isCollapsed || isMobile) && <span className="font-display font-bold text-[var(--panel-text)] tracking-tighter whitespace-nowrap text-2xl">CT6</span>}
         </div>
       </div>
       <nav id="main-navigation" className="flex-1 py-12 px-5 space-y-3 overflow-y-auto custom-scrollbar" aria-label="Main Navigation">
@@ -167,9 +168,9 @@ const Sidebar = ({ isCollapsed, onToggle, isMobile, isOpenMobile, onCloseMobile 
                 onClick={() => isMobile && onCloseMobile()}
                 className={({ isActive }) => cn(
                   "w-full flex items-center gap-4 px-4 py-4 rounded-2xl transition-all group relative focus-visible:outline-teal-500 overflow-hidden border",
-                  isActive 
-                    ? "bg-slate-900 border-slate-800 shadow-xl text-white scale-[1.02]" 
-                    : "text-slate-400 hover:bg-slate-50 hover:text-slate-900 border-transparent"
+                  isActive
+                    ? "bg-slate-900 border-slate-800 shadow-xl text-white scale-[1.02]"
+                    : "text-[var(--panel-text-muted)] hover:bg-[var(--panel-hover)] hover:text-[var(--panel-text)] border-transparent"
                 )}
                 title={isCollapsed && !isMobile ? item.label : undefined}
               >
@@ -216,13 +217,13 @@ const Sidebar = ({ isCollapsed, onToggle, isMobile, isOpenMobile, onCloseMobile 
       </nav>
       {!isMobile && !isCollapsed && <PulseRibbon />}
       {!isMobile && (
-        <div className="p-4 border-t border-slate-100 shrink-0">
-          <button 
-            onClick={onToggle} 
+        <div className="p-4 border-t border-[var(--panel-border)] shrink-0">
+          <button
+            onClick={onToggle}
             aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             aria-expanded={!isCollapsed}
             aria-controls="main-sidebar"
-            className="w-full flex items-center justify-center gap-3 p-3.5 rounded-2xl bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-teal-500/20 outline-none"
+            className="w-full flex items-center justify-center gap-3 p-3.5 rounded-2xl bg-[var(--panel-hover)] text-[var(--panel-text-muted)] hover:text-[var(--panel-text)] transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-teal-500/20 outline-none"
           >
             {isCollapsed ? <ChevronRight size={20} /> : <><ChevronLeft size={20} /><span className="text-sm font-bold uppercase tracking-widest px-1">Collapse</span></>}
           </button>
@@ -271,9 +272,10 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile }: { isColla
   return (
     <header 
       className={cn(
-        "fixed top-0 right-0 flex items-center border-b border-slate-100/50",
-        "h-[var(--layout-header-height)] bg-white/70 backdrop-blur-3xl shadow-sm"
-      )} 
+        "fixed top-0 right-0 flex items-center border-b",
+        "h-[var(--layout-header-height)] backdrop-blur-3xl shadow-sm",
+        "bg-[var(--panel-bg)] border-[var(--panel-border)] text-[var(--panel-text)]"
+      )}
       style={{ 
         left: isMobile ? '0px' : (isCollapsed ? 'var(--layout-sidebar-collapsed-width)' : 'var(--layout-sidebar-width)'),
         zIndex: 'var(--z-header)',
@@ -356,9 +358,10 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile }: { isColla
           </div>
         </div>
         <div className="flex items-center gap-3 sm:gap-6 ml-4">
-          <button 
+          <ThemePicker />
+          <button
             onClick={() => showToast("No new notifications at this time.", "info")}
-            className="p-3 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-900 relative transition-all cursor-pointer focus-visible:outline-teal-500 group"
+            className="p-3 rounded-full hover:bg-[var(--panel-hover)] text-[var(--panel-text-muted)] hover:text-[var(--panel-text)] relative transition-all cursor-pointer focus-visible:outline-teal-500 group"
             aria-label="Notifications"
           >
             <Bell size={21} className="group-hover:rotate-12 transition-transform" />

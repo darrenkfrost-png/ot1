@@ -130,6 +130,101 @@
 }
 
 @layer base {
+  /*
+   * Panel themes.
+   *
+   * Four looks for the header, the sidebar and the ground behind them. Each one
+   * sets its own text colours as well as its surfaces — a dark panel with the
+   * light theme's dark text would be unreadable, so the two always travel
+   * together.
+   *
+   * Applied as data-app-theme on <html> from the settings context.
+   */
+  :root,
+  :root[data-app-theme='clinical'] {
+    --panel-bg: rgba(255, 255, 255, 0.78);
+    --panel-border: rgba(241, 245, 249, 0.6);
+    --panel-text: #0f172a;
+    /* slate-400 measured 2.56:1 against these panels — below the 4.5:1 needed
+       for body text, and the navigation labels are small. slate-500 clears it. */
+    --panel-text-muted: #64748b;
+    --panel-hover: rgba(241, 245, 249, 0.9);
+    --app-bg: #0f172a;
+  }
+
+  :root[data-app-theme='midnight'] {
+    --panel-bg: rgba(2, 6, 23, 0.82);
+    --panel-border: rgba(148, 163, 184, 0.16);
+    --panel-text: #f8fafc;
+    --panel-text-muted: #94a3b8;
+    --panel-hover: rgba(148, 163, 184, 0.14);
+    --app-bg: #020617;
+  }
+
+  :root[data-app-theme='sand'] {
+    --panel-bg: rgba(250, 247, 242, 0.9);
+    --panel-border: rgba(214, 203, 186, 0.55);
+    --panel-text: #2c2622;
+    /* Darkened from #8a7f70, which measured 3.67:1 on this warm panel. */
+    --panel-text-muted: #6b6053;
+    --panel-hover: rgba(232, 224, 211, 0.85);
+    --app-bg: #1c1917;
+  }
+
+  :root[data-app-theme='contrast'] {
+    --panel-bg: #ffffff;
+    --panel-border: #0f172a;
+    --panel-text: #0f172a;
+    --panel-text-muted: #334155;
+    --panel-hover: #e2e8f0;
+    --app-bg: #000000;
+  }
+
+  :root[data-app-theme='ocean'] {
+    --panel-bg: rgba(8, 27, 49, 0.86);
+    --panel-border: rgba(125, 168, 209, 0.2);
+    --panel-text: #eaf2fb;
+    --panel-text-muted: #a9c4dd;
+    --panel-hover: rgba(125, 168, 209, 0.16);
+    --app-bg: #04101d;
+  }
+
+  :root[data-app-theme='forest'] {
+    --panel-bg: rgba(7, 28, 22, 0.86);
+    --panel-border: rgba(122, 176, 154, 0.2);
+    --panel-text: #eaf5f0;
+    --panel-text-muted: #a2c6b6;
+    --panel-hover: rgba(122, 176, 154, 0.16);
+    --app-bg: #04140f;
+  }
+
+  :root[data-app-theme='graphite'] {
+    --panel-bg: rgba(24, 24, 27, 0.88);
+    --panel-border: rgba(161, 161, 170, 0.2);
+    --panel-text: #fafafa;
+    --panel-text-muted: #b4b4bd;
+    --panel-hover: rgba(161, 161, 170, 0.16);
+    --app-bg: #09090b;
+  }
+
+  :root[data-app-theme='blush'] {
+    --panel-bg: rgba(253, 246, 246, 0.93);
+    --panel-border: rgba(214, 184, 187, 0.5);
+    --panel-text: #3a2a2c;
+    --panel-text-muted: #7a5257;
+    --panel-hover: rgba(243, 226, 227, 0.85);
+    --app-bg: #2b1d1f;
+  }
+
+  :root[data-app-theme='ice'] {
+    --panel-bg: rgba(244, 249, 252, 0.92);
+    --panel-border: rgba(176, 202, 216, 0.5);
+    --panel-text: #10212b;
+    --panel-text-muted: #4d6875;
+    --panel-hover: rgba(219, 234, 242, 0.85);
+    --app-bg: #0b1b23;
+  }
+
   :root {
     /* Layout Core Dimensions */
     --layout-sidebar-width: 280px;

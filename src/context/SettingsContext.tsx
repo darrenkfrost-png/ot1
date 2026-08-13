@@ -52,6 +52,17 @@ interface Settings {
    * clean view that cannot be undone is a trap rather than a feature.
    */
   hideOverlays: boolean;
+  /** Look of the header, sidebar and the ground behind them. */
+  appTheme:
+    | 'clinical'
+    | 'midnight'
+    | 'sand'
+    | 'contrast'
+    | 'ocean'
+    | 'forest'
+    | 'graphite'
+    | 'blush'
+    | 'ice';
   holographicEffects: boolean;
   parallaxEnabled: boolean;
   experimentalFeatures: boolean;
@@ -98,6 +109,7 @@ const defaultSettings: Settings = {
   colorAccent: '#14b8a6',
   enableVoiceWake: false,
   hideOverlays: false,
+  appTheme: 'clinical',
   holographicEffects: true,
   parallaxEnabled: true,
   experimentalFeatures: false,
@@ -125,8 +137,12 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
          document.documentElement.classList.remove('high-contrast');
      }
      
+     // The panel theme drives CSS variables from a single attribute on <html>,
+     // so every surface changes together rather than each component deciding.
+     document.documentElement.setAttribute('data-app-theme', settings.appTheme);
+
      // Set body background to wallpaper color to avoid white flashes and support transparent themes
-     document.body.style.backgroundColor = settings.activeWallpaper === 'none' ? '#f8fafc' : '#0f172a'; // slate-50 or slate-900
+     document.body.style.backgroundColor = settings.activeWallpaper === 'none' ? '#f8fafc' : 'var(--app-bg)';
      document.documentElement.style.setProperty('--color-accent-dynamic', settings.colorAccent);
   }, [settings]);
 
