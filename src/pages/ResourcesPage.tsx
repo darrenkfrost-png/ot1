@@ -79,7 +79,7 @@ function FAQItem({ question, answer }: { question: string, answer: string }) {
 }
 
 export default function ResourcesPage() {
-  const [activeVideo, setActiveVideo] = useState<{ title: string; url: string } | null>(null);
+  const [activeVideo, setActiveVideo] = useState<{ title: string; url: string; youtubeId?: string; blurb?: string } | null>(null);
   const { showToast } = useToast();
 
   return (
@@ -196,15 +196,31 @@ export default function ResourcesPage() {
                     show: { opacity: 1, scale: 1 }
                   }}
                 >
-                  <button 
-                    onClick={() => setActiveVideo(video)} 
-                    className="p-6 bg-white rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-premium hover:border-teal-50 transition-all duration-300 flex items-center gap-6 text-left group w-full h-full"
+                  <button
+                    onClick={() => setActiveVideo(video)}
+                    className="bg-white rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-premium hover:border-teal-100 transition-all duration-300 text-left group w-full h-full overflow-hidden flex flex-col"
+                    aria-label={`Play: ${video.title}`}
                   >
-                    <div className="p-4 bg-teal-50 rounded-2xl text-teal-600 transition-colors group-hover:bg-teal-600 group-hover:text-white relative">
-                      <PlayCircle size={24} />
-                      <div className="absolute inset-0 bg-white/20 rounded-2xl scale-0 group-hover:scale-100 transition-transform"></div>
+                    {/* The film's own thumbnail rather than a generic icon —
+                        people choose what to watch by looking at it. */}
+                    <div className="relative aspect-video bg-slate-950 overflow-hidden">
+                      <img
+                        src={`https://i.ytimg.com/vi/${video.youtubeId}/hqdefault.jpg`}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-16 h-16 rounded-full bg-slate-950/60 border border-white/20 flex items-center justify-center text-white group-hover:bg-teal-600 group-hover:scale-110 transition-all">
+                          <PlayCircle size={30} />
+                        </div>
+                      </div>
                     </div>
-                    <h3 className="font-semibold text-slate-900 leading-snug group-hover:text-teal-700 transition-colors">{video.title}</h3>
+                    <div className="p-6 space-y-2 flex-1">
+                      <h3 className="font-semibold text-slate-900 leading-snug group-hover:text-teal-700 transition-colors">{video.title}</h3>
+                      <p className="text-sm text-slate-500 font-light leading-relaxed">{video.blurb}</p>
+                    </div>
                   </button>
                 </motion.div>
               ))}
@@ -331,10 +347,14 @@ export default function ResourcesPage() {
                 {activeVideo.url.includes('youtube') || activeVideo.url.includes('vimeo') || activeVideo.url.includes('drive.google.com') ? (
                   <iframe 
                     src={
-                      activeVideo.url.includes('drive.google.com') 
-                        ? activeVideo.url.replace('/view', '/preview')
-                        : activeVideo.url.replace('watch?v=', 'embed/')
-                    } 
+                      activeVideo.youtubeId
+                        /* nocookie: the clinic's visitors should not be tracked
+                           by a video host just for watching an explainer. */
+                        ? `https://www.youtube-nocookie.com/embed/${activeVideo.youtubeId}?rel=0`
+                        : activeVideo.url.includes('drive.google.com')
+                          ? activeVideo.url.replace('/view', '/preview')
+                          : activeVideo.url.replace('watch?v=', 'embed/')
+                    }
                     className="w-full h-full"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                     allowFullScreen
@@ -356,7 +376,7 @@ export default function ResourcesPage() {
                 rel="noopener noreferrer"
                 className="w-full flex items-center justify-center gap-2 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl font-semibold transition-all"
               >
-                Watch on External Site
+                {activeVideo.youtubeId ? 'Watch on YouTube' : 'Watch on external site'}
               </a>
             </motion.div>
           </motion.div>

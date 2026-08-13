@@ -48,6 +48,9 @@ export const CLINIC = {
   },
 
   /** The practice's Google listing — 56 reviews, rated 5.0 at the time of writing. */
+  facebook: 'https://www.facebook.com/osteoCT6',
+  youtube: 'https://www.youtube.com/@OsteopathyWellbeingCT6HerneBay',
+
   reviewsUrl: 'https://g.page/r/CZpeWBaDHrHKEB0/review',
   /** Same link, used where we invite a patient to leave one of their own. */
   writeReviewUrl: 'https://g.page/r/CZpeWBaDHrHKEB0/review',

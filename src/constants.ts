@@ -26,9 +26,9 @@ export { CLINIC };
  * empty string means the icon simply is not shown.
  */
 export const SOCIAL_LINKS: { label: string; url: string }[] = [
+  { label: 'Facebook', url: 'https://www.facebook.com/osteoCT6' },
+  { label: 'YouTube', url: 'https://www.youtube.com/@OsteopathyWellbeingCT6HerneBay' },
   { label: 'Instagram', url: '' },
-  { label: 'Facebook', url: '' },
-  { label: 'LinkedIn', url: '' },
 ];
 
 /**
