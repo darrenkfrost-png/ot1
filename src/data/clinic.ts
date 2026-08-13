@@ -47,7 +47,10 @@ export const CLINIC = {
     url: 'https://www.osteopathy.org.uk',
   },
 
-  reviewsUrl: 'https://g.page/r/CSpDdGsX79iwEB0/review',
+  /** The practice's Google listing — 56 reviews, rated 5.0 at the time of writing. */
+  reviewsUrl: 'https://g.page/r/CZpeWBaDHrHKEB0/review',
+  /** Same link, used where we invite a patient to leave one of their own. */
+  writeReviewUrl: 'https://g.page/r/CZpeWBaDHrHKEB0/review',
 
   policies: {
     privacy: 'https://osteopathyandwellbeing.co.uk/privacy-statement-uk/',

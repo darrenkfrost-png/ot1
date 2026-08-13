@@ -17,7 +17,8 @@ import {
   Clock,
   Activity,
   Users,
-  Star
+  Star,
+  ExternalLink
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Logo } from '../components/Logo';
@@ -256,6 +257,22 @@ export default function TreatmentsPage() {
                </div>
             </div>
           ))}
+        </div>
+
+        {/* Somewhere for a patient to add their own, rather than only ever
+            reading other people's. */}
+        <div className="text-center">
+          <a
+            href={REVIEWS_SOURCE.writeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-white border border-slate-200 text-slate-700 font-bold text-sm hover:border-teal-300 hover:text-teal-700 hover:shadow-premium transition-all focus-visible:outline-teal-500"
+          >
+            <Star size={16} className="fill-amber-400 text-amber-400" />
+            Been treated here? Leave a review
+            <ExternalLink size={13} className="opacity-50" aria-hidden="true" />
+          </a>
+          <p className="mt-3 text-xs text-slate-400">Opens Google in a new tab</p>
         </div>
       </section>
 

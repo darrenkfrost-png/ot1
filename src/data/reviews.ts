@@ -6,21 +6,80 @@ export interface Review {
 }
 
 /**
- * Real reviews, left as the patients wrote them.
+ * Real reviews from the practice's Google listing, left exactly as written.
  *
- * The site previously carried five invented testimonials — "James T.",
- * "Emma L.", "Mark S.", "David R." — written to sound like marketing copy. The
- * practice has genuine reviews on its Google listing, and a real one signed
- * "Perry Kemp" is worth more than any invented one.
+ * Spelling, punctuation and the odd typo are the reviewers' own. Tidying
+ * someone's words while keeping their name on them makes it a different
+ * statement, and these read as genuine precisely because they are not polished.
  *
- * Wording, spelling and punctuation are the reviewers' own. Tidying someone's
- * words and keeping their name on them makes it a different statement.
+ * Reviews that Google had truncated with "… More" are not included: the visible
+ * half is not the review, and completing someone else's sentence is inventing
+ * a testimonial.
+ *
+ * Order matters — the first three appear on the treatments page, the next two
+ * on practitioner pages, and the sixth is the spotlight quote.
  */
 export const REVIEWS: Review[] = [
+  {
+    author: 'Andrew & Charlie Heap',
+    quote:
+      'I’ve been going to Adrian for around 8 years, he’s brilliant, nothing is too much trouble. A bonus is how friendly he is! He also sees my husband and both my parents.',
+  },
+  {
+    author: 'Tomas White',
+    quote:
+      'Great service, I had an injury on my back which put me out of work for a while, Adrian done a fantastic job and within a few weeks i was back at work. I now visit on a regular basis. Highly recommended.',
+  },
   {
     author: 'Julia Rumsey',
     quote:
       'Shoulder injury giving me pain and after unsuccessful physio sessions decided to try here, glad I did. After a few sessions Shoulder feeling more comfortable and mobile. Highly recommend',
+  },
+  {
+    author: 'Jen Goodman',
+    quote:
+      'Thank you to Adrian for fitting me in in an emergency and helping me out with my horrendous back pain! Brilliant Osteopath, highly recommended.',
+  },
+  {
+    author: 'Julie Sculfor',
+    quote: 'Leon is so goo, definitely pleased and wouldn’t hesitate recommending',
+  },
+  {
+    author: 'Kris Holden',
+    quote:
+      'Great treatments and sound advice, Adrian has helped me recover from painful back injury and offered constructive ideas so that I can get back in the gym without doing any further damage. Happy to recommend.',
+  },
+  {
+    author: 'Bob Eager',
+    quote:
+      'Great people, effective treatment. I have been using this place for years, for ongoing problems and also to treat short term injuries. I would recommend it!',
+  },
+  {
+    author: 'angela smith',
+    quote:
+      'Fantastic osteopath, massage therapy and foot care,10/10.I have been coming here for years,can’t recommend this practice enough',
+  },
+  {
+    author: 'karen kendall',
+    quote: 'Professional, caring and knowledgeable. Always able to offer an appointment when required.',
+  },
+  {
+    author: 'Micky Orr',
+    quote: 'Very professional and sorted the bulge on my Disc in no time top class',
+  },
+  {
+    author: 'Max (Maximus)',
+    quote:
+      'Had a fall snowboarding earlier in the year and pulled a tricep muscle. I received a couple of treatments at the Osteopathy & Wellbeing Clinic which really helped the healing process. I was back up and running in just a few weeks. Thanks guys.',
+  },
+  {
+    author: 'Geoff Lane',
+    quote:
+      'Always sorts out my problems. I have had 2 back surgeries and have problems from time to time, but I am straightened out with treatments carried out.',
+  },
+  {
+    author: 'Peter Coyston',
+    quote: 'Fantastic service My back issue is so much better after 2 visits, I would highly recommend',
   },
   {
     author: 'Perry Kemp',
@@ -32,17 +91,8 @@ export const REVIEWS: Review[] = [
     quote: 'Great for osteopathy and chiropody',
   },
   {
-    author: 'Brian Jarman',
-    quote: 'Leon is the best.',
-  },
-  {
     author: 'Sharon Moon',
     quote: 'Absolutely brilliant',
-  },
-  {
-    author: 'Treat Queen',
-    quote:
-      "Come to Monique for beauty treatments. She's very thorough and caring and always does a fantastic job. Lovely positive girl, thoroughly recommend.",
   },
 ];
 
@@ -50,4 +100,5 @@ export const REVIEWS: Review[] = [
 export const REVIEWS_SOURCE = {
   label: 'Google reviews',
   url: CLINIC.reviewsUrl,
+  writeUrl: CLINIC.writeReviewUrl,
 };
