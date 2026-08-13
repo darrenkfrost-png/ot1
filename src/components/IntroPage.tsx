@@ -27,6 +27,9 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
 
   // Use a subset of gallery images for the cascading background
   const cascadingImages = GALLERY_IMAGES.slice(0, 12);
+  // Only the first screenful needs to be present immediately; the rest of the
+  // cascade scrolls into place over the following seconds.
+  const EAGER_TILES = 4;
 
   return (
     <motion.div 
@@ -39,11 +42,17 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
       <div className="absolute inset-0 neural-grid opacity-30 mix-blend-screen pointer-events-none" />
 
       {/* Background Cascading Images */}
-      <div className="absolute inset-x-0 w-full h-[200%] -top-[50%] flex justify-center gap-4 sm:gap-8 opacity-[0.15] blur-[2px] pointer-events-none select-none overflow-hidden transform rotate-[-4deg] scale-110">
-        {[0, 1, 2, 3, 4].map((colIndex) => (
+      {/*
+        This cascade is the clinic's own artwork, so it should read as artwork.
+        It was previously set at 15% opacity behind a 2px blur and a further 4px
+        backdrop blur, in narrow 3:4 tiles that cropped the portrait guides -
+        legible as texture, but not as anything branded.
+      */}
+      <div className="absolute inset-x-0 w-full h-[200%] -top-[50%] flex justify-center gap-4 sm:gap-8 opacity-[0.5] pointer-events-none select-none overflow-hidden transform rotate-[-4deg] scale-110">
+        {[0, 1, 2, 3].map((colIndex) => (
           <motion.div
             key={colIndex}
-            className="w-1/5 max-w-[280px] flex flex-col gap-4 sm:gap-8"
+            className="w-1/4 max-w-[340px] flex flex-col gap-4 sm:gap-8"
             animate={{ y: colIndex % 2 === 0 ? [0, -1500] : [-1500, 0] }}
             transition={{
               repeat: Infinity,
@@ -53,17 +62,34 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
           >
             {/* Array doubled for seamless looping */}
             {[...cascadingImages, ...cascadingImages, ...cascadingImages].map((img, index) => (
-              <div key={`${colIndex}-${index}`} className="w-full aspect-[3/4] rounded-[2rem] overflow-hidden shadow-2xl relative border border-white/5 crystal-glass">
-                <img src={img} className="w-full h-full object-cover opacity-80" alt="" loading="lazy" decoding="async" />
-                <div className="absolute inset-0 bg-gradient-to-tr from-slate-950/80 to-transparent" />
+              /* shrink-0 is load-bearing: these are flex children in a fixed
+                 height column, so without it every tile is squashed down to a
+                 short bar and the artwork is unrecognisable. */
+              <div key={`${colIndex}-${index}`} className="w-full shrink-0 aspect-[788/1400] rounded-[2rem] overflow-hidden shadow-2xl relative border border-white/5 crystal-glass">
+                <img
+                  src={img}
+                  className="w-full h-full object-cover opacity-90"
+                  alt=""
+                  /* The opening tiles must be on screen the moment the door
+                     appears; lazy-loading them left the cascade empty, because
+                     this column is twice the height of the viewport. */
+                  loading={index < EAGER_TILES ? 'eager' : 'lazy'}
+                  fetchPriority={index < EAGER_TILES ? 'high' : 'low'}
+                  decoding="async"
+                />
+                <div className="absolute inset-0 bg-gradient-to-tr from-slate-950/60 to-transparent" />
               </div>
             ))}
           </motion.div>
         ))}
       </div>
 
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_0%,_var(--color-brand-slate)_100%)] pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-b from-slate-950/50 via-transparent to-slate-950/50 backdrop-blur-[4px]" />
+      {/* A pool of shadow behind the headline, so the artwork can stay bright at
+          the edges without the type fighting it. */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_45%_at_center,_rgba(2,6,23,0.92)_0%,_rgba(2,6,23,0.55)_55%,_transparent_100%)] pointer-events-none" />
+      {/* Darkened top and bottom keep the headline readable without washing the
+          artwork out across the whole screen. */}
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-transparent to-slate-950/70 backdrop-blur-[1px]" />
 
       {/* Ultra subtle background logo watermark */}
       <Logo size={800} variant="dark" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] scale-150 pointer-events-none" />
