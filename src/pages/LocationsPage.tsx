@@ -1,39 +1,28 @@
 import { motion } from 'motion/react';
 import { Globe, Navigation, Shield, MapPin, Clock, Phone, Mail, ChevronRight } from 'lucide-react';
-import { BOOKING_URL } from '../constants';
+import { BOOKING_URL, CLINIC } from '../constants';
 import { useAnalytics } from '../context/AnalyticsContext';
 import { useToast } from '../components/ToastSystem';
 
+/*
+ * One clinic, because there is one clinic.
+ *
+ * This page previously advertised three: a Canterbury centre, a Harley Street
+ * studio in Marylebone, and a Whitstable practice — with telephone numbers that
+ * counted upwards (123456, 987654) and email addresses on a domain the practice
+ * does not own. A patient could have driven to any of them and found nothing.
+ */
 const LOCATIONS = [
   {
-    id: 'canterbury',
-    name: 'Canterbury Clinical Centre',
-    address: '12 Castle Street, Canterbury, CT1 2QG',
-    phone: '+44 1227 123456',
-    email: 'canterbury@ct6wellbeing.co.uk',
-    hours: 'Mon-Fri: 8am - 8pm | Sat: 9am - 4pm',
+    id: 'herne-bay',
+    name: CLINIC.name,
+    address: CLINIC.addressLine,
+    phone: CLINIC.telephone,
+    phoneLink: CLINIC.telephoneLink,
+    email: CLINIC.email,
+    hours: CLINIC.openingHours.map((s) => `${s.days}: ${s.hours}`).join(' | '),
     image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=800',
-    tags: ['Main Clinic', 'Diagnostic Suite', 'On-site Parking']
-  },
-  {
-    id: 'london',
-    name: 'Harley Street Studio',
-    address: '86 Harley House, Marylebone, London, NW1 5HN',
-    phone: '+44 20 7123 4567',
-    email: 'london@ct6wellbeing.co.uk',
-    hours: 'Tue, Thu: 10am - 7pm',
-    image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=800',
-    tags: ['Sports Therapy', 'Corporate Care']
-  },
-  {
-    id: 'whitstable',
-    name: 'Whitstable Harbor Wellbeing',
-    address: '42 Marine Parade, Whitstable, CT5 1BD',
-    phone: '+44 1227 987654',
-    email: 'whitstable@ct6wellbeing.co.uk',
-    hours: 'Wed, Fri: 9am - 6pm',
-    image: 'https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&q=80&w=800',
-    tags: ['Rehabilitation', 'Sea View']
+    tags: ['Osteopathy', 'Acupuncture', 'Sports Massage', 'Footcare']
   }
 ];
 

@@ -60,22 +60,58 @@
     />
 
     <!--
-      Structured data: helps Google show the clinic properly in local search.
-      TO COMPLETE: add "address", "telephone" and "openingHoursSpecification"
-      with the clinic's real details — deliberately left out rather than guessed.
+      Structured data. This is what lets Google show the practice as a local
+      business — address, phone, opening hours — rather than just a web page.
+      Every value here is the practice's own published detail.
     -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "MedicalBusiness",
-        "name": "CT6 Wellbeing",
-        "alternateName": "Osteopathy & Wellbeing @CT6",
-        "description": "Osteopathy, sports and therapeutic massage, acupuncture, footcare and rehabilitation.",
+        "@id": "https://osteopathyandwellbeing.co.uk/#clinic",
+        "name": "Osteopathy & Wellbeing @CT6",
+        "legalName": "Osteopathy & Wellbeing @CT6 Limited",
+        "description": "Osteopathy, acupuncture, sports massage, reflexology, Swedish massage, physiotherapy, hypnotherapy and foot care in Herne Bay, Kent. Osteopaths registered with the General Osteopathic Council.",
         "medicalSpecialty": "PhysicalTherapy",
         "image": "https://example.com/og-image.png",
         "logo": "https://example.com/pwa-512x512.png",
         "url": "https://example.com/",
-        "areaServed": { "@type": "AdministrativeArea", "name": "Kent, United Kingdom" }
+        "sameAs": ["https://osteopathyandwellbeing.co.uk"],
+        "telephone": "+441227366473",
+        "email": "info@osteopathyandwellbeing.co.uk",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "180 High Street",
+          "addressLocality": "Herne Bay",
+          "addressRegion": "Kent",
+          "postalCode": "CT6 5AJ",
+          "addressCountry": "GB"
+        },
+        "areaServed": { "@type": "AdministrativeArea", "name": "Kent, United Kingdom" },
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+            "opens": "08:00",
+            "closes": "20:00"
+          },
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Saturday"],
+            "opens": "08:00",
+            "closes": "12:00"
+          }
+        ],
+        "availableService": [
+          { "@type": "MedicalTherapy", "name": "Osteopathy" },
+          { "@type": "MedicalTherapy", "name": "Acupuncture" },
+          { "@type": "MedicalTherapy", "name": "Sports Massage" },
+          { "@type": "MedicalTherapy", "name": "Physiotherapy" },
+          { "@type": "MedicalTherapy", "name": "Reflexology" },
+          { "@type": "MedicalTherapy", "name": "Swedish Massage" },
+          { "@type": "MedicalTherapy", "name": "Hypnotherapy" },
+          { "@type": "MedicalTherapy", "name": "Foot Care" }
+        ]
       }
     </script>
   </head>

@@ -92,7 +92,7 @@ export default function GalleryPage() {
           <Sparkles size={16} /> Visual Journey
         </span>
         <h1 className="text-5xl md:text-6xl font-display font-medium text-slate-900 tracking-tight leading-tight">State-of-the-Art <span className="text-teal-600">Clinical Spaces</span></h1>
-        <p className="text-xl text-slate-500 font-light leading-relaxed">Explore our modern clinics in Canterbury, designed for comfort, healing, and clinical excellence.</p>
+        <p className="text-xl text-slate-500 font-light leading-relaxed">Illustrated guides to the problems we treat, and a look inside the clinic in Herne Bay.</p>
       </header>
 
       <div className="space-y-10">
@@ -167,7 +167,7 @@ export default function GalleryPage() {
         <div className="relative z-10 flex-1 space-y-8">
            <h2 className="text-4xl md:text-5xl font-display font-medium tracking-tight leading-tight">Virtual Clinic Tour</h2>
            <p className="text-lg text-slate-400 font-light leading-relaxed">
-             Take a guided virtual tour of our CT6 Canterbury clinics. See our treatment rooms, diagnostic suites, and patient recovery areas from the comfort of your home.
+             Take a look around the clinic on Herne Bay High Street — the treatment rooms and where you will be seen — before you come in.
            </p>
            <button 
              onClick={() => {

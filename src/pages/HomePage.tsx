@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { TREATMENTS, PRACTITIONERS } from '../data';
-import { BOOKING_URL } from '../constants';
+import { BOOKING_URL, CLINIC } from '../constants';
 
 export default function HomePage() {
   const { showToast } = useToast();
@@ -113,7 +113,7 @@ export default function HomePage() {
             
             <motion.div variants={fadeInUp} className="relative inline-block">
                <p className="text-xl md:text-3xl text-slate-300/90 max-w-2xl leading-relaxed font-light border-l-[6px] border-teal-500 pl-8 drop-shadow-sm opacity-90">
-                 Your premier physical rehabilitation destination in Canterbury. Combining advanced anatomical science with compassionate clinical care.
+                 Osteopathy, acupuncture, massage and foot care in Herne Bay, from practitioners registered with their professional bodies.
                </p>
                <div className="absolute top-0 right-[-100px] hidden xl:block mix-blend-overlay">
                   <div className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-500/50 rotate-90 origin-left translate-y-12 whitespace-nowrap tracking-widest">Clinical Excellence • Est. 2012</div>
@@ -369,7 +369,7 @@ export default function HomePage() {
                  { icon: Award, label: "Registered", val: "BCA Certified", desc: "Top tiered board approval." },
                  { icon: ShieldCheck, label: "Insurance", val: "AXA/Bupa Ready", desc: "Direct billing partners." },
                  { icon: Clock, label: "Wait Time", val: "< 24 Hours", desc: "Rapid clinical triage." },
-                 { icon: MapPin, label: "Location", val: "Central CT1", desc: "Ease of access focus." }
+                 { icon: MapPin, label: "Location", val: "Herne Bay", desc: "180 High Street, CT6 5AJ." }
                ].map((item, i) => (
                  <div key={i} className="bg-white/80 backdrop-blur-sm border border-slate-100 p-8 rounded-[2.5rem] hover:bg-white hover:shadow-[0_20px_40px_rgba(0,0,0,0.05)] hover:border-teal-100 hover:-translate-y-1 transition-all duration-500 group relative overflow-hidden">
                     <div className="absolute -right-12 -top-12 w-32 h-32 bg-slate-50 rounded-full group-hover:scale-150 group-hover:bg-teal-50/50 transition-all duration-700 -z-10"></div>
@@ -645,29 +645,21 @@ export default function HomePage() {
             <span className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-full text-slate-500 font-bold text-xs uppercase tracking-[0.4em] shadow-sm">
               <MapPin size={16} className="text-teal-600" /> Clinical Reach
             </span>
-            <h2 className="text-5xl md:text-6xl font-display font-medium text-slate-900 tracking-tight leading-tight">Accessible Care <br/>Across Canterbury.</h2>
+            <h2 className="text-5xl md:text-6xl font-display font-medium text-slate-900 tracking-tight leading-tight">Where to <br/>find us.</h2>
             <p className="text-xl text-slate-500 font-light leading-relaxed max-w-2xl mx-auto">
-              Find us at our modern clinical spaces, engineered with the latest diagnostic and structural rehabilitation technology.
+              One clinic, on the High Street in Herne Bay.
             </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
             {[
-              { 
-                id: "canterbury",
-                location: "Canterbury Central (CT1)", 
-                address: "Innovation House, CT1 3JQ", 
-                hours: "08:00 - 18:30 (Daily)",
-                phone: "01227 123 456",
-                features: ["Surgical Grade Rehab", "Private Diagnostic Lab", "Disabled Access"]
-              },
-              { 
-                id: "whitstable",
-                location: "Whitstable Seaside (CT6)", 
-                address: "Marine Drive Business Park, CTRL", 
-                hours: "09:00 - 20:00 (Daily)",
-                phone: "01227 987 654",
-                features: ["Coastal Clinical Suite", "Sports Performance Lab", "Free On-site Parking"]
+              {
+                id: "herne-bay",
+                location: `${CLINIC.address.town} (${CLINIC.address.postcode.split(' ')[0]})`,
+                address: `${CLINIC.address.line1}, ${CLINIC.address.postcode}`,
+                hours: CLINIC.openingHours.map((s) => `${s.days}: ${s.hours}`).join(' · '),
+                phone: CLINIC.telephone,
+                features: ["Osteopathy", "Acupuncture", "Sports Massage", "Foot Care"]
               }
             ].map((clinic, i) => (
               <motion.div 
@@ -808,7 +800,7 @@ export default function HomePage() {
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-emerald-300 to-teal-500 bg-300% animate-gradient-x drop-shadow-sm">True Infinite Potential.</span>
               </h2>
               <p className="text-2xl lg:text-3xl text-slate-400 mx-auto font-light leading-relaxed max-w-3xl opacity-90 drop-shadow-md">
-                Join the thousands of Canterbury residents who have found permanent relief and peak physical mobility at our advanced clinical hub.
+                Book an assessment at the clinic on Herne Bay High Street, and find out what is actually going on.
               </p>
           </div>
           

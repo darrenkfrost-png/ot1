@@ -1,5 +1,5 @@
 import { useState, useEffect, lazy, Suspense, useMemo, useCallback } from 'react';
-import { BOOKING_URL, SOCIAL_LINKS, GOVERNANCE_DOCS } from './constants';
+import { BOOKING_URL, SOCIAL_LINKS, GOVERNANCE_DOCS, CLINIC } from './constants';
 import { BrowserRouter, Routes, Route, Outlet, Link, NavLink, useLocation } from 'react-router-dom';
 import { 
   Home, 
@@ -482,7 +482,7 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
                   <span className="font-display font-medium text-slate-900 text-2xl tracking-tighter">CT6 Wellbeing</span>
                 </div>
                 <p className="text-slate-500 text-lg leading-relaxed font-light">
-                  Expert clinical care and anatomical rehabilitation in the heart of Canterbury. Committed to your long-term health and mobility.
+                  Osteopathy, acupuncture, massage and foot care on the High Street in Herne Bay. Committed to your long-term health and mobility.
                 </p>
                 {/* Only profiles with a real address appear. An icon that
                     announces "Opening Instagram…" and then does nothing is
@@ -526,40 +526,49 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
               </div>
 
               <div className="space-y-8">
-                <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Our Clinics</h4>
+                <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">The Clinic</h4>
                 <div className="space-y-6">
                   <div className="flex gap-4">
                     <div className="mt-1 text-teal-600 shrink-0"><MapPin size={20} /></div>
-                    <div className="text-slate-600 text-sm leading-relaxed font-light">
-                      <span className="font-bold text-slate-900 block mb-1">Canterbury Central</span>
-                      6 St George's Place<br />Canterbury, Kent CT1 1UT
-                    </div>
+                    <address className="text-slate-600 text-sm leading-relaxed font-light not-italic">
+                      <span className="font-bold text-slate-900 block mb-1">{CLINIC.name}</span>
+                      {CLINIC.address.line1}<br />
+                      {CLINIC.address.town}, {CLINIC.address.county} {CLINIC.address.postcode}
+                    </address>
                   </div>
                   <div className="flex gap-4">
-                    <div className="mt-1 text-teal-600 shrink-0"><MapPin size={20} /></div>
+                    <div className="mt-1 text-teal-600 shrink-0"><Phone size={20} /></div>
                     <div className="text-slate-600 text-sm leading-relaxed font-light">
-                      <span className="font-bold text-slate-900 block mb-1">Herne Bay Annex</span>
-                      12 William Street<br />Herne Bay, Kent CT6 5NR
+                      <a href={`tel:${CLINIC.telephoneLink}`} className="font-bold text-slate-900 hover:text-teal-600 transition-colors block mb-1">
+                        {CLINIC.telephone}
+                      </a>
+                      <a href={`mailto:${CLINIC.email}`} className="hover:text-teal-600 transition-colors break-all">
+                        {CLINIC.email}
+                      </a>
                     </div>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-8">
-                <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Hours & Help</h4>
+                <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Opening Hours</h4>
                 <div className="space-y-6">
                   <div className="flex gap-4">
                     <div className="mt-1 text-teal-600 shrink-0"><Clock size={20} /></div>
-                    <div className="text-slate-600 text-sm leading-relaxed font-light">
-                      <span className="font-bold text-slate-900 block mb-1">Clinic Hours</span>
-                      Mon - Fri: 08:00 - 20:00<br />Sat: 09:00 - 16:00
-                    </div>
+                    <dl className="text-slate-600 text-sm leading-relaxed font-light space-y-1">
+                      {CLINIC.openingHours.map((slot) => (
+                        <div key={slot.days} className="flex gap-3 justify-between">
+                          <dt className="font-medium text-slate-700">{slot.days}</dt>
+                          <dd>{slot.hours}</dd>
+                        </div>
+                      ))}
+                    </dl>
                   </div>
                   <div className="flex gap-4">
                     <div className="mt-1 text-teal-600 shrink-0"><ShieldCheck size={20} /></div>
                     <div className="text-slate-600 text-sm leading-relaxed font-light">
-                      <span className="font-bold text-slate-900 block mb-1">Emergency Service</span>
-                      Out-of-hours coverage available for existing patients.
+                      <span className="font-bold text-slate-900 block mb-1">Registered osteopaths</span>
+                      Regulated by the {CLINIC.regulator.name} ({CLINIC.regulator.abbreviation}).
                     </div>
                   </div>
                 </div>
@@ -567,10 +576,21 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
             </div>
             
             <div className="pt-12 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-8 text-[11px] font-bold uppercase tracking-[0.15em] text-slate-400">
-              <div className="flex items-center gap-6">
-                <span>© 2026 CT6 Osteopathy & Wellbeing Clinic</span>
+              {/* "BCA Registered" claimed the British Chiropractic Association
+                  for an osteopathy practice. The regulator is the GOsC. */}
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+                <span>© {new Date().getFullYear()} {CLINIC.legalName}</span>
                 <span className="hidden md:block w-1 h-1 bg-slate-300 rounded-full" />
-                <span>BCA Registered • clinical.ct6.uk</span>
+                <span>Company no. {CLINIC.companyNumber}</span>
+                <span className="hidden md:block w-1 h-1 bg-slate-300 rounded-full" />
+                <a
+                  href={CLINIC.regulator.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-teal-600 transition-colors focus-visible:outline-teal-500"
+                >
+                  {CLINIC.regulator.abbreviation} regulated
+                </a>
               </div>
               <div className="text-[10px] text-slate-300 font-bold uppercase tracking-widest mt-4 md:mt-0 italic max-w-md text-center md:text-right">
                 *Clinical diagnosis requires in-person assessment.
@@ -583,6 +603,8 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
                     <a
                       key={doc.title}
                       href={doc.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="hover:text-teal-600 transition-colors focus-visible:outline-teal-500"
                     >
                       {doc.title}

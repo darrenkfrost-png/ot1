@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Mail, Phone, MapPin, Send, MessageSquare, CheckCircle2, ChevronRight, ArrowRight, Clock, ShieldCheck, AlertTriangle, Calendar, ExternalLink } from 'lucide-react';
 import { useAnalytics } from '../context/AnalyticsContext';
 import { useToast } from '../components/ToastSystem';
-import { BOOKING_URL } from '../constants';
+import { BOOKING_URL, CLINIC } from '../constants';
 
 export default function ContactPage() {
   const { trackClick } = useAnalytics();
@@ -91,9 +91,11 @@ export default function ContactPage() {
                 <Phone size={24} />
               </div>
               <div className="space-y-1">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Phone Support</p>
-                <p className="text-xl font-bold text-slate-900">+44 1227 123456</p>
-                <p className="text-xs text-slate-500 font-medium">Mon-Fri, 8am - 8pm</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Telephone</p>
+                <a href={`tel:${CLINIC.telephoneLink}`} className="text-xl font-bold text-slate-900 hover:text-teal-600 transition-colors block">
+                  {CLINIC.telephone}
+                </a>
+                <p className="text-xs text-slate-500 font-medium">{CLINIC.openingHours[0].days}, {CLINIC.openingHours[0].hours}</p>
               </div>
             </div>
 
@@ -102,9 +104,11 @@ export default function ContactPage() {
                 <Mail size={24} />
               </div>
               <div className="space-y-1">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Email Address</p>
-                <p className="text-xl font-bold text-slate-900">care@ct6wellbeing.co.uk</p>
-                <p className="text-xs text-slate-500 font-medium">Secure clinical portal</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Email</p>
+                <a href={`mailto:${CLINIC.email}`} className="text-lg font-bold text-slate-900 hover:text-teal-600 transition-colors block break-all">
+                  {CLINIC.email}
+                </a>
+                <p className="text-xs text-slate-500 font-medium">We answer as soon as we can</p>
               </div>
             </div>
 
@@ -113,9 +117,9 @@ export default function ContactPage() {
                 <MapPin size={24} />
               </div>
               <div className="space-y-1">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Primary Clinic</p>
-                <p className="text-xl font-bold text-slate-900">Canterbury, Kent</p>
-                <p className="text-xs text-slate-500 font-medium">12 Castle Street, CT1 2QG</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">The Clinic</p>
+                <p className="text-xl font-bold text-slate-900">{CLINIC.address.town}, {CLINIC.address.county}</p>
+                <p className="text-xs text-slate-500 font-medium">{CLINIC.address.line1}, {CLINIC.address.postcode}</p>
               </div>
             </div>
           </div>

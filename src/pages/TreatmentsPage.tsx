@@ -213,7 +213,7 @@ export default function TreatmentsPage() {
         <div className="text-center space-y-4 max-w-3xl mx-auto">
           <span className="text-teal-600 font-bold text-xs uppercase tracking-[0.3em]">Patient Voices</span>
           <h2 className="text-4xl md:text-5xl font-display font-medium text-slate-900 tracking-tight">Real People. <span className="text-teal-600">Real Results.</span></h2>
-          <p className="text-lg text-slate-500 font-light leading-relaxed">Hear from our Canterbury community about their journey from pain to peak performance.</p>
+          <p className="text-lg text-slate-500 font-light leading-relaxed">What patients in Herne Bay say about their treatment.</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {[
@@ -385,7 +385,7 @@ export default function TreatmentsPage() {
         <div className="max-w-3xl mx-auto space-y-6">
           <span className="text-teal-600 font-bold text-xs uppercase tracking-[0.3em]">Pricing Structure</span>
           <h2 className="text-4xl md:text-5xl font-display font-medium text-slate-900 tracking-tighter">Clinical Investment <span className="text-teal-600">for results.</span></h2>
-          <p className="text-xl text-slate-500 font-light leading-relaxed">Transparent, fair, and professional pricing across our Canterbury and Herne Bay clinical sites.</p>
+          <p className="text-xl text-slate-500 font-light leading-relaxed">Please confirm current fees with the clinic when you book.</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl mx-auto px-4">
           {[

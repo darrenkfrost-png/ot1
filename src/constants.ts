@@ -14,6 +14,9 @@ export const BOOKING_URL = "https://ob.rushcliff.com/holding-page/555088";
 /** Shown next to booking links so nobody is surprised by a new tab. */
 export const BOOKING_PROVIDER = "Rushcliff";
 
+import { CLINIC } from './data/clinic';
+export { CLINIC };
+
 /**
  * Social profiles.
  *
@@ -38,7 +41,7 @@ export const SOCIAL_LINKS: { label: string; url: string }[] = [
  * available on request rather than pretending to open.
  */
 export const GOVERNANCE_DOCS: { title: string; url: string }[] = [
-  { title: 'Patient Charter', url: '' },
-  { title: 'Privacy Notice', url: '' },
-  { title: 'Complaints Procedure', url: '' },
+  { title: 'Privacy Statement', url: CLINIC.policies.privacy },
+  { title: 'Cookie Policy', url: CLINIC.policies.cookies },
+  { title: 'Disclaimer', url: CLINIC.policies.disclaimer },
 ];

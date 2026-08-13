@@ -142,7 +142,7 @@ export default function PractitionersPage() {
             <Users size={18} className="animate-pulse" /> Clinical Governance
           </span>
           <h1 className="text-6xl md:text-8xl font-display font-medium text-white mb-6 tracking-tighter leading-[0.85]">Registered <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-300">Clinical Domain</span></h1>
-          <p className="text-2xl text-slate-400 font-light leading-relaxed max-w-2xl border-l-4 border-teal-500 pl-8">Meet the registered specialists who drive Canterbury's highest-rated multidisciplinary clinic through evidence-based practice.</p>
+          <p className="text-2xl text-slate-400 font-light leading-relaxed max-w-2xl border-l-4 border-teal-500 pl-8">Meet the practitioners at the Herne Bay clinic — their training, their registrations, and what each of them treats.</p>
           
           <div className="flex flex-wrap gap-6 pt-4">
             <div className="flex items-center gap-3 px-6 py-3 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-xl">
@@ -553,7 +553,7 @@ export default function PractitionersPage() {
           { icon: ShieldCheck, title: "Regulated Care", desc: "All practitioners are BCA or GOsC registered specialists." },
           { icon: Zap, title: "Modern Science", desc: "We use evidence-based methods and state-of-the-art tech." },
           { icon: Heart, title: "Patient First", desc: "We prioritize your comfort and long-term joint health." },
-          { icon: Sparkles, title: "Premium Sites", desc: "Modern, high-spec clinics in Canterbury and Herne Bay." }
+          { icon: Sparkles, title: "One clinic", desc: "180 High Street, Herne Bay — the same team every visit." }
         ].map((item, i) => (
           <div key={i} className="p-8 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-premium transition-all space-y-4">
             <div className="w-12 h-12 rounded-2xl bg-teal-50 flex items-center justify-center text-teal-600">
