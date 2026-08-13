@@ -377,6 +377,8 @@ export default function FloatingAI() {
             setIsOpen(!isOpen);
             trackClick("Toggle Floating AI Assistant");
         }}
+        aria-label={isOpen ? "Close the clinical AI assistant" : "Open the clinical AI assistant"}
+        aria-expanded={isOpen}
         className={cn(
           "hidden lg:flex w-16 h-16 sm:w-20 sm:h-20 rounded-[2rem] items-center justify-center shadow-premium-lg border-2 transition-all pointer-events-auto group relative",
           isOpen 

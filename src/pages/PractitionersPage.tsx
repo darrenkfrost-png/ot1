@@ -134,7 +134,7 @@ export default function PractitionersPage() {
       <header className="relative bg-slate-950 rounded-[4rem] p-12 md:p-24 text-white shadow-3xl overflow-hidden group holographic-border">
         <div className="absolute inset-0 z-0 opacity-40">
            <div className="absolute inset-0 neural-grid opacity-30 mix-blend-screen pointer-events-none"></div>
-           <img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&q=80&w=2000" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[20s]" alt="Clinical Team" />
+           <img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&q=80&w=2000" fetchPriority="high" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[20s]" alt="Clinical Team" />
            <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent"></div>
         </div>
         <div className="relative z-10 max-w-3xl space-y-8">
@@ -178,8 +178,9 @@ export default function PractitionersPage() {
           </div>
           <div className="relative w-full lg:w-[400px] group">
             <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors" size={20} />
-            <input 
+            <input
               type="text"
+              aria-label="Filter practitioners by name or specialty"
               placeholder="Filter by name or specialty..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -217,7 +218,7 @@ export default function PractitionersPage() {
                 <div className="bg-white/60 backdrop-blur-3xl crystal-glass rounded-[2.5rem] p-7 border border-white/60 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] hover:shadow-premium hover:-translate-y-2 hover:border-teal-300 transition-all duration-500 h-full flex flex-col overflow-hidden holographic-border relative z-0">
                    <div className="absolute inset-0 neural-grid opacity-[0.03] pointer-events-none mix-blend-screen mix-blend-lighten z-[-1]"></div>
                    <div className="aspect-[4/5] rounded-[2rem] overflow-hidden mb-8 relative">
-                    <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 grayscale group-hover:grayscale-0" />
+                    <img src={p.image} alt={p.name} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 grayscale group-hover:grayscale-0" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent flex flex-col justify-end p-8">
                        <div className="flex items-center gap-2 mb-2">
                           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
@@ -274,7 +275,7 @@ export default function PractitionersPage() {
       <section className="py-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         <div className="order-2 lg:order-1 relative">
            <div className="aspect-[4/3] rounded-[3rem] overflow-hidden shadow-2xl relative group">
-              <img src="https://images.unsplash.com/photo-1576091160607-2d0d040f6b7d?auto=format&fit=crop&q=80&w=1000" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[10s]" alt="Education" />
+              <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=1000" loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[10s]" alt="Clinical research and continuing professional development" />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
               <div className="absolute bottom-10 left-10 right-10 flex items-center justify-between">
                 <div className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl flex items-center gap-3">

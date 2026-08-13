@@ -151,6 +151,20 @@
   .polymetric-bg {
     @apply bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black;
   }
+
+  /*
+   * Legibility floor for phones.
+   * The micro-label type reads as refined detail on a large screen, but at
+   * 8-10px on a 375px handset it is genuinely hard to read — and a sizeable
+   * share of this clinic's patients are older. Desktop keeps the original
+   * scale; only small screens get the floor. Remove this block to revert.
+   */
+  @media (max-width: 640px) {
+    .text-\[8px\] { font-size: 10px; }
+    .text-\[9px\] { font-size: 11px; }
+    .text-\[9\.5px\] { font-size: 11px; }
+    .text-\[10px\] { font-size: 11px; }
+  }
 }
 
 @layer base {

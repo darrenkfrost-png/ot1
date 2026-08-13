@@ -68,7 +68,7 @@ export default function TreatmentsPage() {
       <header className="relative bg-slate-950 rounded-[4rem] p-12 md:p-24 text-white shadow-3xl overflow-hidden group holographic-border">
         <div className="absolute inset-0 z-0 opacity-40">
            <div className="absolute inset-0 neural-grid opacity-30 mix-blend-screen pointer-events-none"></div>
-           <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=2000" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[20s]" alt="Clinic" />
+           <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=2000" fetchPriority="high" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[20s]" alt="The CT6 Wellbeing clinic interior" />
            <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent"></div>
         </div>
         <div className="relative z-10 max-w-3xl space-y-8">
@@ -132,8 +132,9 @@ export default function TreatmentsPage() {
           </div>
           <div className="relative w-full lg:w-[400px] group">
             <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors" size={20} />
-            <input 
+            <input
               type="text"
+              aria-label="Search treatments"
               placeholder="Search detailed treatments..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -170,7 +171,7 @@ export default function TreatmentsPage() {
               <Link to={`/treatments/${t.id}`} className="block group h-full">
                 <div className="bg-white rounded-[2.5rem] p-7 border border-slate-100 shadow-sm shadow-slate-200/50 hover:shadow-2xl hover:shadow-teal-900/10 hover:-translate-y-2 hover:border-teal-100 transition-all duration-500 h-full flex flex-col overflow-hidden">
                   <div className="aspect-[16/10] rounded-[2rem] overflow-hidden mb-8 relative">
-                    <img src={t.image} alt={t.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out" />
+                    <img src={t.image} alt={t.title} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
                        <span className="text-white text-xs font-bold uppercase tracking-widest bg-white/20 backdrop-blur-md px-4 py-2 rounded-lg border border-white/20">Learn More</span>
                     </div>
@@ -259,7 +260,7 @@ export default function TreatmentsPage() {
 
       <section className="bg-slate-950 p-12 md:p-24 rounded-[5rem] text-white relative overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-10">
-           <img src="https://images.unsplash.com/photo-1576091160550-217359f42f8c?auto=format&fit=crop&q=80&w=2000" className="w-full h-full object-cover" alt="Medical Office" />
+           <img src="https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&q=80&w=2000" loading="lazy" decoding="async" className="w-full h-full object-cover" alt="Consulting room at the clinic" />
         </div>
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
           <div className="space-y-10">
@@ -302,7 +303,7 @@ export default function TreatmentsPage() {
             </div>
           </div>
           <div className="relative aspect-[4/5] rounded-[4rem] overflow-hidden shadow-[0_0_100px_rgba(20,184,166,0.15)] group">
-            <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=1000" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[10s]" alt="Wellness care" />
+            <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=1000" loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[10s]" alt="Wellness care" />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
             <div className="absolute bottom-12 left-12 right-12 p-10 bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[3rem]">
               <div className="flex items-center gap-3 mb-4">

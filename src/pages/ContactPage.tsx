@@ -118,10 +118,12 @@ export default function ContactPage() {
                 <form onSubmit={handleSubmit} className="space-y-8">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
-                      <input 
+                      <label htmlFor="contact-name" className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1 block">Full Name</label>
+                      <input
                         required
-                        type="text" 
+                        id="contact-name"
+                        autoComplete="name"
+                        type="text"
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
@@ -130,10 +132,12 @@ export default function ContactPage() {
                       />
                     </div>
                     <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
-                      <input 
+                      <label htmlFor="contact-email" className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1 block">Email Address</label>
+                      <input
                         required
-                        type="email" 
+                        id="contact-email"
+                        autoComplete="email"
+                        type="email"
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
@@ -145,9 +149,11 @@ export default function ContactPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Phone Number</label>
-                      <input 
-                        type="tel" 
+                      <label htmlFor="contact-phone" className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1 block">Phone Number</label>
+                      <input
+                        id="contact-phone"
+                        autoComplete="tel"
+                        type="tel"
                         name="phone"
                         value={formData.phone}
                         onChange={handleChange}
@@ -156,8 +162,9 @@ export default function ContactPage() {
                       />
                     </div>
                     <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Subject</label>
-                      <select 
+                      <label htmlFor="contact-subject" className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1 block">Subject</label>
+                      <select
+                        id="contact-subject"
                         name="subject"
                         value={formData.subject}
                         onChange={handleChange}
@@ -172,9 +179,10 @@ export default function ContactPage() {
                   </div>
 
                   <div className="space-y-3">
-                    <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Message</label>
-                    <textarea 
+                    <label htmlFor="contact-message" className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1 block">Message</label>
+                    <textarea
                       required
+                      id="contact-message"
                       name="message"
                       rows={6}
                       value={formData.message}

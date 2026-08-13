@@ -126,8 +126,10 @@ export default function VoiceController() {
                     </motion.div>
                 )}
             </AnimatePresence>
-            <button 
+            <button
                 onClick={toggleManualListen}
+                aria-label={isListening ? "Stop voice input" : "Start voice input"}
+                aria-pressed={isListening}
                 className={cn(
                     "pointer-events-auto p-3 rounded-2xl backdrop-blur-xl border transition-all duration-300 shadow-xl flex items-center justify-center",
                     isListening 

@@ -761,10 +761,12 @@ export default function DashboardPage() {
                   <span className="font-bold text-slate-700">Cervical Flexion ROM</span>
                   <span className="font-mono text-indigo-600 font-bold">{romNeckFlexion}° <span className="text-xs text-slate-400">/ 80°</span></span>
                 </div>
-                <input 
-                  type="range" 
-                  min="20" 
-                  max="80" 
+                <input
+                  type="range"
+                  aria-label="Cervical flexion range of motion, in degrees"
+                  aria-valuetext={`${romNeckFlexion} degrees of 80`}
+                  min="20"
+                  max="80"
                   value={romNeckFlexion}
                   onChange={(e) => setRomNeckFlexion(Number(e.target.value))}
                   className="w-full accent-indigo-600 h-2 bg-slate-100 rounded-lg cursor-pointer"
@@ -780,10 +782,12 @@ export default function DashboardPage() {
                   <span className="font-bold text-slate-700">Cervical Rotation ROM</span>
                   <span className="font-mono text-indigo-600 font-bold">{romNeckRotation}° <span className="text-xs text-slate-400">/ 90°</span></span>
                 </div>
-                <input 
-                  type="range" 
-                  min="30" 
-                  max="90" 
+                <input
+                  type="range"
+                  aria-label="Cervical rotation range of motion, in degrees"
+                  aria-valuetext={`${romNeckRotation} degrees of 90`}
+                  min="30"
+                  max="90"
                   value={romNeckRotation}
                   onChange={(e) => setRomNeckRotation(Number(e.target.value))}
                   className="w-full accent-indigo-600 h-2 bg-slate-100 rounded-lg cursor-pointer"
@@ -799,10 +803,12 @@ export default function DashboardPage() {
                   <span className="font-bold text-slate-700">Subjective Discomfort (VAS Scale)</span>
                   <span className="font-mono text-red-500 font-bold">{painLevel} <span className="text-xs text-slate-400">/ 10</span></span>
                 </div>
-                <input 
-                  type="range" 
-                  min="0" 
-                  max="10" 
+                <input
+                  type="range"
+                  aria-label="Subjective discomfort, visual analogue scale from 0 to 10"
+                  aria-valuetext={`${painLevel} out of 10`}
+                  min="0"
+                  max="10"
                   value={painLevel}
                   onChange={(e) => setPainLevel(Number(e.target.value))}
                   className="w-full accent-red-500 h-2 bg-slate-100 rounded-lg cursor-pointer"
@@ -1129,8 +1135,9 @@ export default function DashboardPage() {
               </p>
 
               <div className="space-y-2">
-                <label className="text-[10px] text-slate-500 font-black uppercase tracking-wider">Subjective Symptoms Summary</label>
+                <label htmlFor="soap-symptoms" className="text-[10px] text-slate-500 font-black uppercase tracking-wider block">Subjective Symptoms Summary</label>
                 <textarea
+                  id="soap-symptoms"
                   value={soapSymptoms}
                   onChange={(e) => setSoapSymptoms(e.target.value)}
                   rows={3}

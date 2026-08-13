@@ -486,7 +486,7 @@ export default function AIConsultantPage() {
         <header className="relative p-12 md:p-20 bg-slate-900 rounded-[4rem] border border-slate-800 shadow-premium-lg overflow-hidden group holographic-border">
           <div className="absolute inset-0 z-0 opacity-20">
              <div className="absolute inset-0 neural-grid opacity-30 mix-blend-screen pointer-events-none"></div>
-             <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=2000" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[30s]" alt="Cyber" />
+             <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=2000" fetchPriority="high" decoding="async" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[30s]" alt="" />
              <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/80 to-transparent"></div>
           </div>
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-end justify-between gap-12">
@@ -815,8 +815,9 @@ export default function AIConsultantPage() {
 
                <div className="p-4 border-t border-slate-800/80 bg-slate-900/50 relative z-10">
                    <form onSubmit={handleSendMessage} className="relative group">
-                     <input 
+                     <input
                        type="text"
+                       aria-label="Describe your symptoms to the clinical AI consultant"
                        value={inputValue}
                        onChange={(e) => setInputValue(e.target.value)}
                        disabled={!isConsultationActive || isProcessing}
