@@ -361,23 +361,18 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile }: { isColla
 const PageWrapper = ({ children }: { children: React.ReactNode }) => {
   const reduceMotion = useReducedMotion();
 
-  // Routes animate with mode="wait", so the outgoing page has to finish before
-  // the incoming one starts: exit and entrance durations are paid one after the
-  // other on every navigation. The exit is therefore kept short and the
-  // entrance carries the character.
+  // Routes animate with mode="wait": the outgoing page must finish exiting
+  // before the incoming one mounts, so both durations are paid in sequence on
+  // every navigation. Half a second each way made that a visible dead pause;
+  // this is deliberately shorter. Timing lives in a single `transition` prop
+  // rather than inside the animate/exit objects - the plainer form of the API,
+  // and one less thing to go wrong in a transition that gates navigation.
   return (
     <motion.div
       initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
-      animate={{
-        opacity: 1,
-        y: 0,
-        transition: { duration: reduceMotion ? 0.12 : 0.34, ease: [0.22, 1, 0.36, 1] },
-      }}
-      exit={{
-        opacity: 0,
-        y: reduceMotion ? 0 : -6,
-        transition: { duration: reduceMotion ? 0.08 : 0.16, ease: 'easeIn' },
-      }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: reduceMotion ? 0 : -6 }}
+      transition={{ duration: reduceMotion ? 0.1 : 0.28, ease: [0.22, 1, 0.36, 1] }}
       className="w-full"
     >
       {children}
