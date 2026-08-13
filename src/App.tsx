@@ -25,7 +25,8 @@ import {
   Phone,
   Mail,
   Maximize,
-  Minimize
+  Minimize,
+  ExternalLink
 } from 'lucide-react';
 import { cn } from './lib/utils';
 const TreatmentsPage = lazy(() => import('./pages/TreatmentsPage'));
@@ -359,21 +360,22 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile }: { isColla
             <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
           </button>
           <div className="h-8 w-px bg-slate-100 hidden sm:block mx-1"></div>
-          <button 
-            onClick={() => window.open(BOOKING_URL, '_blank')}
+          {/*
+            A real link, not a scripted window.open: it survives pop-up
+            blockers, opens with a middle-click or ctrl-click, and tells a
+            screen reader where it is going.
+          */}
+          <a
+            href={BOOKING_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-teal-500/25 hover:bg-teal-700 hover:shadow-teal-500/40 transition-all active:scale-95 focus-visible:outline-teal-500 group"
-            aria-label="Book appointment"
+            aria-label="Book an appointment online — opens our booking system in a new tab"
           >
             <Calendar size={16} className="group-hover:rotate-12 transition-transform" />
             <span>Book Online</span>
-          </button>
-          <button 
-            onClick={() => window.open(BOOKING_URL, '_blank')}
-            className="hidden p-2.5 bg-teal-600 text-white rounded-xl shadow-lg shadow-teal-500/20 hover:bg-teal-700 transition-all"
-            aria-label="Book appointment"
-          >
-            <Calendar size={20} />
-          </button>
+            <ExternalLink size={12} className="opacity-60" aria-hidden="true" />
+          </a>
           
           <div className="h-8 w-px bg-slate-100 mx-1 hidden sm:block"></div>
           

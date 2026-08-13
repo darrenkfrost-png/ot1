@@ -134,11 +134,29 @@
       @apply absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent -translate-x-full animate-[shimmer_3s_infinite];
     }
   }
+  /*
+   * A lit edge, not a radar.
+   *
+   * This was a hard teal wedge on a conic gradient rotating once every four
+   * seconds. Applied to 26 cards and panels it read as a sweeping radar behind
+   * the content - restless, and nothing to do with a clinic. It is now a fixed
+   * rim of light that lifts on hover, which is what the effect was reaching for.
+   */
   .holographic-border {
     @apply relative rounded-2xl p-[1px] overflow-hidden;
     &::before {
       content: '';
-      @apply absolute inset-0 bg-[conic-gradient(from_0deg,transparent_0_340deg,rgba(45,212,191,1)_360deg)] animate-[spin_4s_linear_infinite];
+      @apply absolute inset-0 opacity-60 transition-opacity duration-500 pointer-events-none;
+      background: linear-gradient(
+        140deg,
+        rgba(45, 212, 191, 0.55) 0%,
+        rgba(45, 212, 191, 0.08) 34%,
+        transparent 58%,
+        rgba(16, 185, 129, 0.30) 100%
+      );
+    }
+    &:hover::before {
+      @apply opacity-100;
     }
   }
   .crystal-glass {

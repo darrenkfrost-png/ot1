@@ -5,7 +5,7 @@ import { useToast } from '../components/ToastSystem';
 import { 
   Calendar, Users, Phone, BookOpen, Clock, MapPin, Activity, Sparkles, 
   ChevronRight, ShieldCheck, Zap, ArrowRight, TrendingUp, Brain, Award, 
-  Video, FileText, Smartphone, CheckCircle2, ScanFace, MousePointerClick
+  Video, FileText, Smartphone, CheckCircle2, ScanFace, MousePointerClick, ExternalLink
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { TREATMENTS, PRACTITIONERS } from '../data';
@@ -127,13 +127,22 @@ export default function HomePage() {
             transition={{ delay: 0.8, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col sm:flex-row items-center gap-6 pt-8"
           >
-            <button 
-              onClick={() => window.open(BOOKING_URL, '_blank')}
-              className="w-full sm:w-auto px-12 py-6 rounded-2xl bg-teal-600 hover:bg-teal-500 text-white font-bold text-xl transition-all shadow-[0_0_40px_rgba(20,184,166,0.3)] hover:shadow-[0_0_60px_rgba(20,184,166,0.5)] hover:-translate-y-1.5 active:scale-[0.98] flex items-center justify-center gap-4 group cinematic-glow"
-            >
-              <Calendar size={22} className="group-hover:rotate-12 transition-transform" />
-              Book Assessment
-            </button>
+            <div className="w-full sm:w-auto flex flex-col items-center gap-2">
+              <a
+                href={BOOKING_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto px-12 py-6 rounded-2xl bg-teal-600 hover:bg-teal-500 text-white font-bold text-xl transition-all shadow-[0_0_40px_rgba(20,184,166,0.3)] hover:shadow-[0_0_60px_rgba(20,184,166,0.5)] hover:-translate-y-1.5 active:scale-[0.98] flex items-center justify-center gap-4 group cinematic-glow"
+                aria-label="Book an assessment — opens our booking system in a new tab"
+              >
+                <Calendar size={22} className="group-hover:rotate-12 transition-transform" />
+                Book Assessment
+                <ExternalLink size={16} className="opacity-70" aria-hidden="true" />
+              </a>
+              <span className="text-[11px] text-white/50 font-medium tracking-wide">
+                Opens our secure booking system in a new tab
+              </span>
+            </div>
             <Link to="/treatments" className="w-full sm:w-auto px-12 py-6 rounded-2xl bg-white/5 backdrop-blur-2xl border border-white/10 hover:bg-white/10 text-white font-semibold text-lg transition-all hover:border-white/30 flex items-center justify-center gap-4 group/btn shadow-[0_8px_32px_0_rgba(255,255,255,0.05)]">
               Our Specialties <ChevronRight size={18} className="opacity-50 group-hover/btn:translate-x-1 group-hover/btn:opacity-100 transition-all" />
             </Link>
