@@ -1,7 +1,7 @@
 import { GALLERY_IMAGES } from '../data/images';
 import { motion, AnimatePresence } from 'motion/react';
 import { useState, useCallback, useEffect, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, X, Download, Home, Play, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Download, Home, Play, Sparkles, Maximize2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Link } from 'react-router-dom';
 import { useToast } from '../components/ToastSystem';
@@ -45,8 +45,12 @@ export default function GalleryPage() {
     e.stopPropagation();
     if (selectedIndex === null) return;
     const link = document.createElement('a');
-    link.href = GALLERY_IMAGES[selectedIndex];
-    link.download = `gallery-image-${selectedIndex}.jpg`;
+    const href = GALLERY_IMAGES[selectedIndex];
+    // Take the extension from the file itself; these are WebP, not JPEG, and a
+    // wrong extension saves a file the visitor's computer cannot open.
+    const extension = href.split('.').pop()?.split('?')[0] || 'webp';
+    link.href = href;
+    link.download = `ct6-patient-guide-${selectedIndex + 1}.${extension}`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -123,7 +127,7 @@ export default function GalleryPage() {
               }
             }
           }}
-          className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6"
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
         >
           {filteredImages.map((src, index) => (
             <motion.div
@@ -135,13 +139,18 @@ export default function GalleryPage() {
               }}
               whileHover={{ scale: 1.05, zIndex: 10 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              className="aspect-square rounded-[2rem] overflow-hidden shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] hover:shadow-premium transition-all cursor-pointer relative group border border-white/60 crystal-glass holographic-border"
+              /*
+               * These are portrait guides, not square photographs. A square
+               * tile cropped away the top and bottom of every one - which is
+               * where their headings and conclusions live.
+               */
+              className="aspect-[788/1400] rounded-[2rem] overflow-hidden shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] hover:shadow-premium transition-all cursor-pointer relative group border border-white/60 crystal-glass holographic-border"
               onClick={() => setSelectedIndex(GALLERY_IMAGES.indexOf(src))}
             >
-              <img src={src} alt={`CT6 Wellbeing clinic photograph ${index + 1}`} loading="lazy" decoding="async" className="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-transform duration-700" />
+              <img src={src} alt={`CT6 Wellbeing patient guide ${index + 1} — open to read in full`} loading="lazy" decoding="async" className="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-transform duration-700" />
               <div className="absolute inset-0 bg-slate-950/0 group-hover:bg-slate-950/30 transition-all duration-500 flex items-center justify-center">
                 <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all transform scale-50 group-hover:scale-100 flex items-center justify-center text-white">
-                  <Play size={20} fill="currentColor" />
+                  <Maximize2 size={20} />
                 </div>
               </div>
             </motion.div>
@@ -193,24 +202,28 @@ export default function GalleryPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[var(--z-modal)] bg-slate-950/90 backdrop-blur-sm flex items-center justify-center p-4" 
+            className="fixed inset-0 z-[var(--z-modal)] bg-slate-950/90 backdrop-blur-sm flex items-center justify-center p-4"
             onClick={close}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Patient guide ${selectedIndex + 1} of ${GALLERY_IMAGES.length}`}
           >
-            <button className="absolute top-4 right-4 text-white hover:text-teal-400 p-2 transition" onClick={close}><X size={28} /></button>
-            <button className="absolute top-4 right-16 text-white hover:text-teal-400 p-2 transition" onClick={download}><Download size={28} /></button>
-            
+            <button aria-label="Close guide" className="absolute top-4 right-4 text-white hover:text-teal-400 p-2 transition" onClick={close}><X size={28} /></button>
+            <button aria-label="Download this guide" className="absolute top-4 right-16 text-white hover:text-teal-400 p-2 transition" onClick={download}><Download size={28} /></button>
+
             <div className="absolute top-4 left-4 text-white font-mono text-sm tracking-widest bg-slate-900/50 px-3 py-1 rounded-full">
                 {selectedIndex + 1} / {GALLERY_IMAGES.length}
             </div>
 
-            <button className="absolute left-4 text-white hover:text-teal-400 p-2 md:p-6 transition-transform hover:scale-110" onClick={prev}><ChevronLeft size={48} /></button>
-            <button className="absolute right-4 text-white hover:text-teal-400 p-2 md:p-6 transition-transform hover:scale-110" onClick={next}><ChevronRight size={48} /></button>
+            <button aria-label="Previous guide" className="absolute left-4 text-white hover:text-teal-400 p-2 md:p-6 transition-transform hover:scale-110" onClick={prev}><ChevronLeft size={48} /></button>
+            <button aria-label="Next guide" className="absolute right-4 text-white hover:text-teal-400 p-2 md:p-6 transition-transform hover:scale-110" onClick={next}><ChevronRight size={48} /></button>
 
-            <motion.img 
+            <motion.img
               key={selectedIndex}
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              src={GALLERY_IMAGES[selectedIndex]} 
+              src={GALLERY_IMAGES[selectedIndex]}
+              alt={`CT6 Wellbeing patient guide ${selectedIndex + 1} of ${GALLERY_IMAGES.length}`}
               className="max-w-full max-h-full object-contain shadow-2xl border border-white/5 rounded-lg"
               onClick={(e) => e.stopPropagation()}
             />
