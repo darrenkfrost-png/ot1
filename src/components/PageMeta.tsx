@@ -2,10 +2,16 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { TREATMENTS, PRACTITIONERS } from '../data';
 
-const SITE_NAME = 'CT6 Wellbeing';
-const DEFAULT_TITLE = 'CT6 Wellbeing | Osteopathy, Physiotherapy & Rehabilitation';
+/**
+ * The practice's registered trading name. The template shipped with the
+ * shorthand "CT6 Wellbeing", which is not what the practice is called and not
+ * what anyone searches for. The town is in the title deliberately — local
+ * searches are nearly always "osteopath in <town>".
+ */
+const SITE_NAME = 'Osteopathy & Wellbeing @CT6';
+const DEFAULT_TITLE = 'Osteopathy & Wellbeing @CT6 | Osteopath in Herne Bay, Kent';
 const DEFAULT_DESCRIPTION =
-  'Osteopathy, sports massage, acupuncture and rehabilitation in Kent. Expert practitioners, evidence-based treatment and rapid clinical triage.';
+  'Osteopathy, sports massage, acupuncture and rehabilitation in Herne Bay, Kent. Osteopaths registered with the General Osteopathic Council.';
 
 interface Meta {
   title: string;

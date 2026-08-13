@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { GALLERY_IMAGES } from '../data/images';
 import { motion } from 'motion/react';
+import { CLINIC } from '../data/clinic';
 
 export default function Screensaver({ onDismiss }: { onDismiss: () => void }) {
   const idleTimer = useRef<number | undefined>(undefined);
@@ -68,7 +69,7 @@ export default function Screensaver({ onDismiss }: { onDismiss: () => void }) {
           className="px-12 py-6 bg-white text-slate-900 rounded-3xl text-3xl font-display font-bold shadow-2xl hover:scale-105 transition-transform"
           onClick={(e) => { e.stopPropagation(); handleDismiss(); }}
         >
-          CT6 Wellbeing
+          {CLINIC.name}
         </button>
       </div>
     </div>

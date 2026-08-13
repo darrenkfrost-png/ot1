@@ -13,11 +13,19 @@ export default defineConfig(({mode}) => {
       tailwindcss(),
       VitePWA({
         registerType: 'autoUpdate',
-        includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+        includeAssets: ['favicon.ico', 'favicon-32.png', 'apple-touch-icon.png'],
         manifest: {
-          name: 'Clinic OS',
-          short_name: 'Clinic OS',
-          description: 'Premium Clinical Management System',
+          // This is the name a patient sees under the icon once they install
+          // the site to a home screen. It was 'Clinic OS' — the name of the
+          // template this was built from, not of the practice.
+          id: '/',
+          name: 'Osteopathy & Wellbeing @CT6',
+          short_name: 'Osteo @CT6',
+          description:
+            'Osteopathy, acupuncture, sports massage and rehabilitation in Herne Bay, Kent.',
+          lang: 'en-GB',
+          start_url: '/',
+          scope: '/',
           theme_color: '#0f172a',
           background_color: '#020617',
           display: 'standalone',
@@ -25,12 +33,23 @@ export default defineConfig(({mode}) => {
             {
               src: 'pwa-192x192.png',
               sizes: '192x192',
-              type: 'image/png'
+              type: 'image/png',
+              purpose: 'any'
             },
             {
               src: 'pwa-512x512.png',
               sizes: '512x512',
-              type: 'image/png'
+              type: 'image/png',
+              purpose: 'any'
+            },
+            {
+              // Android crops the icon to whatever shape the launcher uses, so
+              // this one carries padding around the mark. Without a maskable
+              // entry the ring gets sliced off at the edges.
+              src: 'pwa-maskable-512x512.png',
+              sizes: '512x512',
+              type: 'image/png',
+              purpose: 'maskable'
             }
           ]
         },

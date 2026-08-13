@@ -483,7 +483,7 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
               <div className="space-y-8">
                 <div className="flex items-center gap-3">
                   <Logo size={44} variant="gradient" replayIntroOnClick />
-                  <span className="font-display font-medium text-slate-900 text-2xl tracking-tighter">CT6 Wellbeing</span>
+                  <span className="font-display font-medium text-slate-900 text-2xl tracking-tighter">{CLINIC.name}</span>
                 </div>
                 <p className="text-slate-500 text-lg leading-relaxed font-light">
                   Osteopathy, acupuncture, massage and foot care on the High Street in Herne Bay. Committed to your long-term health and mobility.
