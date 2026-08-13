@@ -121,16 +121,17 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
             <Sparkles size={14} className="animate-pulse" /> Clinical Matrix Online
           </span>
           <h1 className="text-4xl md:text-7xl font-display font-medium text-white tracking-tighter leading-[0.95]">
-            Look after the body
+            Something feels wrong.
             <br />
-            <span className="text-teal-300">you live in.</span>
+            <span className="text-teal-300">We take that seriously.</span>
           </h1>
         </motion.div>
 
         {/*
-          Three tiers: what care here actually consists of, in the order a
-          patient moves through it. Each states something the clinic can stand
-          behind — no figures, no outcome promises.
+          Three tiers following the patient, not the process: the worry that
+          brings someone here, the attention it gets, and the life they want
+          back. Each states something the clinic can stand behind — no figures,
+          no outcome promises, nothing that pretends pain is trivial.
         */}
         <motion.ol
           initial="hidden"
@@ -144,18 +145,18 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
           {[
             {
               step: '01',
-              title: 'Understand it',
-              body: 'A proper assessment, and a plain explanation of what is actually going on.',
+              title: 'It worries you',
+              body: 'Pain that will not settle is frightening, and guessing at it on your own is worse. That is reason enough to come in.',
             },
             {
               step: '02',
-              title: 'Ease it',
-              body: 'Hands-on treatment matched to the problem, at a pace your body accepts.',
+              title: 'We pay attention',
+              body: 'A full assessment, time to explain what is actually going on, and honesty if it is something we should not be treating.',
             },
             {
               step: '03',
-              title: 'Keep it away',
-              body: 'The movement, habits and strength that stop it returning once you feel well.',
+              title: 'You get your life back',
+              body: 'Hands-on treatment at a pace your body accepts, and the movement and habits that keep it from returning.',
             },
           ].map((tier) => (
             <motion.li
