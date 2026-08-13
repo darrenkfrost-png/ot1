@@ -175,6 +175,29 @@
     @apply bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black;
   }
 
+  /*
+   * Sliding gradient for accent words.
+   *
+   * This lived in a <style> block inside HomePage, so any other page using
+   * `animate-gradient-x` only had it while HomePage happened to be mounted —
+   * and HomePage is lazily loaded. On the intro door the animation therefore
+   * switched on and off as chunks arrived, and because that span had no
+   * enlarged background the gradient snapped back to its start on every cycle.
+   * Defined once, here, with the background size it needs.
+   */
+  @keyframes gradient-x {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .animate-gradient-x {
+    background-size: 300% 100%;
+    animation: gradient-x 8s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animate-gradient-x { animation: none; background-size: 100% 100%; }
+  }
+
   /* Traced pulse line at the foot of the navigation. */
   @keyframes pulse-trace {
     from { stroke-dashoffset: 520; }

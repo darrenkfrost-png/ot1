@@ -848,17 +848,10 @@ export default function HomePage() {
 
       {/* Style support for animated background and premium effects */}
       <style dangerouslySetInnerHTML={{__html: `
-        @keyframes gradient-x {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
+        /* gradient-x now lives in index.css so every page has it, not just
+           this one while it happens to be mounted. */
         @keyframes shimmer {
           100% { transform: translateX(400%); }
-        }
-        .animate-gradient-x {
-          background-size: 200% 100%;
-          animation: gradient-x 8s linear infinite;
         }
         .bg-300\\% { background-size: 300% 100%; }
         .holographic-border {

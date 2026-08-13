@@ -120,11 +120,62 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
           <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-teal-500/10 border border-teal-500/30 text-teal-400 text-[10px] font-black uppercase tracking-[0.4em] backdrop-blur-md mb-8 shadow-2xl cinematic-glow">
             <Sparkles size={14} className="animate-pulse" /> Clinical Matrix Online
           </span>
-          <h1 className="text-5xl md:text-8xl font-display font-medium text-white tracking-tighter leading-[0.9]">
-            The evolution of <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-emerald-300 to-teal-500 animate-gradient-x">osteopathy.</span>
+          <h1 className="text-4xl md:text-7xl font-display font-medium text-white tracking-tighter leading-[0.95]">
+            Look after the body
+            <br />
+            <span className="text-teal-300">you live in.</span>
           </h1>
         </motion.div>
+
+        {/*
+          Three tiers: what care here actually consists of, in the order a
+          patient moves through it. Each states something the clinic can stand
+          behind — no figures, no outcome promises.
+        */}
+        <motion.ol
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.18, delayChildren: 1 } },
+          }}
+          className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-14 text-left"
+        >
+          {[
+            {
+              step: '01',
+              title: 'Understand it',
+              body: 'A proper assessment, and a plain explanation of what is actually going on.',
+            },
+            {
+              step: '02',
+              title: 'Ease it',
+              body: 'Hands-on treatment matched to the problem, at a pace your body accepts.',
+            },
+            {
+              step: '03',
+              title: 'Keep it away',
+              body: 'The movement, habits and strength that stop it returning once you feel well.',
+            },
+          ].map((tier) => (
+            <motion.li
+              key={tier.step}
+              variants={{
+                hidden: { opacity: 0, y: 16 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
+              }}
+              className="relative rounded-[1.75rem] border border-white/10 bg-slate-950/55 backdrop-blur-md p-6 shadow-2xl"
+            >
+              <span className="block text-[10px] font-black tracking-[0.35em] text-teal-400 mb-3">
+                {tier.step}
+              </span>
+              <h2 className="text-xl md:text-2xl font-display font-medium text-white mb-2 tracking-tight">
+                {tier.title}
+              </h2>
+              <p className="text-sm text-slate-300/85 font-light leading-relaxed">{tier.body}</p>
+            </motion.li>
+          ))}
+        </motion.ol>
 
         <div className="h-32 sm:h-24 flex items-center justify-center w-full mb-16">
           <AnimatePresence mode="wait">
