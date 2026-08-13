@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+﻿import { useState, useMemo } from 'react';
 import { TREATMENTS, PRACTITIONERS } from '../data';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Logo } from '../components/Logo';
-import { BOOKING_URL } from '../constants';
+import { BOOKING_URL, CLINIC } from '../constants';
 import { REVIEWS, REVIEWS_SOURCE } from '../data/reviews';
 import { TreatmentMotif } from '../components/AnatomyMotif';
 
@@ -99,7 +99,7 @@ export default function TreatmentsPage() {
       <section className="grid grid-cols-1 md:grid-cols-4 gap-8">
         {/*
           Every figure here can be checked. It previously read 99% patient
-          retention, a 94.2% success rate and 12+ specialists — none of which
+          retention, a 94.2% success rate and 12+ specialists â€” none of which
           came from anywhere, and the last of which contradicted the practice's
           own team page.
         */}
@@ -317,7 +317,7 @@ export default function TreatmentsPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-12 py-6 bg-teal-600 text-white rounded-2xl font-bold text-lg hover:bg-teal-500 transition-all shadow-2xl shadow-teal-900/40 active:scale-95 flex items-center justify-center gap-3 group"
-                aria-label="Book an appointment — opens our booking system in a new tab"
+                aria-label="Book an appointment â€” opens our booking system in a new tab"
               >
                 Book an assessment <ChevronRight size={22} className="group-hover:translate-x-1 transition-transform" />
               </a>
@@ -341,7 +341,7 @@ export default function TreatmentsPage() {
                  <span className="text-white font-bold text-xs uppercase tracking-[0.3em]">Patient Spotlight</span>
               </div>
               <p className="text-white text-lg font-medium italic leading-relaxed">"{REVIEWS[5].quote}"</p>
-              <div className="mt-4 text-teal-400 font-bold text-xs uppercase tracking-widest">— {REVIEWS[5].author}, Google review</div>
+              <div className="mt-4 text-teal-400 font-bold text-xs uppercase tracking-widest">â€” {REVIEWS[5].author}, Google review</div>
             </div>
           </div>
         </div>
@@ -368,115 +368,45 @@ export default function TreatmentsPage() {
          <div className="absolute -top-24 -right-24 w-96 h-96 bg-teal-400 rounded-full blur-[120px] group-hover:scale-120 transition-transform duration-[7s]"></div>
       </section>
 
-      {/* Clinical Care Bundles - New Section */}
-      <section className="space-y-16">
-         <div className="text-center space-y-4 max-w-3xl mx-auto">
-            <span className="text-teal-600 font-bold text-xs uppercase tracking-[0.3em]">Value Engineering</span>
-            <h2 className="text-4xl md:text-5xl font-display font-medium text-slate-900 tracking-tighter leading-tight">Mastery Bundles.</h2>
-            <p className="text-xl text-slate-500 font-light leading-relaxed">Dedicated to long-term health? Our clinical bundles offer structured progression at optimized price points.</p>
-         </div>
-         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            <div className="p-12 bg-white rounded-[4rem] border border-slate-100 shadow-premium flex flex-col md:flex-row items-center gap-10 group hover:border-teal-500/20 transition-all">
-               <div className="w-32 h-32 rounded-[2.5rem] bg-slate-950 flex items-center justify-center text-teal-400 shadow-2xl shrink-0 group-hover:scale-105 transition-transform">
-                  <Sparkles size={48} />
-               </div>
-               <div className="space-y-4 flex-1">
-                  <div className="flex items-center justify-between">
-                     <h4 className="text-3xl font-display font-bold text-slate-900 tracking-tight">The Recovery Pack</h4>
-                     <span className="px-3 py-1 bg-teal-50 text-teal-600 text-[10px] font-black rounded-lg">SAVE £30</span>
-                  </div>
-                  <p className="text-slate-500 font-light text-base leading-relaxed">6 Sessions (1 Assessment + 5 Follow-ups). Perfect for moderate mechanical issues needing consistent support.</p>
-                  <div className="text-3xl font-display font-bold text-slate-900">£310 <span className="text-sm font-light text-slate-400">/ Total</span></div>
-               </div>
-            </div>
-            <div className="p-12 bg-slate-950 rounded-[4rem] border border-slate-800 shadow-premium flex flex-col md:flex-row items-center gap-10 group hover:border-teal-500/30 transition-all">
-               <div className="w-32 h-32 rounded-[2.5rem] bg-teal-600 flex items-center justify-center text-slate-950 shadow-2xl shrink-0 group-hover:scale-105 transition-transform">
-                  <Star size={48} fill="currentColor" />
-               </div>
-               <div className="space-y-4 flex-1">
-                  <div className="flex items-center justify-between">
-                     <h4 className="text-3xl font-display font-bold text-white tracking-tight">The Longevity Pack</h4>
-                     <span className="px-3 py-1 bg-teal-500 text-slate-950 text-[10px] font-black rounded-lg uppercase tracking-widest">BEST VALUE</span>
-                  </div>
-                  <p className="text-slate-400 font-light text-base leading-relaxed">12 Sessions (1 Assessment + 11 Follow-ups). For serious athletes or patients with chronic structural needs.</p>
-                  <div className="text-3xl font-display font-bold text-white">£600 <span className="text-sm font-light text-slate-500">/ Total</span></div>
-               </div>
-            </div>
-         </div>
-      </section>
-
-      <section className="text-center space-y-20 py-24">
-        <div className="max-w-3xl mx-auto space-y-6">
-          <span className="text-teal-600 font-bold text-xs uppercase tracking-[0.3em]">Pricing Structure</span>
-          <h2 className="text-4xl md:text-5xl font-display font-medium text-slate-900 tracking-tighter">Clinical Investment <span className="text-teal-600">for results.</span></h2>
-          <p className="text-xl text-slate-500 font-light leading-relaxed">Please confirm current fees with the clinic when you book.</p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl mx-auto px-4">
-          {[
-            { 
-              title: "Assessment", 
-              sub: "Initial Intake",
-              price: "£65", 
-              features: ["60 Minute Session", "Orthopaedic Testing", "Diagnostic Plan", "Initial Treatment", "GP Referral Support"],
-              desc: "Mandatory for all new clinical patients."
-            },
-            { 
-              title: "Follow-Up", 
-              sub: "Standard Session",
-              price: "£55", 
-              features: ["45 Minute Session", "Targeted Therapy", "Progressive Review", "Exercise Adjustments", "Mobile App Support"], 
-              highlight: true,
-              desc: "Our most popular progressive care session."
-            },
-            { 
-              title: "Intensive", 
-              sub: "Extended Care",
-              price: "£85", 
-              features: ["90 Minute Session", "Multimodal Therapy", "Complex Case Review", "Advanced Rehab", "Custom Support"],
-              desc: "For complex injuries and deep tissue work."
-            }
-          ].map((plan, i) => (
-            <div key={i} className={cn(
-              "p-12 rounded-[4rem] border transition-all duration-700 space-y-10 flex flex-col items-center text-center relative overflow-hidden group",
-              plan.highlight 
-                ? "bg-slate-950 text-white border-slate-800 shadow-[0_40px_100px_rgba(15,23,42,0.5)] -translate-y-8 lg:scale-110 z-20" 
-                : "bg-white border-slate-100 shadow-premium hover:border-teal-100 hover:-translate-y-3"
-            )}>
-              {plan.highlight && (
-                <div className="absolute top-10 inset-x-0 flex justify-center">
-                   <span className="px-4 py-1.5 bg-teal-500 text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg">Recommended</span>
-                </div>
-              )}
-              <div className="space-y-4">
-                <div className="space-y-1">
-                  <h3 className="text-xl font-bold uppercase tracking-[0.25em] opacity-80">{plan.title}</h3>
-                  <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-teal-500">{plan.sub}</p>
-                </div>
-                <div className="text-7xl font-display font-medium tracking-tighter">{plan.price}</div>
-                <p className="text-xs font-light opacity-60 leading-relaxed max-w-xs">{plan.desc}</p>
-              </div>
-              <div className={cn("h-px w-16", plan.highlight ? "bg-teal-500/30" : "bg-slate-100")} />
-              <ul className="space-y-5 flex-1">
-                {plan.features.map((feat, j) => (
-                  <li key={j} className="text-sm font-medium opacity-80 flex items-center justify-center gap-3">
-                     <div className={cn("w-1.5 h-1.5 rounded-full", plan.highlight ? "bg-teal-400" : "bg-teal-600")}></div>
-                     {feat}
-                  </li>
-                ))}
-              </ul>
-              <button 
-                onClick={() => window.open(BOOKING_URL, '_blank')}
-                className={cn(
-                  "w-full py-5 rounded-[2rem] font-bold text-sm uppercase tracking-widest transition-all shadow-xl active:scale-95",
-                  plan.highlight 
-                    ? "bg-teal-600 text-white hover:bg-teal-500 shadow-teal-900/40" 
-                    : "bg-teal-50 text-teal-700 hover:bg-teal-600 hover:text-white shadow-teal-100"
-                )}
-              >
-                Secure Your Spot
-              </button>
-            </div>
-          ))}
+      {/*
+        The pricing here was invented: a £65 assessment, £55 follow-up and £85
+        intensive, plus "Recovery" and "Longevity" bundles at £310 and £600 with
+        savings against prices that never existed. A patient could have budgeted
+        on those, or arrived expecting to pay £55. The practice does not publish
+        fees on its own site, so this now says where to get them.
+      */}
+      <section className="py-24">
+        <div className="max-w-3xl mx-auto text-center space-y-6 bg-white rounded-[3rem] border border-slate-100 shadow-premium p-12 md:p-16">
+          <span className="text-teal-600 font-bold text-xs uppercase tracking-[0.3em]">Fees</span>
+          <h2 className="text-4xl md:text-5xl font-display font-medium text-slate-900 tracking-tight">
+            What it costs
+          </h2>
+          <p className="text-lg text-slate-500 font-light leading-relaxed">
+            Fees depend on the treatment and the length of the appointment. Ring the clinic
+            on{' '}
+            <a href={`tel:${CLINIC.telephoneLink}`} className="text-teal-600 font-medium hover:underline focus-visible:outline-teal-500">
+              {CLINIC.telephone}
+            </a>{' '}
+            and we will tell you exactly what your appointment will cost before you book —
+            no obligation, and no surprises when you arrive.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+            <a
+              href={BOOKING_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-teal-600 text-white font-bold hover:bg-teal-500 transition-all shadow-lg shadow-teal-500/25 focus-visible:outline-teal-400"
+              aria-label="Book an appointment — opens our booking system in a new tab"
+            >
+              <Calendar size={18} /> Book an appointment
+            </a>
+            <a
+              href={`tel:${CLINIC.telephoneLink}`}
+              className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-slate-50 text-slate-700 font-bold border border-slate-200 hover:border-teal-300 hover:text-teal-700 transition-all focus-visible:outline-teal-500"
+            >
+              Ask about fees
+            </a>
+          </div>
         </div>
       </section>
     </div>

@@ -244,8 +244,9 @@ export default function PractitionersPage() {
                   </div>
                   <div className="pt-8 mt-8 border-t border-slate-50 flex items-center justify-between text-teal-700 px-2 group-hover:px-4 transition-all duration-500">
                     <div className="flex flex-col">
-                       <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Consultation Rate</span>
-                       <span className="text-sm font-bold text-slate-900 group-hover:text-teal-600">From £65.00</span>
+                       {/* "From £65.00" was invented. Fees come from the clinic. */}
+                       <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Appointments</span>
+                       <span className="text-sm font-bold text-slate-900 group-hover:text-teal-600">Book or ask about fees</span>
                     </div>
                     <div className="w-12 h-12 rounded-2xl bg-teal-50 flex items-center justify-center group-hover:bg-teal-600 group-hover:text-white transition-all shadow-sm">
                       <ChevronRight size={24} />

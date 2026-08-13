@@ -1,6 +1,6 @@
-import { useParams, Link } from 'react-router-dom';
+﻿import { useParams, Link } from 'react-router-dom';
 import { TREATMENTS, PRACTITIONERS } from '../data';
-import { BOOKING_URL } from '../constants';
+import { BOOKING_URL, CLINIC } from '../constants';
 import { 
   ChevronRight, 
   CheckCircle2, 
@@ -343,15 +343,23 @@ export default function TreatmentDetailPage() {
           <section className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm shadow-slate-200/20 sticky top-32">
             <div className="space-y-8">
               <div>
-                <h3 className="text-xl font-display font-bold text-slate-900 mb-6 tracking-tight">Initial Consultation</h3>
+                <h3 className="text-xl font-display font-bold text-slate-900 mb-6 tracking-tight">Your first appointment</h3>
+                {/* The Â£55.00 shown here was invented, as was the 60-minute
+                    duration. Both vary by treatment and are confirmed by the
+                    clinic when you book. */}
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-slate-500 font-light">Price</span>
-                  <span className="text-2xl font-bold text-teal-600">£55.00</span>
+                  <span className="text-slate-500 font-light">Fee</span>
+                  <a
+                    href={`tel:${CLINIC.telephoneLink}`}
+                    className="text-base font-bold text-teal-600 hover:underline focus-visible:outline-teal-500"
+                  >
+                    Ask when you book
+                  </a>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-500 font-light">Duration</span>
+                  <span className="text-slate-500 font-light">Length</span>
                   <span className="text-slate-800 font-semibold flex items-center gap-2">
-                    <Clock size={16} className="text-teal-600" /> 60 Mins
+                    <Clock size={16} className="text-teal-600" /> Varies by treatment
                   </span>
                 </div>
               </div>
