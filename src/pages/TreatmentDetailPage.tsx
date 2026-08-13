@@ -22,6 +22,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useState } from 'react';
 import { cn } from '../lib/utils';
 import { useAnalytics } from '../context/AnalyticsContext';
+import { TreatmentMotif } from '../components/AnatomyMotif';
 import { useToast } from '../components/ToastSystem';
 
 const FAQItem = ({ question, answer }: { question: string, answer: string }) => {
@@ -130,6 +131,14 @@ export default function TreatmentDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         <div className="lg:col-span-8 space-y-12">
            <section className="bg-white/60 backdrop-blur-3xl crystal-glass p-10 rounded-[3rem] border border-white/40 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] overflow-hidden relative">
+            {/* The part of the body this treatment is about, sitting quietly
+                behind the text: a spine for osteopathy, a leg for sports
+                massage, a foot for footcare. */}
+            <TreatmentMotif
+              treatmentId={t.id}
+              className="absolute -right-6 -top-6 w-56 h-72 text-teal-900"
+              opacity={7}
+            />
             <div className="relative z-10">
               <h2 className="text-3xl font-display font-semibold text-slate-900 mb-8 tracking-tight flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center">

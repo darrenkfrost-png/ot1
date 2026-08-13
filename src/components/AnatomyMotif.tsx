@@ -85,6 +85,32 @@ export const LegMotif: React.FC<MotifProps> = ({ className, opacity = 6 }) => (
   </svg>
 );
 
+/** Foot in profile — arch, heel and the line of the toes. */
+export const FootMotif: React.FC<MotifProps> = ({ className, opacity = 6 }) => (
+  <svg
+    viewBox="0 0 260 180"
+    aria-hidden="true"
+    className={cn('pointer-events-none select-none', className)}
+    style={{ opacity: opacity / 100 }}
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+  >
+    {/* ankle down into the heel */}
+    <path d="M74 18c-4 26-2 44 4 58" />
+    <path d="M110 18c2 28 0 46-6 60" />
+    <path d="M78 76c-16 12-26 26-26 44 0 20 16 34 42 34" />
+    {/* the arch, which is the whole point of a foot */}
+    <path d="M94 154c34 0 62-6 88-16" opacity="0.75" />
+    <path d="M78 120c26 14 62 18 104 12" opacity="0.5" />
+    {/* toes */}
+    <path d="M182 138c14-2 26-6 36-12" />
+    <path d="M186 150c12-1 22-4 30-8" opacity="0.7" />
+    <circle cx="226" cy="126" r="7" opacity="0.65" />
+  </svg>
+);
+
 /** The CT6 emblem, faint, as a watermark. */
 export const EmblemWatermark: React.FC<MotifProps> = ({ className, opacity = 4 }) => (
   <svg
@@ -109,3 +135,48 @@ export const EmblemWatermark: React.FC<MotifProps> = ({ className, opacity = 4 }
     </text>
   </svg>
 );
+
+/**
+ * Which part of the body each treatment is actually about.
+ *
+ * Mapped by hand rather than guessed from the name: a Thai *foot* massage and a
+ * Thai *oil body* massage share a word and share nothing else. Where a treatment
+ * has no single region — hypnotherapy, acupuncture, digestive work — it takes
+ * the emblem instead of being forced onto a limb it has nothing to do with.
+ */
+export type MotifKind = 'spine' | 'neck' | 'leg' | 'foot' | 'emblem';
+
+const TREATMENT_MOTIFS: Record<string, MotifKind> = {
+  osteopathy: 'spine',
+  'therapeutic-massage': 'spine',
+  'swedish-massage': 'spine',
+  'thai-oil-massage': 'spine',
+  'hot-stone-massage': 'spine',
+  'pregnancy-massage': 'spine',
+  'indian-head-massage': 'neck',
+  'natural-face-lift': 'neck',
+  'sports-massage': 'leg',
+  physiotherapy: 'leg',
+  'thai-foot-massage': 'foot',
+  footcare: 'foot',
+  acupuncture: 'emblem',
+  hypnotherapy: 'emblem',
+  'digestive-massage': 'emblem',
+};
+
+export const motifKindFor = (treatmentId?: string): MotifKind =>
+  (treatmentId && TREATMENT_MOTIFS[treatmentId]) || 'emblem';
+
+/** Renders whichever motif belongs to a treatment. */
+export const TreatmentMotif: React.FC<MotifProps & { treatmentId?: string }> = ({
+  treatmentId,
+  className,
+  opacity = 6,
+}) => {
+  const kind = motifKindFor(treatmentId);
+  if (kind === 'spine') return <SpineMotif className={className} opacity={opacity} />;
+  if (kind === 'neck') return <NeckMotif className={className} opacity={opacity} />;
+  if (kind === 'leg') return <LegMotif className={className} opacity={opacity} />;
+  if (kind === 'foot') return <FootMotif className={className} opacity={opacity} />;
+  return <EmblemWatermark className={className} opacity={opacity} />;
+};

@@ -23,6 +23,7 @@ import { cn } from '../lib/utils';
 import { Logo } from '../components/Logo';
 import { BOOKING_URL } from '../constants';
 import { REVIEWS, REVIEWS_SOURCE } from '../data/reviews';
+import { TreatmentMotif } from '../components/AnatomyMotif';
 
 export default function TreatmentsPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -170,7 +171,14 @@ export default function TreatmentsPage() {
               }}
             >
               <Link to={`/treatments/${t.id}`} className="block group h-full">
-                <div className="bg-white rounded-[2.5rem] p-7 border border-slate-100 shadow-sm shadow-slate-200/50 hover:shadow-2xl hover:shadow-teal-900/10 hover:-translate-y-2 hover:border-teal-100 transition-all duration-500 h-full flex flex-col overflow-hidden">
+                <div className="relative bg-white rounded-[2.5rem] p-7 border border-slate-100 shadow-sm shadow-slate-200/50 hover:shadow-2xl hover:shadow-teal-900/10 hover:-translate-y-2 hover:border-teal-100 transition-all duration-500 h-full flex flex-col overflow-hidden">
+                  {/* The region this treatment concerns, faint behind the card
+                      and a little clearer when you hover it. */}
+                  <TreatmentMotif
+                    treatmentId={t.id}
+                    className="absolute -right-4 bottom-2 w-40 h-52 text-teal-900 opacity-100 group-hover:scale-105 transition-transform duration-700"
+                    opacity={6}
+                  />
                   <div className="aspect-[16/10] rounded-[2rem] overflow-hidden mb-8 relative">
                     <img src={t.image} alt={t.title} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
