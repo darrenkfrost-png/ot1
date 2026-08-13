@@ -1,4 +1,5 @@
 import express from "express";
+import fs from "fs";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
@@ -393,10 +394,30 @@ PLAN (P):
     });
     app.use(vite.middlewares);
   } else {
-    const distPath = path.join(process.cwd(), 'dist');
+    // Locate the built client relative to this file first. Hosting platforms
+    // often start the app from a different working directory, and resolving
+    // from process.cwd() alone makes every route 404 while the server still
+    // reports a successful boot.
+    const candidates = [
+      path.join(__dirname, 'index.html'),
+      path.join(__dirname, '..', 'dist', 'index.html'),
+      path.join(process.cwd(), 'dist', 'index.html'),
+    ];
+    const indexFile = candidates.find((candidate) => fs.existsSync(candidate));
+
+    if (!indexFile) {
+      console.error(
+        `CRITICAL: no built client found. Looked in:\n  ${candidates.join('\n  ')}\n` +
+        `Run "npm run build" before "npm start".`
+      );
+      process.exit(1);
+    }
+
+    const distPath = path.dirname(indexFile);
+    console.log(`Serving built client from ${distPath}`);
     app.use(express.static(distPath));
     app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
+      res.sendFile(indexFile);
     });
   }
 
