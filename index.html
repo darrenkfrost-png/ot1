@@ -1,18 +1,76 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-GB">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0f172a" />
+
+    <title>CT6 Wellbeing | Osteopathy, Physiotherapy &amp; Rehabilitation</title>
+    <meta
+      name="description"
+      content="Osteopathy, sports massage, acupuncture and rehabilitation in Kent. Expert practitioners, evidence-based treatment and rapid clinical triage. Book an assessment today."
+    />
+    <meta name="author" content="CT6 Wellbeing" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Icons -->
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/masked-icon.svg" color="#2dd4bf" />
+
+    <!--
+      LAUNCH STEP: replace https://example.com below with the real domain once it is live.
+      Social previews (Facebook, LinkedIn, WhatsApp, X) need absolute URLs to work.
+    -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="CT6 Wellbeing" />
+    <meta property="og:title" content="CT6 Wellbeing | Osteopathy, Physiotherapy &amp; Rehabilitation" />
+    <meta
+      property="og:description"
+      content="Osteopathy, sports massage, acupuncture and rehabilitation in Kent. Expert practitioners and evidence-based treatment."
+    />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:url" content="https://example.com/" />
+    <meta property="og:image" content="https://example.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="CT6 Wellbeing — precise, clinical, transformative care." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="CT6 Wellbeing | Osteopathy, Physiotherapy &amp; Rehabilitation" />
+    <meta
+      name="twitter:description"
+      content="Osteopathy, sports massage, acupuncture and rehabilitation in Kent."
+    />
+    <meta name="twitter:image" content="https://example.com/og-image.png" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://images.unsplash.com" />
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-    <title>CT6 Wellbeing | Clinical Portal</title>
+
+    <!--
+      Structured data: helps Google show the clinic properly in local search.
+      TO COMPLETE: add "address", "telephone" and "openingHoursSpecification"
+      with the clinic's real details — deliberately left out rather than guessed.
+    -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "MedicalBusiness",
+        "name": "CT6 Wellbeing",
+        "alternateName": "Osteopathy & Wellbeing @CT6",
+        "description": "Osteopathy, sports and therapeutic massage, acupuncture, footcare and rehabilitation.",
+        "medicalSpecialty": "PhysicalTherapy",
+        "image": "https://example.com/og-image.png",
+        "logo": "https://example.com/pwa-512x512.png",
+        "url": "https://example.com/",
+        "areaServed": { "@type": "AdministrativeArea", "name": "Kent, United Kingdom" }
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-
