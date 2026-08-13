@@ -1,4 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+/*
+ * The webfonts are linked from index.html, not imported here.
+ * An @import in this file cannot be discovered until this stylesheet has
+ * already downloaded, which pushed the font request out to around the point
+ * of DOMContentLoaded and delayed the first text on screen.
+ */
 @import "tailwindcss";
 
 @layer base {

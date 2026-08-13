@@ -50,6 +50,16 @@
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
 
     <!--
+      Linked here rather than @import-ed from index.css so the browser can start
+      fetching the typefaces while it is still reading the head, instead of
+      waiting for the stylesheet to arrive first.
+    -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+    />
+
+    <!--
       Structured data: helps Google show the clinic properly in local search.
       TO COMPLETE: add "address", "telephone" and "openingHoursSpecification"
       with the clinic's real details — deliberately left out rather than guessed.
