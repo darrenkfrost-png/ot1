@@ -397,7 +397,7 @@
    * Sliding gradient for accent words.
    *
    * This lived in a <style> block inside HomePage, so any other page using
-   * `animate-gradient-x` only had it while HomePage happened to be mounted â€”
+   * `animate-gradient-x` only had it while HomePage happened to be mounted —
    * and HomePage is lazily loaded. On the intro door the animation therefore
    * switched on and off as chunks arrived, and because that span had no
    * enlarged background the gradient snapped back to its start on every cycle.
@@ -448,7 +448,7 @@
   /*
    * Legibility floor for phones.
    * The micro-label type reads as refined detail on a large screen, but at
-   * 8-10px on a 375px handset it is genuinely hard to read â€” and a sizeable
+   * 8-10px on a 375px handset it is genuinely hard to read — and a sizeable
    * share of this clinic's patients are older. Desktop keeps the original
    * scale; only small screens get the floor. Remove this block to revert.
    */

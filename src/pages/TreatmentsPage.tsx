@@ -1,4 +1,4 @@
-﻿import { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { TREATMENTS, PRACTITIONERS } from '../data';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
@@ -71,7 +71,7 @@ export default function TreatmentsPage() {
       <header className="relative bg-slate-950 rounded-[4rem] p-12 md:p-24 text-white shadow-3xl overflow-hidden group holographic-border">
         <div className="absolute inset-0 z-0 opacity-40">
            <div className="absolute inset-0 neural-grid opacity-30 mix-blend-screen pointer-events-none"></div>
-           <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=2000" fetchPriority="high" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[20s]" alt="The CT6 Wellbeing clinic interior" />
+           <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=2000" fetchPriority="high" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[20s]" alt={`The ${CLINIC.name} clinic interior`} />
            <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent"></div>
         </div>
         <div className="relative z-10 max-w-3xl space-y-8">
@@ -99,7 +99,7 @@ export default function TreatmentsPage() {
       <section className="grid grid-cols-1 md:grid-cols-4 gap-8">
         {/*
           Every figure here can be checked. It previously read 99% patient
-          retention, a 94.2% success rate and 12+ specialists â€” none of which
+          retention, a 94.2% success rate and 12+ specialists — none of which
           came from anywhere, and the last of which contradicted the practice's
           own team page.
         */}
@@ -317,7 +317,7 @@ export default function TreatmentsPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-12 py-6 bg-teal-600 text-white rounded-2xl font-bold text-lg hover:bg-teal-500 transition-all shadow-2xl shadow-teal-900/40 active:scale-95 flex items-center justify-center gap-3 group"
-                aria-label="Book an appointment â€” opens our booking system in a new tab"
+                aria-label="Book an appointment — opens our booking system in a new tab"
               >
                 Book an assessment <ChevronRight size={22} className="group-hover:translate-x-1 transition-transform" />
               </a>
@@ -341,7 +341,7 @@ export default function TreatmentsPage() {
                  <span className="text-white font-bold text-xs uppercase tracking-[0.3em]">Patient Spotlight</span>
               </div>
               <p className="text-white text-lg font-medium italic leading-relaxed">"{REVIEWS[5].quote}"</p>
-              <div className="mt-4 text-teal-400 font-bold text-xs uppercase tracking-widest">â€” {REVIEWS[5].author}, Google review</div>
+              <div className="mt-4 text-teal-400 font-bold text-xs uppercase tracking-widest">— {REVIEWS[5].author}, Google review</div>
             </div>
           </div>
         </div>

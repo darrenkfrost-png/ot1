@@ -195,7 +195,7 @@ export default function SettingsPanel() {
                         <div className="space-y-12 pb-10 animate-in fade-in slide-in-from-right-4 duration-500">
                            <div className="space-y-3">
                              <h2 className="text-3xl font-display font-medium text-slate-900 tracking-tight">Theme & Canvas Layer</h2>
-                             <p className="text-slate-500 font-light text-base leading-relaxed">Configure the background canvas animations and core thematic colors of CT6 Wellbeing.</p>
+                             <p className="text-slate-500 font-light text-base leading-relaxed">Configure the background canvas animations and core thematic colours of this site.</p>
                            </div>
 
                            <div className="space-y-6">

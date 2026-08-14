@@ -96,6 +96,30 @@ export const REVIEWS: Review[] = [
   },
 ];
 
+/**
+ * Reviews to show on a named practitioner's page.
+ *
+ * Practitioner pages used to show a fixed slice of the list, so Adrian's page
+ * carried a review praising Leon by name. Putting one practitioner's praise
+ * under another's photograph misattributes it, and a reader who notices stops
+ * believing the rest of the page.
+ *
+ * A review is only shown on a practitioner's page if it names them. Reviews
+ * that name a *different* practitioner are excluded outright; the remainder,
+ * which praise the practice without naming anyone, are used to make up the
+ * numbers — they are true of whoever the reader is looking at.
+ */
+export function reviewsForPractitioner(fullName: string, limit = 2): Review[] {
+  const firstName = fullName.trim().split(/\s+/)[0];
+  const everyFirstName = ['Adrian', 'Leon', 'Keri'];
+  const names = (r: Review) => everyFirstName.filter((n) => new RegExp(`\\b${n}\\b`, 'i').test(r.quote));
+
+  const aboutThem = REVIEWS.filter((r) => names(r).some((n) => n.toLowerCase() === firstName.toLowerCase()));
+  const aboutNobody = REVIEWS.filter((r) => names(r).length === 0);
+
+  return [...aboutThem, ...aboutNobody].slice(0, limit);
+}
+
 /** Where these came from, so a reader can check them. */
 export const REVIEWS_SOURCE = {
   label: 'Google reviews',

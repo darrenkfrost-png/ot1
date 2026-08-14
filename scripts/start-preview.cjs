@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Starts the CT6 Wellbeing site for a preview pane.
+ * Starts the Osteopathy & Wellbeing @CT6 site for a preview pane.
  *
  * Runs the development server, so what you see is the working tree as it is
  * right now — edits appear without a rebuild. Kept as a script with an absolute
@@ -13,7 +13,7 @@ const path = require('node:path');
 const root = path.join(__dirname, '..');
 const port = process.env.PORT || '3300';
 
-console.log(`Starting CT6 Wellbeing (dev) from ${root} on port ${port}`);
+console.log(`Starting Osteopathy & Wellbeing @CT6 (dev) from ${root} on port ${port}`);
 
 const child = spawn(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['run', 'dev'], {
   cwd: root,

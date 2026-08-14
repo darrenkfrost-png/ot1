@@ -10,6 +10,7 @@ import {
 import { cn } from '../lib/utils';
 import { TREATMENTS, PRACTITIONERS } from '../data';
 import { BOOKING_URL, CLINIC } from '../constants';
+import { REVIEWS, REVIEWS_SOURCE } from '../data/reviews';
 
 export default function HomePage() {
   const { showToast } = useToast();
@@ -76,7 +77,7 @@ export default function HomePage() {
             animate={{ scale: 1, opacity: 0.65 }}
             transition={{ duration: 2.5, ease: "easeOut" }}
             src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=2000"
-            alt="A calm treatment room at the CT6 Wellbeing clinic"
+            alt={`A calm treatment room at ${CLINIC.name}`}
             fetchPriority="high"
             decoding="async"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[40s] ease-linear"
@@ -621,14 +622,29 @@ export default function HomePage() {
                   <div className="flex items-center gap-2 mb-6">
                      {[...Array(5)].map((_, i) => <Sparkles key={i} size={16} className="text-teal-300 drop-shadow-md fill-teal-400/50" />)}
                   </div>
+                  {/* A real Google review. This card used to carry a quote from
+                      "Richard James, Post-Operative Rehab" — a patient who does
+                      not exist, praising the software rather than the treatment.
+                      Inventing a testimonial for a healthcare practice is not a
+                      placeholder, it is a false claim, so it is sourced now and
+                      links out to the listing it came from. */}
                   <p className="text-white text-2xl font-display font-medium leading-relaxed drop-shadow-sm">
-                    "The integration of digital resources and clinical expertise at CT6 Wellbeing is revolutionary. Supported every single day of my recovery."
+                    “{REVIEWS[6].quote}”
                   </p>
                   <div className="mt-8 flex items-center gap-4">
-                     <div className="w-12 h-12 rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 border-2 border-white/50 flex items-center justify-center text-slate-950 font-black text-sm shadow-lg">RJ</div>
+                     <div className="w-12 h-12 rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 border-2 border-white/50 flex items-center justify-center text-slate-950 font-black text-sm shadow-lg">
+                        {REVIEWS[6].author.split(' ').map((w) => w[0]).join('').slice(0, 2)}
+                     </div>
                      <div>
-                        <p className="text-white text-base font-bold drop-shadow-md">Richard James</p>
-                        <p className="text-teal-300 text-[9px] font-black uppercase tracking-[0.2em] mt-0.5">Post-Operative Rehab</p>
+                        <p className="text-white text-base font-bold drop-shadow-md">{REVIEWS[6].author}</p>
+                        <a
+                          href={REVIEWS_SOURCE.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-teal-300 hover:text-teal-200 text-[9px] font-black uppercase tracking-[0.2em] mt-0.5 inline-flex items-center gap-1.5 transition-colors"
+                        >
+                          {REVIEWS_SOURCE.label} <ExternalLink size={9} />
+                        </a>
                      </div>
                   </div>
               </motion.div>

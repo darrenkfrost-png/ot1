@@ -1,10 +1,9 @@
 import { useParams, Link } from 'react-router-dom';
 import { PRACTITIONERS } from '../data';
-import { BOOKING_URL } from '../constants';
-import { REVIEWS } from '../data/reviews';
+import { BOOKING_URL, CLINIC } from '../constants';
+import { reviewsForPractitioner } from '../data/reviews';
 import { Award, Stethoscope, Mail, CheckCircle2, ChevronRight, Home, Calendar, MapPin, Star, Shield, Briefcase } from 'lucide-react';
 import { motion } from 'motion/react';
-import PractitionerAIAnalytics from '../components/PractitionerAIAnalytics';
 import { useToast } from '../components/ToastSystem';
 import { useAnalytics } from '../context/AnalyticsContext';
 
@@ -41,8 +40,12 @@ export default function PractitionerDetailPage() {
     );
   }
 
+  // Only osteopaths are on the GOsC register — a massage therapist or
+  // reflexologist is not, and implying otherwise would be misleading.
+  const isOsteopath = /osteopath/i.test(practitioner.role);
+
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="max-w-5xl mx-auto space-y-10"
@@ -141,8 +144,6 @@ export default function PractitionerDetailPage() {
               </div>
             </motion.section>
 
-            <PractitionerAIAnalytics practitioner={practitioner} />
-
             <div className="grid md:grid-cols-2 gap-8">
                 {practitioner.philosophy && (
                     <motion.section 
@@ -230,32 +231,54 @@ export default function PractitionerDetailPage() {
               )}
             </div>
 
+            {/*
+              This was a "Professional Timeline" listing three jobs — Senior
+              Practitioner here since 2020, Clinical Osteopath at "London
+              Health", Junior Associate at "Kent Medical". It was hardcoded, so
+              every practitioner was shown the same career, and none of it was
+              real. Inventing an employment history for a named, regulated
+              healthcare professional is a false claim about that person.
+
+              What replaces it is only what the practice actually publishes:
+              the role, the letters after their name, and who regulates them.
+            */}
             <section className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm shadow-slate-200/20">
               <h2 className="text-2xl font-display font-semibold text-slate-900 mb-10 tracking-tight flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center">
                   <Briefcase size={20} />
                 </div>
-                Professional Timeline
+                Credentials
               </h2>
-              <div className="space-y-8 relative">
-                <div className="absolute left-6 top-2 bottom-2 w-px bg-slate-100 hidden sm:block"></div>
-                {[
-                  { year: '2020 - Present', role: `Senior Practitioner at CT6 Wellbeing`, detail: 'Leading clinical excellence in multidisciplinary therapy.' },
-                  { year: '2015 - 2020', role: 'Clinical Osteopath, London Health', detail: 'Specialised in sports-related injury recovery.' },
-                  { year: '2012 - 2015', role: 'Junior Associate, Kent Medical', detail: 'Focused on community health and postural assessment.' }
-                ].map((item, i) => (
-                  <div key={i} className="flex flex-col sm:flex-row gap-6 sm:gap-12 relative group">
-                    <div className="w-12 h-12 rounded-full bg-white border-4 border-slate-50 flex items-center justify-center text-teal-600 shadow-sm z-10 shrink-0 self-start sm:self-center transition-all group-hover:bg-teal-600 group-hover:text-white group-hover:border-teal-50">
-                      <Star size={16} />
-                    </div>
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-teal-600 uppercase tracking-widest">{item.year}</span>
-                      <h4 className="text-lg font-bold text-slate-800">{item.role}</h4>
-                      <p className="text-sm text-slate-500 font-light leading-relaxed">{item.detail}</p>
-                    </div>
+              <dl className="space-y-8">
+                <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-8">
+                  <dt className="text-[10px] font-bold text-teal-600 uppercase tracking-widest sm:w-40 shrink-0">Role</dt>
+                  <dd className="text-lg font-bold text-slate-800">{practitioner.role}</dd>
+                </div>
+                {practitioner.qualifications && (
+                  <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-8">
+                    <dt className="text-[10px] font-bold text-teal-600 uppercase tracking-widest sm:w-40 shrink-0">Qualifications</dt>
+                    <dd className="text-lg font-bold text-slate-800">{practitioner.qualifications}</dd>
                   </div>
-                ))}
-              </div>
+                )}
+                {isOsteopath && (
+                  <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-8">
+                    <dt className="text-[10px] font-bold text-teal-600 uppercase tracking-widest sm:w-40 shrink-0">Regulated by</dt>
+                    <dd className="text-base text-slate-600 font-light leading-relaxed">
+                      <a
+                        href={CLINIC.regulator.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-bold text-slate-800 hover:text-teal-600 transition-colors focus-visible:outline-teal-500"
+                      >
+                        {CLINIC.regulator.name}
+                      </a>
+                      <span className="block text-sm mt-1">
+                        Every osteopath in the UK must be registered with the {CLINIC.regulator.abbreviation} by law. You can check the register yourself.
+                      </span>
+                    </dd>
+                  </div>
+                )}
+              </dl>
             </section>
 
             <section className="bg-teal-50/50 p-10 rounded-[3rem] border border-teal-100/50">
@@ -270,9 +293,7 @@ export default function PractitionerDetailPage() {
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {[
-                  ...REVIEWS.slice(3, 5)
-                ].map((testimonial, i) => (
+                {reviewsForPractitioner(practitioner.name).map((testimonial, i) => (
                   <div key={i} className="bg-white p-8 rounded-[2rem] shadow-sm border border-white/50 space-y-4">
                     <p className="text-slate-600 font-light italic leading-relaxed">"{testimonial.quote}"</p>
                     <p className="text-xs font-bold text-slate-900 uppercase tracking-widest">— {testimonial.author}</p>

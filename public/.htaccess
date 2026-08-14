@@ -1,4 +1,4 @@
-# CT6 Wellbeing — static hosting rules
+# Osteopathy & Wellbeing @CT6 — static hosting rules
 #
 # This file matters when the built site is served directly by Apache or
 # LiteSpeed (Hostinger's default) rather than by the Node server in server.ts.

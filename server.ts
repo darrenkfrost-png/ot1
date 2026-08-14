@@ -114,7 +114,7 @@ async function startServer() {
         model: "gemini-3.5-flash",
         config: {
           temperature: 0.2,
-          systemInstruction: "You are the clinical software governance engine for CT6 Wellbeing. Audit the clinical state, musculoskeletal modules, and patient compliance pathways. Return a JSON structure representing your architectural, functional, and safety evaluation.",
+          systemInstruction: "You are the clinical software governance engine for Osteopathy & Wellbeing @CT6. Audit the clinical state, musculoskeletal modules, and patient compliance pathways. Return a JSON structure representing your architectural, functional, and safety evaluation.",
         },
       });
 
@@ -168,74 +168,14 @@ async function startServer() {
     }
   });
 
-  // API Route for Practitioner Analysis
-  app.post("/api/analyze-practitioner", async (req, res) => {
-    try {
-      const { practitioner } = req.body;
-      if (!practitioner) return res.status(400).json({ error: 'Practitioner data is required' });
-
-      const ai = getAi();
-      
-      console.log('Creating chat session with gemini-3.5-flash...');
-      const chat = ai.chats.create({
-        model: "gemini-3.5-flash",
-        config: {
-          temperature: 0.7,
-          systemInstruction: "Analyze the following practitioner profile and provide a deep dive into their offering. Professional and clinical tone.",
-        },
-      });
-
-      const prompt = `Analyze the following practitioner profile and provide a deep dive into their offering:
-      Name: ${practitioner.name}
-      Role: ${practitioner.role}
-      Bio: ${practitioner.bio}
-      Services: ${practitioner.services?.join(', ') || 'N/A'}
-      Specialisations: ${practitioner.specialisations?.join(', ') || 'N/A'}                
-      
-      Provide:
-      1. A concise 3-4 sentence professional breakdown of their impact and what patients can expect.
-      2. A concise, synthesized testimonial representative of typical patient feedback for a practitioner with these specific specialisations and services.
-      3. Precise numerical metrics: an 'impactScore' (0-100), 'patientFocus' (a short descriptive 2-word phrase), 'averageRecoveryTime' (e.g., '3-5 weeks'), and a 'satisfactionScore' (0.0-5.0).
-      
-      Return the output as a clean JSON object with keys: "analysis" (the breakdown), "testimonialSummary" (the testimonial), and "metrics" (an object containing impactScore, patientFocus, averageRecoveryTime, and satisfactionScore).`;
-      
-      const result = await chat.sendMessage({ message: prompt });
-      const responseText = result.text || '';
-      
-      let parsedResponse;
-      try {
-        const cleanedText = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
-        parsedResponse = JSON.parse(cleanedText);
-      } catch (parseError) {
-        console.error('Failed to parse AI response as JSON:', responseText);
-        parsedResponse = {
-          analysis: "Our clinical team provides high-quality care tailored to your needs.",
-          testimonialSummary: "Patients frequently report significant improvement in mobility and pain reduction.",
-          metrics: {
-            impactScore: 90,
-            patientFocus: "Holistic Care",
-            averageRecoveryTime: "4-6 weeks",
-            satisfactionScore: 4.8,
-          }
-        };
-      }
-      
-      res.json({ 
-        analysis: parsedResponse.analysis,
-        metrics: parsedResponse.metrics || {
-          impactScore: 92,
-          patientFocus: "Holistic Wellbeing",
-          averageRecoveryTime: "4-6 weeks",
-          satisfactionScore: 4.9,
-        },
-        testimonialSummary: parsedResponse.testimonialSummary
-      });
-    } catch (error) {
-      console.error('Practitioner Analysis crash:', error);
-      res.status(500).json({ error: 'Internal server error during analysis' });
-    }
-  });
-
+  // The practitioner "AI deep dive" used to live here. It asked the model for
+  // an invented testimonial and "precise numerical metrics" â€” an impact score,
+  // a satisfaction score, and an average recovery time â€” then published them
+  // against a named osteopath, with a hardcoded "4-6 weeks, 4.8/5" fallback
+  // whenever the model's reply would not parse. None of it came from patient
+  // records, and outcome claims about a GOsC-registered clinician are exactly
+  // the sort of thing a practice must be able to substantiate. Removed rather
+  // than reworded.
   // API Route for Clinical SOAP Note Gen (Subjective, Objective, Assessment, Plan)
   app.post("/api/generate-soap", async (req, res) => {
     try {
@@ -247,7 +187,7 @@ async function startServer() {
         model: "gemini-3.5-flash",
         config: {
           temperature: 0.3,
-          systemInstruction: "You are the clinical SOAP Note Generator for CT6 Wellbeing. Transform patient self-reported concerns and raw biomechanical ranges of motion into formal clinical SOAP format. Professional, medical-grade, structured, and clinically sound tone.",
+          systemInstruction: "You are the clinical SOAP Note Generator for Osteopathy & Wellbeing @CT6. Transform patient self-reported concerns and raw biomechanical ranges of motion into formal clinical SOAP format. Professional, medical-grade, structured, and clinically sound tone.",
         },
       });
 
@@ -289,7 +229,7 @@ async function startServer() {
         model: "gemini-3.5-flash",
         config: {
           temperature: 0.5,
-          systemInstruction: "You are the Physical Rehabilitation Prescriber for CT6 Wellbeing. Review patient ROM and pain indexes and prescribe 3 custom, highly personalized clinical-grade rehabilitation exercises. Return as a clean JSON structure.",
+          systemInstruction: "You are the Physical Rehabilitation Prescriber for Osteopathy & Wellbeing @CT6. Review patient ROM and pain indexes and prescribe 3 custom, highly personalized clinical-grade rehabilitation exercises. Return as a clean JSON structure.",
         },
       });
 

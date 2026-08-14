@@ -331,10 +331,6 @@ export const PRACTITIONERS: Practitioner[] = [
 
 Following his qualification, Adrian worked at several different clinics before purchasing the business in 2008 and establishing Osteopathy & Wellbeing @CT6. He remains deeply passionate about sports science and rehabilitation. Adrian is known for his ability to translate complex physiological concepts into plain, actionable language, ensuring clients are fully equipped to manage their own long-term health. His commitment is to not just resolve immediate pain, but to identify the biomechanical root causes that lead to recurring issues.`,
     philosophy: 'Adrian believes the human body possesses an innate, intelligent ability to heal when biomechanical restrictions are removed. His treatment philosophy centers on empowerment: providing clients with the understanding of their own mechanics to ensure durable, long-term health rather than temporary relief.',
-    caseStudies: [
-        'Successfully rehabilitated a semi-professional athlete following a grade 3 ankle sprain, utilizing a phased return-to-play protocol that reduced recovery time by 25%.',
-        'Resolved chronic spinal discomfort in a patient with a decade-long history of sedentary postural strain through a combined approach of targeted mobilization, workplace ergonomic adjustments, and customized muscle strengthening.'
-    ],
     approach: 'Adrian utilizes a highly structural approach. During an initial consultation, he employs localized orthopedic testing to pinpoint the primary site of restriction, followed by tailored myofascial release, joint articulation, and tailored resistance exercises to restore optimal mechanical function.',
     specialisations: ['Osteopathy', 'Sports Massage', 'Acupuncture', 'Chronic Spinal Patients'],
     services: ['Spinal Adjustment', 'Sports Injury Rehabilitation', 'Dry Needling', 'Posture Correction']
@@ -349,10 +345,6 @@ Following his qualification, Adrian worked at several different clinics before p
 
 He is a firm believer that incremental, sustainable physical activity is the cornerstone of lifelong wellness. His expertise lies in bridging the gap between acute clinical diagnosis and professional-level sports rehabilitation, ensuring clients—whether athletes or office-based professionals—receive the same level of precise care.`,
     philosophy: 'Leon adheres to an evidence-based approach, combining functional movement assessment with sports-specific therapeutic modalities to maximize both health outcomes and human performance.',
-    caseStudies: [
-        'Coordinated the comprehensive rehabilitation for a high-intensity rugby player who suffered a complex shoulder dislocation, ensuring a safe, accelerated return to competitive play within six months.',
-        'Managed the recovery of a marathon runner plagued by recurring calf strains, identifying and correcting underlying biomechanical gait imbalances.'
-    ],
     approach: 'His approach integrates acute sports trauma management with long-term rehabilitative strength programming, focusing on restoring stability and capacity to injured structures.',
     specialisations: ['Sports Medicine', 'Dry Needling', 'Sports Massage'],
     services: ['Sports Injury Assessment', 'Pitchside First Aid', 'Dry Needling Therapy', 'Exercise Prescription']
@@ -366,10 +358,6 @@ He is a firm believer that incremental, sustainable physical activity is the cor
 
 She holds advanced certifications in Deep Tissue Massage, Sports Massage, and Remedial Back Therapy. Keri thrives on a holistic therapeutic approach, crafting individual sessions that directly address the specific stressors her clients face in their daily lives, helping them restore both physical comfort and well-being.`,
     philosophy: 'Keri views massage as an essential tool to reconnect the mind and body, utilizing therapeutic touch to alleviate physical holdings and encourage a state of deep nervous system regulation.',
-    caseStudies: [
-        'Helped a retired dancer regain significant hip mobility and reduced chronic muscular tension developed over two decades of professional performance.',
-        'Enabled a corporate executive suffering from severe shoulder strain due to static desk work to maintain full range of motion through a consistent monthly remedial maintenance routine.'
-    ],
     approach: 'Keri uses an intuitive, empathetic style. She carefully listens to the client’s physical history and responses during treatment, blending gentle tissue release with targeted, deeper work to resolve tension patterns.',
     specialisations: ['Swedish Massage', 'Deep Tissue', 'Sports Massage', 'Remedial Back Therapy'],
     services: ['Swedish Relaxation', 'Deep Tissue Remedial Therapy', 'Sports Injury Recovery']
@@ -384,10 +372,6 @@ She holds advanced certifications in Deep Tissue Massage, Sports Massage, and Re
 
 Understanding that daily movement is fundamentally predicated on foot health, Clare provides compassionate, meticulous clinical care coupled with practical, personalized advice to help clients manage their foot health effectively at home.`,
     philosophy: 'Clare champions proactive foot health as the indispensable foundation for maintaining autonomy, activity, and independence throughout the aging process.',
-    caseStudies: [
-        'Treated an elderly patient with recurring, highly painful calluses that significantly restricted their walking, resulting in improved gait, reduced pain scores, and increased daily activity levels.',
-        'Provided comprehensive diabetic foot monitoring and management for a client, identifying early-stage skin compromises and providing essential preventive intervention.'
-    ],
     approach: 'Clare combines meticulous clinical precision with highly practical, lifestyle-matched advice, respecting that effective foot care must be inherently sustainable for the client.',
     specialisations: ['Diabetic Foot Care', 'Corn Removal', 'Elderly Foot Care'],
     services: ['Corn & Callus Removal', 'Diabetic Foot Screening', 'Routine Nail Care', 'Verruca Treatment']
@@ -402,10 +386,6 @@ Understanding that daily movement is fundamentally predicated on foot health, Cl
 
 She frequently works with clients seeking natural, holistic interventions for chronic, hard-to-manage issues including skin conditions, anxiety disorders, functional digestive impediments, and debilitating migraine syndromes.`,
     philosophy: 'Magdalena views health as a delicate, dynamic equilibrium of internal energy. She utilizes a synthesize approach, harmonizing the body’s internal systems through acupuncture and herbal medicine to facilitate true healing processes.',
-    caseStudies: [
-        'Guided a client with chronic, frequent migraine episodes through a twelve-week acupuncture treatment course, resulting in a 60% reduction in episode frequency and diminished symptom severity.',
-        'Supported a patient through a complex skin condition management program, combining medicinal herbal formulas with strategic acupuncture points to achieve long-term skin clarity.'
-    ],
     approach: 'Her diagnostic methodology is deeply rooted in traditional TCM diagnostics, which she then adapts to the unique energetic constitution and lifestyle constraints of each individual patient, ensuring the treatment is deeply personalized.',
     specialisations: ['Acupuncture', 'Chinese Herbal Medicine'],
     services: ['Traditional Acupuncture', 'Chinese Herbal Medicine Consultation', 'Migraine Management']
@@ -420,10 +400,6 @@ She frequently works with clients seeking natural, holistic interventions for ch
 
 Her methodology is grounded in contemporary neuroscience, assisting clients in identifying and neutralizing subconscious roadblocks in a supportive, non-judgmental environment. Her work empowers clients to leverage their own inner resources to overcome persistent challenges.`,
     philosophy: 'Alexandra fundamentally believes in the brain’s inherent neuroplasticity. Her philosophy centers on empowering clients to rewrite their own internal narratives, moving them from a state of being "problem-focused" to consciously "solution-focused".',
-    caseStudies: [
-        'Enabled a high-achieving student paralyzed by examination anxiety to successfully re-frame their cognitive response, leading to significantly enhanced preparation capability and academic performance.',
-        'Assisted a client suffering from long-term chronic insomnia to successfully identify and restructure maladaptive sleep habits through a blend of cognitive reframing and hypnotic relaxation techniques, restoring a healthy sleep cycle.'
-    ],
     approach: 'Alexandra provides a neutral, deeply safe space for collaborative exploration, Utilizing neuroscience-informed techniques to help clients systematically identify and move towards their desired state.',
     specialisations: ['Hypnotherapy', 'Sleep Therapy', 'Gut Directed Hypnotherapy'],
     services: ['Solution-Focused Hypnotherapy', 'Anxiety & Stress Management', 'Sleep Therapy']

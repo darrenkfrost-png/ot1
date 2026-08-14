@@ -65,7 +65,7 @@ ${urls
 </urlset>
 `;
 
-const robots = `# CT6 Wellbeing
+const robots = `# Osteopathy & Wellbeing @CT6
 User-agent: *
 Allow: /
 

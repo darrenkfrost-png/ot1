@@ -406,7 +406,7 @@ export default function AIConsultantPage() {
        const greetingOptions = [
           "Hello. I am the Clinical AI Consultant. Please describe the symptoms or issues you are experiencing.",
           "Welcome. As your virtual clinical guide, I am ready to listen. Where are you feeling pain or discomfort today?",
-          "Connection established. Let's begin the preliminary diagnosis. What brings you to CT6 Wellbeing today?"
+          "Connection established. Let's begin the preliminary diagnosis. What brings you to Osteopathy & Wellbeing @CT6 today?"
        ];
        
        const greeting = settings.aiAssistantPersona === 'clinical' ? greetingOptions[2] : settings.aiAssistantPersona === 'friendly' ? greetingOptions[1] : greetingOptions[0];
@@ -455,7 +455,7 @@ export default function AIConsultantPage() {
       const greetingOptions = [
          "Hello. I am the Clinical AI Consultant. Please describe the symptoms or issues you are experiencing.",
          "Welcome. As your virtual clinical guide, I am ready to listen. Where are you feeling pain or discomfort today?",
-         "Connection established. Let's begin the preliminary diagnosis. What brings you to CT6 Wellbeing today?"
+         "Connection established. Let's begin the preliminary diagnosis. What brings you to Osteopathy & Wellbeing @CT6 today?"
       ];
       const greeting = settings.aiAssistantPersona === 'clinical' ? greetingOptions[2] : settings.aiAssistantPersona === 'friendly' ? greetingOptions[1] : greetingOptions[0];
       
