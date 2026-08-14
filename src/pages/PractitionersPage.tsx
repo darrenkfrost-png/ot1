@@ -1,50 +1,31 @@
 import { PRACTITIONERS } from '../data';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  AlertCircle,
-  ChevronRight, 
+import {
+  ChevronRight,
   ChevronDown,
-  Home, 
-  Search, 
-  Users, 
-  Award, 
-  Heart, 
-  MessageSquare, 
+  Home,
+  Search,
+  Users,
+  Award,
+  Heart,
+  MessageSquare,
   Sparkles,
   ArrowRight,
   ShieldCheck,
   Zap,
   Star,
   BookOpen,
-  Mic,
-  MicOff,
-  Volume2,
   HelpCircle
 } from 'lucide-react';
-import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import { useState, useMemo } from 'react';
 import { cn } from '../lib/utils';
-import { useVoice } from '../hooks/useVoice';
 import { BOOKING_URL } from '../constants';
 
 export default function PractitionersPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeSpecialty, setActiveSpecialty] = useState('All');
   const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(null);
-  const [voiceFeedback, setVoiceFeedback] = useState<string | null>(null);
-
-  const { 
-    state: voiceState, 
-    transcript, 
-    finalTranscript, 
-    startListening, 
-    stopListening, 
-    speak, 
-    stopSpeaking, 
-    error: voiceError,
-    clearTranscripts,
-    isSupported
-  } = useVoice();
 
   const FAQS = [
     {
@@ -65,39 +46,6 @@ export default function PractitionersPage() {
     }
   ];
 
-  const handleVoiceCommand = useCallback((command: 'read_faq' | 'navigate_booking' | 'summarize_qualifications') => {
-    if (command === 'read_faq') {
-      setExpandedFaqIndex(0);
-      setVoiceFeedback("Reading FAQ aloud...");
-      speak("Reading frequent questions. Question 1: What qualifications do your practitioners hold? Answer: Our osteopaths have each completed a four year degree in osteopathy and are registered with the General Osteopathic Council. Our other practitioners hold their own qualifications in their fields.");
-    } else if (command === 'navigate_booking') {
-      setVoiceFeedback("Redirecting to booking portal...");
-      speak("Navigating to our secure electronic booking portal. Direct link is initiating now.");
-      setTimeout(() => {
-        window.open(BOOKING_URL, '_blank');
-      }, 3000);
-    } else if (command === 'summarize_qualifications') {
-      setVoiceFeedback("Summarizing qualifications...");
-      speak("The clinic has practised in Herne Bay since twenty twelve. Our osteopaths hold four year degrees and are registered with the General Osteopathic Council, and each practitioner's page sets out their own training.");
-    }
-  }, [speak]);
-
-  useEffect(() => {
-    if (finalTranscript) {
-      const lower = finalTranscript.toLowerCase().trim();
-      console.log("PractitionersPage Voice Command Heard:", lower);
-      if (lower.includes('read faq') || lower.includes('faq') || lower.includes('frequently') || lower.includes('read questions')) {
-        handleVoiceCommand('read_faq');
-        clearTranscripts();
-      } else if (lower.includes('navigate booking') || lower.includes('book appointment') || lower.includes('go to booking') || lower.includes('booking portal')) {
-        handleVoiceCommand('navigate_booking');
-        clearTranscripts();
-      } else if (lower.includes('summarize qualifications') || lower.includes('qualifications') || lower.includes('tell me about credentials') || lower.includes('summarize credentials')) {
-        handleVoiceCommand('summarize_qualifications');
-        clearTranscripts();
-      }
-    }
-  }, [finalTranscript, handleVoiceCommand, clearTranscripts]);
 
   const specialties = ['All', 'Osteopathy', 'Physiotherapy', 'Sports Therapy', 'Massage Therapy'];
 
@@ -353,145 +301,12 @@ export default function PractitionersPage() {
                Frequently Asked <span className="text-teal-600">Questions</span>
             </h2>
             <p className="text-slate-500 font-light text-base max-w-lg">
-               Browse our structured interactive clinic manual or activate our unified vocal assistant controls to talk through the qualifications and clinic details.
+               Learn about the qualifications and expertise of our clinical team, and find answers to frequently asked questions about treatment.
             </p>
           </div>
-          {voiceFeedback && (
-             <motion.div 
-               initial={{ opacity: 0, scale: 0.95 }}
-               animate={{ opacity: 1, scale: 1 }}
-               className="bg-teal-500 text-white rounded-2xl px-5 py-3 text-xs font-bold leading-none animate-pulse flex items-center gap-2 shadow-xl shadow-teal-500/20"
-             >
-                <Volume2 size={14} /> {voiceFeedback}
-             </motion.div>
-          )}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
-          {/* Left Column: AI Voice Assistant Control Console */}
-          <div className="bg-slate-900 text-white rounded-[2.5rem] p-8 space-y-8 relative overflow-hidden border border-slate-800 shadow-xl flex flex-col justify-between">
-            <div className="space-y-6 relative z-10">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-teal-500/10 flex items-center justify-center text-teal-400">
-                    <Mic size={18} />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-sm tracking-tight">Unified Voice Assist</h3>
-                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Interactive Command Hub</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1.5 px-3 py-1 bg-white/5 border border-white/10 rounded-full">
-                  <span className={cn(
-                    "w-2 h-2 rounded-full",
-                    voiceState === 'listening' ? "bg-emerald-500 animate-pulse shadow-[0_0_10px_#10b981]" :
-                    voiceState === 'speaking' ? "bg-teal-400 animate-pulse" :
-                    voiceState === 'error' ? "bg-red-500" : "bg-slate-500"
-                  )} />
-                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-300">
-                    {voiceState === 'listening' ? 'Listening...' :
-                     voiceState === 'speaking' ? 'Vocalizing' :
-                     voiceState === 'error' ? 'Halted' : 'Standby'}
-                  </span>
-                </div>
-              </div>
-
-              {/* Speech Level Monitor UI */}
-              <div className="h-16 bg-black/40 rounded-2xl border border-white/5 flex items-center justify-center p-4 relative overflow-hidden">
-                {voiceState === 'listening' ? (
-                  <div className="flex items-end gap-1 h-8">
-                     {[...Array(8)].map((_, i) => (
-                       <motion.div 
-                         key={i} 
-                         className="w-1.5 bg-teal-400 rounded-full"
-                         animate={{ height: [4, i % 2 === 0 ? 32 : 16, 4] }}
-                         transition={{ repeat: Infinity, duration: 0.6, delay: i * 0.08 }}
-                       />
-                     ))}
-                  </div>
-                ) : voiceState === 'speaking' ? (
-                  <div className="flex items-center gap-2 text-[11px] text-teal-300 italic">
-                     <Volume2 size={14} className="animate-bounce" /> "Narrating clinic details..."
-                  </div>
-                ) : (
-                  <div className="text-[11px] text-slate-500 font-light uppercase tracking-wider text-center">
-                     Voice recognition engine offline.
-                  </div>
-                )}
-              </div>
-
-              {/* Transcript Display */}
-              {transcript && (
-                <div className="p-4 bg-white/5 border border-white/10 rounded-2xl text-[11px] text-teal-300 font-mono leading-relaxed max-h-24 overflow-y-auto">
-                  <span className="text-slate-500 uppercase tracking-widest font-black mr-2 text-[9px]">Live:</span>
-                  "{transcript}"
-                </div>
-              )}
-
-              {voiceError && (
-                <div className="p-4 bg-red-950/40 border border-red-500/20 text-red-400 rounded-2xl text-[10px] leading-normal flex flex-col gap-2">
-                  <div className="font-bold uppercase tracking-widest flex items-center gap-1.5">
-                    <AlertCircle size={14} className="text-red-400" /> Diagnostic Warning
-                  </div>
-                  <p className="opacity-80 leading-relaxed font-light">{voiceError.split(': ')[1] || voiceError}</p>
-                </div>
-              )}
-
-              {/* Action Buttons */}
-              <div className="flex flex-col gap-3">
-                <button
-                  onClick={() => {
-                    if (voiceState === 'listening') {
-                      stopListening();
-                    } else {
-                      startListening();
-                    }
-                  }}
-                  className={cn(
-                    "w-full h-12 rounded-2xl font-black uppercase tracking-[0.25em] text-[10px] flex items-center justify-center gap-2.5 transition-all shadow-lg active:scale-95 border cursor-pointer",
-                    voiceState === 'listening' ? "bg-red-500 hover:bg-red-600 text-white border-red-400/20" : "bg-white hover:bg-slate-50 text-slate-950 border-white/10"
-                  )}
-                >
-                  {voiceState === 'listening' ? <MicOff size={14} /> : <Mic size={14} />}
-                  {voiceState === 'listening' ? 'Disconnect Mic' : 'Activate Microphone'}
-                </button>
-
-                {voiceState === 'speaking' && (
-                  <button 
-                    onClick={stopSpeaking}
-                    className="w-full h-10 rounded-xl bg-white/5 hover:bg-white/10 text-white text-[9px] font-bold uppercase tracking-widest border border-white/10 transition-all cursor-pointer"
-                  >
-                    Mute Voice Synthesis
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Simulated Assistive Prompts or Commands (Clicks triggers the action itself, super handy fallback) */}
-            <div className="mt-8 pt-6 border-t border-white/5 space-y-4">
-              <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500 block">Or Try Clicking a Simulated Action:</span>
-              <div className="grid grid-cols-1 gap-2">
-                {[
-                  { label: '"Read FAQs Now"', action: () => handleVoiceCommand('read_faq') },
-                  { label: '"Summarize Qualifications"', action: () => handleVoiceCommand('summarize_qualifications') },
-                  { label: '"Go To Online Booking Portal"', action: () => handleVoiceCommand('navigate_booking') }
-                ].map((cmd, i) => (
-                  <button 
-                    key={i}
-                    onClick={cmd.action}
-                    className="px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-teal-500/20 rounded-xl text-left text-[11px] font-medium text-slate-300 transition-all flex items-center justify-between group cursor-pointer"
-                  >
-                    <span>{cmd.label}</span>
-                    <ChevronRight size={14} className="text-slate-600 group-hover:text-teal-400 group-hover:translate-x-1 transition-all" />
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500/5 rounded-full blur-[80px] pointer-events-none"></div>
-          </div>
-
-          {/* Right Column: Accessible Accordion Section */}
-          <div className="lg:col-span-2 space-y-4">
+        <div className="space-y-4">
             {FAQS.map((faq, index) => {
               const isOpen = expandedFaqIndex === index;
               return (
@@ -547,7 +362,6 @@ export default function PractitionersPage() {
                 </div>
               );
             })}
-          </div>
         </div>
       </section>
 

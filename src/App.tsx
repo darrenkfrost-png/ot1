@@ -37,7 +37,6 @@ const PractitionersPage = lazy(() => import('./pages/PractitionersPage'));
 const GalleryPage = lazy(() => import('./pages/GalleryPage'));
 const ResourcesPage = lazy(() => import('./pages/ResourcesPage'));
 const HomePage = lazy(() => import('./pages/HomePage'));
-const AIConsultantPage = lazy(() => import('./pages/AIConsultantPage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const LocationsPage = lazy(() => import('./pages/LocationsPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
@@ -53,10 +52,8 @@ import IntroPage from './components/IntroPage';
 import IntroVideo from './components/IntroVideo';
 import PageMeta from './components/PageMeta';
 import ThemePicker from './components/ThemePicker';
-import FloatingAI from './components/FloatingAI';
 import MobileNavDock from './components/MobileNavDock';
 import Breadcrumbs from './components/Breadcrumbs';
-import VoiceController from './components/VoiceController';
 import { Logo, REPLAY_INTRO_EVENT } from './components/Logo';
 import { EmblemWatermark, SpineMotif } from './components/AnatomyMotif';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
@@ -79,7 +76,6 @@ const NAV_ITEMS = [
   { id: 'locations', label: 'Locations', icon: MapPin, path: '/locations' },
   { id: 'faq', label: 'Questions', icon: HelpCircle, path: '/faq' },
   { id: 'contact', label: 'Contact', icon: Mail, path: '/contact' },
-  { id: 'ai-clinic', label: 'AI Voice Clinic', icon: Sparkles, path: '/ai-consultant' },
 ];
 
 /**
@@ -684,8 +680,6 @@ function AppContent() {
             <VideoBackground />
             <WallpaperCanvas />
             <SettingsPanel />
-            <FloatingAI />
-            <VoiceController />
             <Suspense fallback={
               /*
                * A page's code arrives in well under a second on any normal
@@ -716,7 +710,6 @@ function AppContent() {
                 <Route path="/locations" element={<PageWrapper><LocationsPage /></PageWrapper>} />
                 <Route path="/contact" element={<PageWrapper><ContactPage /></PageWrapper>} />
                 <Route path="/faq" element={<PageWrapper><FaqPage /></PageWrapper>} />
-                <Route path="/ai-consultant" element={<PageWrapper><AIConsultantPage /></PageWrapper>} />
                 <Route path="*" element={
                   <PageWrapper>
                     <div className="flex flex-col items-center justify-center min-h-[70vh] text-center space-y-10 py-20 relative bg-white/60 backdrop-blur-3xl crystal-glass rounded-[4rem] holographic-border shadow-premium mt-12 mx-4 sm:mx-0 overflow-hidden">
