@@ -7,7 +7,7 @@ import { useAnalytics } from '../context/AnalyticsContext';
 import { cn } from '../lib/utils';
 import { useSettings } from '../context/SettingsContext';
 import { usePageContext } from '../context/PageContextContext';
-import { BOOKING_URL } from '../constants';
+import { BOOKING_URL, CLINIC } from '../constants';
 import { useToast } from '../components/ToastSystem';
 
 interface LogEntry {
@@ -27,13 +27,11 @@ export default function AIConsultantPage() {
   const [logs, setLogs] = useState<LogEntry[]>([{
     id: 'sys-start',
     sender: 'system',
-    text: 'Clinical AI initialization sequence complete. Voice interface ready.',
+    text: 'Ready when you are. Tell me what hurts, and when it started.',
     timestamp: new Date()
   }]);
   const [isProcessing, setIsProcessing] = useState(false);
    const [aiAnalysisSummary, setAiAnalysisSummary] = useState<string[]>([]);
-   const [complexityScore, setComplexityScore] = useState<number>(0);
-   const [riskStatus, setRiskStatus] = useState<'low' | 'moderate' | 'elevated'>('low');
    const [detectedAnatomy, setDetectedAnatomy] = useState<string[]>([]);
    const [inputValue, setInputValue] = useState('');
    const logsRef = useRef<HTMLDivElement>(null);
@@ -352,15 +350,9 @@ export default function AIConsultantPage() {
                setDetectedAnatomy(prev => Array.from(new Set([...prev, 'Upper Cervical', 'Temporomandibular'])));
                scoreIncrement += 20;
             }
-            
-            if (scoreIncrement > 0) {
-               setComplexityScore(prev => {
-                   const newScore = Math.min(prev + scoreIncrement, 100);
-                   if (newScore > 75) setRiskStatus('elevated');
-                   else if (newScore > 40) setRiskStatus('moderate');
-                   return newScore;
-               });
-            }
+            // scoreIncrement fed a "complexity" bar and a red/amber/green
+            // triage light. Counting keywords is not triage, so the display is
+            // gone and the tally with it.
          }
 
          addLog('ai', response);
@@ -492,13 +484,21 @@ export default function AIConsultantPage() {
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-end justify-between gap-12">
             <div className="space-y-8 max-w-3xl">
               <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-[11px] font-black uppercase tracking-[0.3em] mb-4 shadow-[0_0_30px_rgba(45,212,191,0.2)] backdrop-blur-md">
-                <ScanFace size={18} className="animate-pulse" /> Clinical Neuro-Engine v4.2
+                <ScanFace size={18} className="animate-pulse" /> Not a diagnosis
               </div>
+              {/*
+                This was headed "Intelligent Diagnosis Core", inviting the
+                visitor to "undergo a deep-layer structural assessment". It does
+                not diagnose and it does not assess anyone — it is a chat
+                assistant that helps you put symptoms into words. Naming it a
+                diagnosis on a regulated practice's site tells a patient they
+                have been examined when nobody has examined them.
+              */}
               <h1 className="text-6xl md:text-8xl font-display font-medium text-white tracking-tighter mb-4 leading-[0.85] drop-shadow-2xl">
-                Intelligent <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-emerald-300 to-teal-500 animate-gradient-x">Diagnosis Core</span>
+                Describe it <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-emerald-300 to-teal-500 animate-gradient-x">before you come in</span>
               </h1>
               <p className="text-2xl text-slate-300 font-light max-w-2xl leading-relaxed border-l-4 border-teal-500 pl-8 drop-shadow-md">
-                Engage with our state-of-the-art clinical reasoning engine. Speak naturally to undergo a deep-layer structural assessment before your physical visit.
+                Talk or type about what hurts, and this will help you put it into words for your appointment. It is not a diagnosis, and it is not a substitute for seeing a practitioner.
               </p>
             </div>
             
@@ -516,7 +516,7 @@ export default function AIConsultantPage() {
                         voiceState === 'error' ? 'Link Interrupted' : 'Engine Status'}
                     </span>
                     <span className={cn("text-lg font-bold tracking-tight", voiceState === 'error' ? 'text-red-400' : '')}>
-                       {isConsultationActive ? (isProcessing ? "Analyzing Core..." : (voiceState === 'error' ? "Mic Blocked" : "Neural Link Online")) : "System Standby"}
+                       {isConsultationActive ? (isProcessing ? "Thinking..." : (voiceState === 'error' ? "Mic Blocked" : "Listening")) : "System Standby"}
                     </span>
                   </div>
                </div>
@@ -533,7 +533,7 @@ export default function AIConsultantPage() {
                   <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
                   <span className="relative z-10 flex items-center gap-4">
                     {isConsultationActive ? <StopCircle size={24} className="group-hover:rotate-90 transition-transform" /> : <PlayCircle size={24} className="group-hover:scale-125 transition-transform" />}
-                    {isConsultationActive ? 'Terminate Session' : 'Begin Deep Consult'}
+                    {isConsultationActive ? 'Stop' : 'Start talking'}
                   </span>
                </button>
             </div>
@@ -544,11 +544,22 @@ export default function AIConsultantPage() {
 
         {/* Feature Grid for AI Consultant */}
         <section className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          {/*
+            All four of these claimed something untrue. "Trained on 10,000+
+            musculoskeletal cases" — it is a general-purpose model, trained on
+            no such thing. "Encrypted and processed locally for maximum
+            privacy" — what you say is sent off this device to an AI service,
+            and telling a patient the opposite is a data-protection problem,
+            not marketing licence. "Immediate health feedback" invites reliance
+            on it. And "directly syncs findings to our human practitioners"
+            described a referral pipeline that does not exist: nothing you type
+            here reaches anybody at the practice.
+          */}
           {[
-            { icon: Brain, title: "Neural Logic", desc: "Advanced algorithmic reasoning trained on 10,000+ musculoskeletal cases." },
-            { icon: ShieldCheck, title: "Data Privacy", desc: "All voice data is encrypted and processed locally for maximum privacy." },
-            { icon: Zap, title: "Instant Analysis", desc: "Real-time extraction of clinical markers for immediate health feedback." },
-            { icon: ClipboardList, title: "Smart Referrals", desc: "Directly syncs findings to our human practitioners for your visit." }
+            { icon: Brain, title: "Puts it into words", desc: "Helps you describe where it hurts and when, so your appointment starts further along." },
+            { icon: ShieldCheck, title: "Where it goes", desc: "What you write is sent to an AI service to generate a reply. Do not enter anything you would not want to leave this device." },
+            { icon: Zap, title: "Nobody reads it here", desc: "This is not connected to the practice. It does not book, notify anyone, or reach your practitioner." },
+            { icon: ClipboardList, title: "Bring it with you", desc: "Copy anything useful into your own notes. A real assessment happens in the room, with hands." }
           ].map((feature, i) => (
             <div key={i} className="p-10 bg-slate-900 rounded-[3rem] border border-slate-800 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] crystal-glass flex flex-col gap-6 group hover:border-teal-500/30 transition-all">
                <div className="w-16 h-16 rounded-[1.5rem] bg-teal-500/10 flex items-center justify-center text-teal-400 group-hover:bg-teal-500 group-hover:text-white transition-all duration-500 shadow-lg ring-4 ring-teal-500/5">
@@ -566,7 +577,7 @@ export default function AIConsultantPage() {
            
            <div className="lg:col-span-3 space-y-6">
               <div className="bg-slate-900/50 border border-slate-800 rounded-[2rem] p-6 supports-[backdrop-filter]:bg-slate-900/30 backdrop-blur-2xl">
-                 <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-6 flex items-center gap-2"><Cpu size={14} /> Diagnostic Parameters</h3>
+                 <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-6 flex items-center gap-2"><Cpu size={14} /> Settings</h3>
                  <ul className="space-y-4">
                     <li className="flex justify-between items-center text-sm border-b border-slate-800 pb-3">
                        <span className="text-slate-400">Persona Profile</span>
@@ -612,31 +623,43 @@ export default function AIConsultantPage() {
               </div>
 
               <div className="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-8 shadow-premium space-y-8">
+                 {/*
+                   A "Case Complexity" bar and a "Risk Assessment" traffic light
+                   used to sit here. Both were keyword counters — mention a neck
+                   and the score went up twenty. Somebody describing genuine red
+                   flags would still have been shown a calm green LOW PRIORITY,
+                   which is the one failure that actually costs somebody
+                   something. A fake triage is worse than no triage, so it is
+                   replaced by the advice a practice would really give.
+                 */}
                  <div className="space-y-4">
-                    <h4 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">Case Complexity</h4>
-                    <div className="relative h-4 bg-slate-800 rounded-full overflow-hidden">
-                       <motion.div 
-                          className={cn("h-full rounded-full transition-all duration-1000", complexityScore > 60 ? "bg-red-500" : "bg-teal-500")}
-                          initial={{ width: 0 }}
-                          animate={{ width: `${complexityScore}%` }}
-                       />
-                       <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="text-[10px] font-black text-white mix-blend-difference">{complexityScore}%</span>
-                       </div>
-                    </div>
-                 </div>
-
-                 <div className="space-y-4">
-                    <h4 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">Risk Assessment</h4>
-                    <div className={cn(
-                      "px-4 py-2 rounded-xl border flex items-center gap-3 transition-colors",
-                      riskStatus === 'elevated' ? "bg-red-500/10 border-red-500/30 text-red-400" :
-                      riskStatus === 'moderate' ? "bg-amber-500/10 border-amber-500/30 text-amber-400" :
-                      "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
-                    )}>
-                       <div className={cn("w-2 h-2 rounded-full", riskStatus === 'elevated' ? "bg-red-500" : riskStatus === 'moderate' ? "bg-amber-500" : "bg-emerald-500")} />
-                       <span className="text-xs font-bold uppercase tracking-widest">{riskStatus} Priority</span>
-                    </div>
+                    <h4 className="text-xs font-black uppercase tracking-[0.2em] text-red-400 flex items-center gap-2">
+                      <AlertCircle size={14} /> Do not wait for an appointment
+                    </h4>
+                    <p className="text-sm text-slate-400 font-light leading-relaxed">
+                      Call <strong className="text-white font-bold">999</strong> or go to A&amp;E if you have any of these:
+                    </p>
+                    <ul className="space-y-2.5">
+                      {[
+                        'Numbness around the groin, buttocks or inner thighs',
+                        'Loss of control of your bladder or bowels',
+                        'Weakness spreading in both legs or both arms',
+                        'Severe pain after a fall, crash or other major injury',
+                        'Chest pain, breathlessness, or pain with a fever',
+                      ].map((flag) => (
+                        <li key={flag} className="flex gap-3 text-sm text-slate-300 font-light leading-relaxed">
+                          <span className="mt-2 w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
+                          {flag}
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="text-xs text-slate-500 font-light leading-relaxed pt-2 border-t border-slate-800">
+                      This page cannot tell how urgent your problem is, and does not try to. If you are worried, ring the practice on{' '}
+                      <a href={`tel:${CLINIC.telephoneLink}`} className="text-teal-400 font-bold hover:text-teal-300 transition-colors">
+                        {CLINIC.telephone}
+                      </a>{' '}
+                      or call NHS 111.
+                    </p>
                  </div>
 
                  {detectedAnatomy.length > 0 && (
@@ -941,7 +964,7 @@ export default function AIConsultantPage() {
                  Human Body Hotspots
                </h3>
                <p className="text-sm text-slate-500 font-light leading-relaxed">
-                 Select an active anatomical zone directly on this diagnostic schematic to instantly feed symptom contexts into the clinical AI core.
+                 Tap where it hurts. That just adds the area to what you are describing — nothing is examined or recorded.
                </p>
              </div>
 
