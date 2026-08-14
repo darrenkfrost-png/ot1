@@ -76,8 +76,8 @@ export default function HomePage() {
             initial={{ scale: 1.15, opacity: 0 }}
             animate={{ scale: 1, opacity: 0.65 }}
             transition={{ duration: 2.5, ease: "easeOut" }}
-            src="https://images.unsplash.com/photo-1576091160550-112173f7f869?auto=format&fit=crop&q=80&w=2000"
-            alt={`Professional clinical rehabilitation at ${CLINIC.name}`}
+            src="https://images.unsplash.com/photo-1631217314831-dc169d0cb64e?auto=format&fit=crop&q=90&w=2560"
+            alt={`Clinical treatment and patient care at ${CLINIC.name}`}
             fetchPriority="high"
             decoding="async"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[40s] ease-linear"
