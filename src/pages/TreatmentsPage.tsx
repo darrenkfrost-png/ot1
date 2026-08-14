@@ -351,16 +351,21 @@ export default function TreatmentsPage() {
       <section className="bg-teal-600 rounded-[5rem] p-12 md:p-24 text-slate-950 relative overflow-hidden group">
          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 pointer-events-none"></div>
          <div className="relative z-10 max-w-4xl mx-auto text-center space-y-12">
+            {/* This was a "Clinical Pathway Finder" promising that "our algorithm will
+                suggest the most efficient treatment protocol". There was no algorithm —
+                the button pointed at the AI page, which no longer exists. Replaced with
+                the thing that actually happens: you ask, a practitioner answers. */}
             <div className="inline-flex items-center gap-3 px-6 py-2 bg-white/20 backdrop-blur-md rounded-full border border-white/30 text-[10px] font-black uppercase tracking-[0.4em]">
-               <Activity size={18} /> Optimization Tool
+               <Activity size={18} /> Not sure where to start?
             </div>
-            <h2 className="text-5xl md:text-7xl font-display font-medium tracking-tighter leading-tight">Can't decide? Use the <br/><span className="text-white">Clinical Pathway Finder.</span></h2>
+            <h2 className="text-5xl md:text-7xl font-display font-medium tracking-tighter leading-tight">Not sure which one <br/><span className="text-white">you need? Just ask.</span></h2>
             <p className="text-xl md:text-2xl font-light text-teal-950 leading-relaxed">
-               Answer three quick clinical markers and our algorithm will suggest the most efficient treatment protocol for your current status.
+               Tell us what hurts and how long it has been going on. A practitioner will tell you
+               whether we can help — and say so plainly if we cannot.
             </p>
             <div className="pt-8">
-               <Link to="/ai-consultant" className="inline-flex items-center justify-center h-20 px-16 bg-slate-950 text-white rounded-[2.5rem] font-black uppercase tracking-[0.3em] text-xs hover:-translate-y-2 transition-all shadow-3xl hover:bg-slate-900 group">
-                  Launch Pathway Finder <ChevronRight size={22} className="group-hover:translate-x-2 transition-transform" />
+               <Link to="/contact" className="inline-flex items-center justify-center h-20 px-16 bg-slate-950 text-white rounded-[2.5rem] font-black uppercase tracking-[0.3em] text-xs hover:-translate-y-2 transition-all shadow-3xl hover:bg-slate-900 group">
+                  Ask a practitioner <ChevronRight size={22} className="group-hover:translate-x-2 transition-transform" />
                </Link>
             </div>
          </div>

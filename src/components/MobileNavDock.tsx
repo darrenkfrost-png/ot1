@@ -1,8 +1,8 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, HeartPulse, Users, Mic, Calendar } from 'lucide-react';
+import { Home, HeartPulse, Users, Phone, Calendar } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useAnalytics } from '../context/AnalyticsContext';
-import { BOOKING_URL } from '../constants';
+import { BOOKING_URL, CLINIC } from '../constants';
 import { motion } from 'motion/react';
 
 export default function MobileNavDock() {
@@ -14,12 +14,6 @@ export default function MobileNavDock() {
     { label: 'Treatments', path: '/treatments', icon: HeartPulse },
     { label: 'Team', path: '/practitioners', icon: Users },
   ];
-
-  const handleVoiceTrigger = () => {
-    trackClick("Mobile Dock Voice Trigger");
-    const event = new CustomEvent('open-voice-consultation');
-    window.dispatchEvent(event);
-  };
 
   const handleBookTrigger = () => {
     trackClick("Mobile Dock Book Now");
@@ -65,21 +59,18 @@ export default function MobileNavDock() {
 
         {/* Action button collection */}
         <div className="flex items-center gap-2 flex-1 justify-end">
-          {/* Voice Command Button */}
-          <button
-            onClick={handleVoiceTrigger}
-            aria-label="Talk to the symptom guide"
+          {/* This was a pulsing "Voice AI" mic that fired an open-voice-consultation
+              event nothing listens for any more — the loudest control in the dock did
+              nothing at all. On a phone, the useful thing is dialling the clinic. */}
+          <a
+            href={`tel:${CLINIC.telephoneLink}`}
+            onClick={() => trackClick("Mobile Dock Call Clinic")}
+            aria-label={`Call the clinic on ${CLINIC.telephone}`}
             className="flex flex-col items-center justify-center p-2 rounded-2xl text-teal-400 hover:text-teal-300 transition-all hover:bg-white/5 cursor-pointer relative group shrink-0"
           >
-            <div className="relative">
-              <Mic size={19} className="group-hover:scale-110 transition-all text-teal-400 animate-pulse" />
-              <span className="absolute -top-1 -right-1 flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-500"></span>
-              </span>
-            </div>
-            <span className="text-[9px] font-black uppercase tracking-wider mt-1 text-center scale-90 text-teal-400">Voice AI</span>
-          </button>
+            <Phone size={19} className="group-hover:scale-110 transition-all text-teal-400" />
+            <span className="text-[9px] font-black uppercase tracking-wider mt-1 text-center scale-90 text-teal-400">Call</span>
+          </a>
 
           {/* Book Now persistent Call To Action */}
           <button

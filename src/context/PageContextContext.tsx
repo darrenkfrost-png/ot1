@@ -88,14 +88,6 @@ const resolveModuleMetadata = (pathname: string): Partial<PageContextData> => {
         selectedItemId: null,
         availableActions: ['send_message', 'call_clinic']
       };
-    case 'ai-consultant':
-      return {
-        moduleTitle: 'AI Voice Clinic',
-        moduleDescription: 'The neural engine providing preliminary clinical assessment and symptom analysis.',
-        category: 'AI Assistant',
-        selectedItemId: null,
-        availableActions: ['start_consultation', 'describe_symptoms', 'voice_input']
-      };
     case 'dashboard':
       return {
         moduleTitle: 'Progress Board',

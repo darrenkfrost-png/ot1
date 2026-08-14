@@ -3,9 +3,10 @@ import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { useToast } from '../components/ToastSystem';
 import { 
-  Calendar, Users, Phone, BookOpen, Clock, MapPin, Activity, Sparkles, 
-  ChevronRight, ShieldCheck, Zap, ArrowRight, TrendingUp, Brain, Award, 
-  Video, FileText, Smartphone, CheckCircle2, ScanFace, MousePointerClick, ExternalLink
+  Calendar, Users, Phone, BookOpen, Clock, MapPin, Activity, Sparkles,
+  ChevronRight, ShieldCheck, Zap, ArrowRight, TrendingUp, Brain, Award,
+  Video, FileText, Smartphone, CheckCircle2, ScanFace, MousePointerClick, ExternalLink,
+  Stethoscope, MessageSquare
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { TREATMENTS, PRACTITIONERS } from '../data';
@@ -74,18 +75,22 @@ export default function HomePage() {
         >
           <motion.img
             initial={{ scale: 1.15, opacity: 0 }}
-            animate={{ scale: 1, opacity: 0.65 }}
+            animate={{ scale: 1, opacity: 0.92 }}
             transition={{ duration: 2.5, ease: "easeOut" }}
-            src="https://images.unsplash.com/photo-1576091160645-112173f7f897?auto=format&fit=crop&q=95&w=2560&dpr=2"
-            alt={`Advanced clinical rehabilitation facility at ${CLINIC.name}`}
+            src="https://images.unsplash.com/photo-1706353399656-210cca727a33?auto=format&fit=crop&q=85&w=2400"
+            alt={`Osteopath treating a patient at ${CLINIC.name}`}
             fetchPriority="high"
             decoding="async"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[40s] ease-linear"
           />
           <div className="absolute inset-0 neural-grid opacity-[0.15] mix-blend-screen mix-blend-lighten pointer-events-none"></div>
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/85 to-transparent"></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/40 to-transparent"></div>
+          {/* The left-to-right wash is what keeps the headline legible, so it stays
+              strong. The full-width top/bottom washes were stacked on top of it and
+              between them the photograph was crushed to near-black — softened so the
+              treatment room is actually visible. */}
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/75 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/45 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/15 to-transparent"></div>
           
           {/* Animated Noise Texture */}
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
@@ -107,7 +112,10 @@ export default function HomePage() {
                </div>
             </motion.div>
             
-            <motion.h1 variants={fadeInUp} className="text-6xl md:text-9xl font-display font-medium tracking-tighter leading-[0.85] text-white mb-10 drop-shadow-2xl">
+            {/* "Transformative." is the longest word here and at text-6xl it ran off
+                the right edge of a 375px phone. Scaled from the viewport so the word
+                always fits, capped at the old desktop size. */}
+            <motion.h1 variants={fadeInUp} className="text-[clamp(2.5rem,11vw,8rem)] font-display font-medium tracking-tighter leading-[0.85] text-white mb-10 drop-shadow-2xl">
               Precise. Clinical. <br/>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-emerald-300 to-teal-500 bg-300% animate-gradient-x drop-shadow-sm">Transformative.</span>
             </motion.h1>
@@ -185,7 +193,7 @@ export default function HomePage() {
       >
         {[
           { label: "Clinical Booking", icon: Calendar, path: "/treatments", color: "bg-teal-600 border-teal-500 text-white shadow-[0_0_40px_rgba(20,184,166,0.2)]", sub: "Priority Scheduling", desc: "Instant confirmation for all clinics.", hoverColor: "group-hover:bg-teal-500" },
-          { label: "Voice AI Clinic", icon: Brain, path: "/ai-consultant", color: "bg-slate-900 border-slate-700 text-white shadow-xl", sub: "Real-Time Diagnosis", desc: "24/7 symptom analysis layer.", hoverColor: "group-hover:bg-slate-800" },
+          { label: "Our Treatments", icon: Stethoscope, path: "/treatments", color: "bg-slate-900 border-slate-700 text-white shadow-xl", sub: "What We Offer", desc: "Osteopathy, acupuncture, massage, foot care.", hoverColor: "group-hover:bg-slate-800" },
           { label: "Meet the Team", icon: Users, path: "/practitioners", color: "bg-white/60 backdrop-blur-3xl border-white/40 text-slate-900 shadow-premium", sub: "Expert Practitioners", desc: "View clinical backgrounds.", hoverColor: "group-hover:bg-white" },
           { label: "Patient Dashboard", icon: Activity, path: "/dashboard", color: "bg-white/60 backdrop-blur-3xl border-white/40 text-slate-900 shadow-premium", sub: "Recovery Hub", desc: "Track your health progress.", hoverColor: "group-hover:bg-white" }
         ].map((action, i) => (
@@ -351,8 +359,8 @@ export default function HomePage() {
                     ))}
                 </div>
 
-                <Link to="/ai-consultant" className="inline-flex items-center gap-4 bg-slate-950 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-teal-600 hover:-translate-y-1 transition-all shadow-[0_10px_30px_rgba(15,23,42,0.2)] group">
-                    Launch AI Protocol <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
+                <Link to="/practitioners" className="inline-flex items-center gap-4 bg-slate-950 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-teal-600 hover:-translate-y-1 transition-all shadow-[0_10px_30px_rgba(15,23,42,0.2)] group">
+                    Meet the Practitioners <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
                 </Link>
             </motion.div>
             
@@ -575,7 +583,7 @@ export default function HomePage() {
                {[
                  { icon: Video, title: "Video Masterclasses", count: "40+ Clips", desc: "Step-by-step guidance on postural correction and biomechanics." },
                  { icon: FileText, title: "Anatomy Guides", count: "15 PDF Books", desc: "Detailed breakdowns of spinal health and joint longevity." },
-                 { icon: Brain, title: "AI Recovery Tool", count: "Interactive", desc: "Real-time refinement of your home exercise program." },
+                 { icon: Stethoscope, title: "Exercise Plans", count: "Per Patient", desc: "The home exercises your practitioner sets for you." },
                  { icon: Smartphone, title: "Mobile Ready", count: "Always On", desc: "Access your clinical data and advice from any device." }
                ].map((item, i) => (
                  <motion.div 
@@ -757,8 +765,8 @@ export default function HomePage() {
                   We deploy secure digital clinical consultations for initial triage and rehabilitation monitoring. Speak with a structural engineer from your own environment.
                 </p>
                 <div className="flex flex-wrap gap-6 pt-4">
-                    <Link to="/ai-consultant" className="bg-white text-slate-950 px-10 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest border border-transparent hover:bg-teal-50 transition-all flex items-center gap-3 shadow-xl hover:-translate-y-1">
-                       Describe your symptoms <Brain size={18} className="text-teal-600" />
+                    <Link to="/contact" className="bg-white text-slate-950 px-10 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest border border-transparent hover:bg-teal-50 transition-all flex items-center gap-3 shadow-xl hover:-translate-y-1">
+                       Ask us a question <MessageSquare size={18} className="text-teal-600" />
                     </Link>
                     <a
                       href={BOOKING_URL}
@@ -832,8 +840,8 @@ export default function HomePage() {
             >
               Book an appointment <ArrowRight size={28} className="group-hover:translate-x-2 transition-transform" />
             </a>
-            <Link to="/ai-consultant" className="w-full sm:w-auto h-24 px-14 bg-white/5 backdrop-blur-3xl text-white border border-white/15 hover:border-white/30 rounded-[3rem] font-bold text-xl hover:bg-white/10 transition-all flex items-center justify-center gap-5 group shadow-2xl hover:-translate-y-1">
-              Voice Diagnostic <Brain size={26} className="text-teal-400 group-hover:rotate-12 transition-transform opacity-80 group-hover:opacity-100" />
+            <Link to="/contact" className="w-full sm:w-auto h-24 px-14 bg-white/5 backdrop-blur-3xl text-white border border-white/15 hover:border-white/30 rounded-[3rem] font-bold text-xl hover:bg-white/10 transition-all flex items-center justify-center gap-5 group shadow-2xl hover:-translate-y-1">
+              Talk to us first <MessageSquare size={26} className="text-teal-400 group-hover:rotate-12 transition-transform opacity-80 group-hover:opacity-100" />
             </Link>
           </div>
 

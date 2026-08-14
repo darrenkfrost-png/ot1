@@ -163,13 +163,13 @@ export const CommandProvider = ({ children }: { children: ReactNode }) => {
          voicePhrases: ['open treatments', 'view treatments', 'show treatments']
       },
       {
-         id: 'nav.voice',
-         label: 'Open AI Voice Clinic',
-         description: 'Navigates to the AI Voice Consultant page.',
+         id: 'nav.contact',
+         label: 'Contact the clinic',
+         description: 'Navigates to the contact page.',
          category: 'navigation',
-         handler: () => navigate('/ai-consultant'),
+         handler: () => navigate('/contact'),
          shortcut: ['ctrl', 'Enter'],
-         voicePhrases: ['open ai clinic', 'start voice ai', 'voice diagnostic', 'ai consultant']
+         voicePhrases: ['contact', 'contact us', 'get in touch', 'ask a question']
       }
     ];
 

@@ -27,7 +27,6 @@ export default function Breadcrumbs() {
         case 'resources': return 'Patient Resources';
         case 'locations': return 'Locations';
         case 'contact': return 'Contact Us';
-        case 'ai-consultant': return 'AI Voice Clinic';
         case 'dashboard': return 'Progress Board';
         default: return path.charAt(0).toUpperCase() + path.slice(1);
       }

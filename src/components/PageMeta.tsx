@@ -58,11 +58,6 @@ const STATIC_META: Record<string, Meta> = {
     description:
       'Illustrated guides to sciatica, spinal anatomy and recovery, plus a look inside the clinic.',
   },
-  '/ai-consultant': {
-    title: `AI Symptom Guide | ${SITE_NAME}`,
-    description:
-      'Describe your symptoms and get a preliminary steer on which treatment may suit — never a diagnosis, and never a substitute for seeing a clinician.',
-  },
   '/dashboard': {
     title: `Your Progress | ${SITE_NAME}`,
     description: 'Track your rehabilitation progress between appointments.',
@@ -174,7 +169,6 @@ export default function PageMeta() {
         locations: 'Locations',
         contact: 'Contact',
         faq: 'Questions',
-        'ai-consultant': 'AI Symptom Guide',
         dashboard: 'Your Progress',
       };
       crumbs.push({
