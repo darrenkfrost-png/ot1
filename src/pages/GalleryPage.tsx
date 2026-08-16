@@ -164,7 +164,7 @@ export default function GalleryPage() {
               className="aspect-[788/1400] rounded-[2rem] overflow-hidden shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] hover:shadow-premium transition-all cursor-pointer relative group border border-white/60 crystal-glass holographic-border"
               onClick={() => setSelectedIndex(GALLERY_IMAGES.indexOf(src))}
             >
-              <img src={src} alt={`${CLINIC.name} patient guide ${index + 1} — open to read in full`} loading="lazy" decoding="async" className="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-transform duration-700" />
+              <img src={src} alt={`${CLINIC.name} patient guide ${index + 1} — open to read in full`} loading="lazy" decoding="async" width={788} height={1400} className="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-transform duration-700" />
               <div className="absolute inset-0 bg-slate-950/0 group-hover:bg-slate-950/30 transition-all duration-500 flex items-center justify-center">
                 <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all transform scale-50 group-hover:scale-100 flex items-center justify-center text-white">
                   <Maximize2 size={20} />
@@ -203,7 +203,7 @@ export default function GalleryPage() {
           }}
           className="relative flex-1 w-full aspect-video rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl group cursor-pointer"
         >
-          <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=1000" loading="lazy" decoding="async" className="w-full h-full object-cover opacity-60 group-hover:scale-110 transition-transform duration-1000" alt="Clinic tour video" />
+          <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=1000" loading="lazy" decoding="async" width={1000} height={563} className="w-full h-full object-cover opacity-60 group-hover:scale-110 transition-transform duration-1000" alt="Clinic tour video" />
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-20 h-20 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 flex items-center justify-center group-hover:scale-110 transition-transform shadow-2xl">
               <Play size={32} fill="white" className="ml-1" />
@@ -252,6 +252,8 @@ export default function GalleryPage() {
               transition={{ rotate: { duration: 0.35, ease: [0.22, 1, 0.36, 1] } }}
               src={GALLERY_IMAGES[selectedIndex]}
               alt={`${CLINIC.name} patient guide ${selectedIndex + 1} of ${GALLERY_IMAGES.length}`}
+              width={788}
+              height={1400}
               /*
                * A rotated element keeps its original layout box, so at 90 or
                * 270 degrees the picture would spill off the screen unless the

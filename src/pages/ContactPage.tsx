@@ -28,11 +28,33 @@ export default function ContactPage() {
    * Success is now claimed only when the server confirms delivery. Anything
    * else says so and offers a route that does work.
    */
+  const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setSendFailed(false);
     trackClick("Contact Form Submission Started");
+
+    // Client-side validation
+    if (!formData.name.trim()) {
+      setSendFailed(true);
+      showToast('Please enter your name.', 'error');
+      setIsSubmitting(false);
+      return;
+    }
+    if (!isValidEmail(formData.email)) {
+      setSendFailed(true);
+      showToast('Please enter a valid email address.', 'error');
+      setIsSubmitting(false);
+      return;
+    }
+    if (!formData.message.trim()) {
+      setSendFailed(true);
+      showToast('Please enter your message.', 'error');
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
       const response = await fetch('/api/contact', {
@@ -45,6 +67,7 @@ export default function ContactPage() {
 
       if (response.ok && result.ok) {
         setIsSuccess(true);
+        setFormData({ name: '', email: '', phone: '', subject: 'General Inquiry', message: '' });
         showToast('Message sent. We will come back to you as soon as we can.', 'success');
         trackClick('Contact Form Submission Success');
       } else {

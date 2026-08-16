@@ -81,6 +81,8 @@ export default function HomePage() {
             alt={`Osteopath treating a patient at ${CLINIC.name}`}
             fetchPriority="high"
             decoding="async"
+            width={2400}
+            height={1350}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[40s] ease-linear"
           />
           <div className="absolute inset-0 neural-grid opacity-[0.15] mix-blend-screen mix-blend-lighten pointer-events-none"></div>
