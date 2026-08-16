@@ -96,7 +96,7 @@ export default function DashboardPage() {
       osc.start();
       osc.stop(ctx.currentTime + duration);
     } catch (e) {
-      console.log("Audio feedback blocked:", e);
+      // Audio playback blocked by browser policy — fail silently
     }
   }, []);
 
@@ -133,7 +133,7 @@ export default function DashboardPage() {
       setIsCameraActive(true);
       showToast("Accessing video sensor. Live ROM calibration crosshair engaged.", "success");
     } catch (err) {
-      console.warn("Camera streaming not supported or blocked by sandbox:", err);
+      // Camera not available — show fallback vector grid
       showToast("Video feed restricted in preview. Engaged vector calibration wireframe grid.", "info");
       setIsCameraActive(true); // Engages the elegant vector simulation
     }

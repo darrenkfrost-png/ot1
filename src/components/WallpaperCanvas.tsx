@@ -16,7 +16,6 @@ const WallpaperCanvas: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log("WallpaperCanvas: initializing for mode:", settings.activeWallpaper);
     if (!canvasRef.current) return;
     
     if (settings.activeWallpaper === 'none' || settings.activeWallpaper === 'static-image' || settings.activeWallpaper === 'video') {
