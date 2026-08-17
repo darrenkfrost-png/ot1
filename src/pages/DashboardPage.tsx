@@ -39,6 +39,7 @@ import {
 import { cn } from '../lib/utils';
 import { useAnalytics } from '../context/AnalyticsContext';
 import { useToast } from '../components/ToastSystem';
+import { CLINIC } from '../data/clinic';
 
 interface AuditData {
   overallHealth: number;
@@ -1042,27 +1043,27 @@ export default function DashboardPage() {
 
                       {/* PHYSICAL-LIKE SLIP */}
                       <div className="bg-slate-950/60 p-4 rounded-2xl border border-slate-900 font-mono text-[11px] text-slate-300 space-y-3 relative">
-                        <div className="absolute top-2 right-3 text-[7px] text-slate-600 uppercase font-black">CT6 OFFICIAL OUTTAKE</div>
+                        <div className="absolute top-2 right-3 text-[7px] text-slate-600 uppercase font-black">Example — not a clinical record</div>
                         <div className="border-b border-dashed border-slate-800 pb-2">
                           <div className="flex justify-between">
                             <span className="text-slate-500">PATIENT:</span>
-                            <span className="text-white font-bold">RICHARD KENT</span>
+                            <span className="text-white font-bold">Your name</span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-slate-500">CLINIC:</span>
-                            <span className="text-white">CANTERBURY (ID: CT6-928)</span>
+                            <span className="text-white">{CLINIC.address.town} ({CLINIC.address.postcode})</span>
                           </div>
                         </div>
                         
                         <div className="space-y-1">
                           <div className="flex justify-between">
-                            <span className="text-slate-500">FLEXION ROM値:</span>
+                            <span className="text-slate-500">FLEXION ROM:</span>
                             <span className={cn(romNeckFlexion >= 65 ? "text-emerald-400" : "text-amber-500")}>
                               {romNeckFlexion}° / 80° {romNeckFlexion >= 65 ? "(OK)" : "(LIMIT)"}
                             </span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-slate-500">ROTATION ROM値:</span>
+                            <span className="text-slate-500">ROTATION ROM:</span>
                             <span className={cn(romNeckRotation >= 70 ? "text-emerald-400" : "text-amber-500")}>
                               {romNeckRotation}° / 90° {romNeckRotation >= 70 ? "(OK)" : "(LIMIT)"}
                             </span>
@@ -1085,27 +1086,8 @@ export default function DashboardPage() {
                           </div>
                         </div>
                         
-                        <div className="border-t border-dashed border-slate-800 pt-2 text-[8px] text-slate-500 text-center uppercase tracking-wider leading-relaxed">
-                          Assigned crypt index:<br/>
-                          9823-7412-CT6-SECURE-A
-                        </div>
                       </div>
 
-                      <div className="flex justify-center relative">
-                        {/* Mock QR Code in SVG */}
-                        <svg className="w-24 h-24 bg-white p-2.5 rounded-2xl" viewBox="0 0 100 100">
-                          <path d="M5,5 h20 v20 h-20 z M15,15 h-5 v-5 h5 z" fill="#020617"/>
-                          <path d="M75,5 h20 v20 h-20 z M85,15 h-5 v-5 h5 z" fill="#020617"/>
-                          <path d="M5,75 h20 v20 h-20 z M15,85 h-5 v-5 h5 z" fill="#020617"/>
-                          <rect x="35" y="35" width="30" height="30" fill="#020617" opacity="0.8"/>
-                          <rect x="10" y="35" width="10" height="5" fill="#020617"/>
-                          <rect x="45" y="10" width="15" height="10" fill="#020617"/>
-                          <rect x="80" y="45" width="10" height="15" fill="#020617"/>
-                          <rect x="25" y="55" width="15" height="5" fill="#020617"/>
-                          <rect x="55" y="80" width="20" height="5" fill="#020617"/>
-                        </svg>
-                        <div className="absolute inset-0 bg-teal-400/5 blur-xl rounded-full opacity-60 pointer-events-none animate-pulse"></div>
-                      </div>
 
                       <div className="flex gap-3">
                         <button 

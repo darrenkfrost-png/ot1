@@ -41,7 +41,6 @@ interface Settings {
   notificationSound: boolean;
   notificationDuration: number;
   showLogoCycling: boolean;
-  clinicLocationPreference: 'all' | 'canterbury' | 'herne-bay';
   showClinicalStats: boolean;
   dashboardLayout: 'grid' | 'list' | 'dense';
   colorAccent: string;
@@ -103,7 +102,6 @@ const defaultSettings: Settings = {
   notificationSound: true,
   notificationDuration: 5000,
   showLogoCycling: true,
-  clinicLocationPreference: 'all',
   showClinicalStats: true,
   dashboardLayout: 'grid',
   colorAccent: '#14b8a6',

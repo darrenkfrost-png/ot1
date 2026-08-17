@@ -430,18 +430,6 @@ export default function SettingsPanel() {
                            <div className="space-y-10">
                                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                                    <div className="space-y-4">
-                                      <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-600 block">Default Clinic Bias</label>
-                                      <select 
-                                        value={settings.clinicLocationPreference}
-                                        onChange={(e) => updateSetting('clinicLocationPreference', e.target.value as any)}
-                                        className="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl text-sm font-bold text-slate-700 focus:border-teal-500 outline-none transition-all"
-                                      >
-                                        <option value="all">All Canterbury Locations</option>
-                                        <option value="canterbury">Canterbury Central (Lead)</option>
-                                        <option value="herne-bay">Herne Bay Annex</option>
-                                      </select>
-                                   </div>
-                                   <div className="space-y-4">
                                       <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-600 block">Dashboard Layout</label>
                                       <div className="flex bg-slate-50 p-1.5 rounded-2xl w-full border border-slate-100">
                                           {['grid', 'list', 'dense'].map(l => (
