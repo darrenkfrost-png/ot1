@@ -252,7 +252,7 @@ export default function HomePage() {
                  <span className="text-[10px] font-black uppercase tracking-[0.3em]">The CT6 Standard</span>
               </div>
               <h2 className="text-5xl font-display font-medium tracking-tight text-slate-950 leading-[1.1]">A Multi-Tiered Approach to <span className="underline decoration-teal-300 underline-offset-8">Longevity</span>.</h2>
-              <p className="text-xl text-slate-500 font-light leading-relaxed">
+              <p className="text-xl text-slate-400 font-light leading-relaxed">
                 We do not mask symptoms. We mathematically isolate the mechanical root cause and engineer recovery pathways that prioritize long-term physiological resilience.
               </p>
               <div className="pt-6">
@@ -327,7 +327,7 @@ export default function HomePage() {
                   <h2 className="text-5xl md:text-6xl font-display font-medium text-slate-900 tracking-tight leading-[1.1]">
                     Real-time Data for <br/> <span className="relative inline-block"><span className="relative z-10 text-slate-950">Peak Performance</span><div className="absolute bottom-2 left-0 right-0 h-4 bg-teal-300/40 -z-0 -rotate-2"></div></span>.
                   </h2>
-                  <p className="text-xl text-slate-500 font-light leading-relaxed max-w-md drop-shadow-sm">
+                  <p className="text-xl text-slate-400 font-light leading-relaxed max-w-md drop-shadow-sm">
                     Our interconnected ecosystem monitors local clinic activity, success rates, and availability to give you the most accurate triage and recovery pathway.
                   </p>
                 </div>
@@ -417,7 +417,7 @@ export default function HomePage() {
                 <Users size={16} className="text-teal-400" /> Clinical Faculty
               </div>
               <h2 className="text-6xl font-display font-medium text-slate-900 tracking-tight leading-[1.05]">The Elite Roster.</h2>
-              <p className="text-2xl text-slate-500 font-light max-w-2xl leading-relaxed">Our practitioners are relentlessly vetted for their deep anatomical mastery and commitment to evidence-based protocol.</p>
+              <p className="text-2xl text-slate-400 font-light max-w-2xl leading-relaxed">Our practitioners are relentlessly vetted for their deep anatomical mastery and commitment to evidence-based protocol.</p>
             </motion.div>
             <Link to="/practitioners" className="shrink-0 px-10 py-5 bg-white border border-slate-200 text-slate-900 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-slate-950 hover:border-slate-950 hover:text-white transition-all shadow-premium flex items-center gap-3 group">
               View All Experts <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
@@ -576,7 +576,7 @@ export default function HomePage() {
                     <svg className="absolute w-full h-4 -bottom-1 left-0 text-teal-200/50 -z-0" viewBox="0 0 100 20" preserveAspectRatio="none"><path d="M0 10 Q50 20 100 10" fill="none" stroke="currentColor" strokeWidth="8"/></svg>
                   </span>.
                 </h2>
-                <p className="text-2xl text-slate-500 font-light leading-relaxed max-w-xl">
+                <p className="text-2xl text-slate-400 font-light leading-relaxed max-w-xl">
                   We believe a well-informed patient recovers exponentially faster. Access our technical hub to maintain your physical resilience at home.
                 </p>
             </div>
@@ -674,7 +674,7 @@ export default function HomePage() {
               <MapPin size={16} className="text-teal-600" /> Clinical Reach
             </span>
             <h2 className="text-5xl md:text-6xl font-display font-medium text-slate-900 tracking-tight leading-tight">Where to <br/>find us.</h2>
-            <p className="text-xl text-slate-500 font-light leading-relaxed max-w-2xl mx-auto">
+            <p className="text-xl text-slate-400 font-light leading-relaxed max-w-2xl mx-auto">
               One clinic, on the High Street in Herne Bay.
             </p>
         </div>
