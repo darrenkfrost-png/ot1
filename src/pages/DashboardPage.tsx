@@ -405,7 +405,7 @@ export default function DashboardPage() {
       <section className="space-y-6">
         <div className="flex items-center gap-3 ml-4">
             <TrendingUp size={24} className="text-teal-600" />
-            <h2 className="text-3xl font-display font-bold text-slate-900 tracking-tight">Personal Health Progress</h2>
+            <h2 className="text-3xl font-display font-bold text-slate-50 tracking-tight">Personal Health Progress</h2>
         </div>
         
         <div className="bg-white/60 backdrop-blur-3xl p-8 lg:p-12 rounded-[3.5rem] shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] border border-white/60 relative overflow-hidden group crystal-glass holographic-border">
@@ -416,8 +416,8 @@ export default function DashboardPage() {
                {/* Left Controls/Stats */}
                <div className="lg:col-span-1 flex flex-col justify-between space-y-8">
                   <div className="space-y-4">
-                      <h3 className="text-xl font-bold text-slate-800">Cervical Spine Rehabilitation</h3>
-                      <p className="text-sm text-slate-500 font-light leading-relaxed">
+                      <h3 className="text-xl font-bold text-slate-100">Cervical Spine Rehabilitation</h3>
+                      <p className="text-sm text-slate-300 font-light leading-relaxed">
                           Your weekly mobility and core strength levels show positive trajectory. Real-time updates depend on your daily exercise completions.
                       </p>
                   </div>
@@ -431,7 +431,7 @@ export default function DashboardPage() {
                      ].map((stat, i) => (
                          <div key={i} className="flex items-center justify-between p-4 rounded-2xl bg-white border border-slate-100/80 shadow-sm hover:shadow-lg transition-all cursor-default">
                              <div>
-                                 <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{stat.label}</div>
+                                 <div className="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-1">{stat.label}</div>
                                  <div className="text-xs text-slate-500 font-medium">{stat.desc}</div>
                              </div>
                              <div className={cn("text-xl font-bold", stat.color)}>{stat.val}</div>
@@ -554,7 +554,7 @@ export default function DashboardPage() {
 
                         <div className="space-y-2">
                           <span className="text-[10px] uppercase font-black text-teal-600 tracking-widest">Clinical Milestone Phase 0{selectedMilestone + 1}</span>
-                          <h3 className="text-2xl font-bold font-display text-slate-900 tracking-tight">
+                          <h3 className="text-2xl font-bold font-display text-slate-100 tracking-tight">
                             {['Inflammation Reduced (Acute Relief)', 'Physiological Range of Motion', 'Active Load Resiliency', 'Functional Checkout & Discharge'][selectedMilestone]}
                           </h3>
                         </div>
@@ -775,7 +775,7 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
                 <div className="flex justify-between items-center text-sm">
-                  <span className="font-bold text-slate-700">Cervical Flexion ROM</span>
+                  <span className="font-bold text-slate-200">Cervical Flexion ROM</span>
                   <span className="font-mono text-indigo-600 font-bold">{romNeckFlexion}° <span className="text-xs text-slate-400">/ 80°</span></span>
                 </div>
                 <input

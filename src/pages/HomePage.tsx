@@ -424,7 +424,7 @@ export default function HomePage() {
               <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-slate-950 text-white rounded-full text-[10px] font-black uppercase tracking-[0.3em] shadow-lg shadow-slate-900/20">
                 <Users size={16} className="text-teal-400" /> Clinical Faculty
               </div>
-              <h2 className="text-6xl font-display font-medium text-slate-900 tracking-tight leading-[1.05]">The Elite Roster.</h2>
+              <h2 className="text-6xl font-display font-medium text-slate-50 tracking-tight leading-[1.05]">The Elite Roster.</h2>
               <p className="text-2xl text-slate-400 font-light max-w-2xl leading-relaxed">Our practitioners are relentlessly vetted for their deep anatomical mastery and commitment to evidence-based protocol.</p>
             </motion.div>
             <Link to="/practitioners" className="shrink-0 px-10 py-5 bg-white border border-slate-200 text-slate-900 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-slate-950 hover:border-slate-950 hover:text-white transition-all shadow-premium flex items-center gap-3 group">
@@ -458,7 +458,7 @@ export default function HomePage() {
                   <div className="px-4 flex items-center justify-between opacity-70 group-hover:opacity-100 transition-opacity">
                      <div className="flex gap-2 items-center">
                         <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-pulse"></div>
-                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Available Today</span>
+                        <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Available Today</span>
                      </div>
                      <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 opacity-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500 -rotate-45 group-hover:rotate-0">
                         <ArrowRight size={16} />
@@ -527,7 +527,7 @@ export default function HomePage() {
                           <p className="text-slate-400 text-sm font-light leading-relaxed mb-6 group-hover:text-slate-300 transition-colors">{t.desc}</p>
                           <ul className="grid grid-cols-2 gap-4 pb-2">
                              {["Clinical Assessment", "Targeted Rehab", "Digital Plan", "Support Hub"].map((item, idx) => (
-                               <li key={idx} className="flex items-center gap-2 text-[10px] font-black text-slate-500 group-hover:text-slate-400 uppercase tracking-widest transition-colors">
+                               <li key={idx} className="flex items-center gap-2 text-[10px] font-black text-slate-300 group-hover:text-slate-200 uppercase tracking-widest transition-colors">
                                   <CheckCircle2 size={12} className="text-teal-500" /> {item}
                                </li>
                              ))}
