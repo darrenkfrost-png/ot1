@@ -27,7 +27,9 @@ import {
   Maximize,
   Minimize,
   ExternalLink,
-  HelpCircle
+  HelpCircle,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import { cn } from './lib/utils';
 /*
@@ -237,7 +239,7 @@ const Sidebar = ({ isCollapsed, onToggle, isMobile, isOpenMobile, onCloseMobile 
   </>
 );
 
-const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile }: { isCollapsed: boolean; isMobile: boolean; onOpenMobile: () => void; isOpenMobile: boolean }) => {
+const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile, onEnterImmersive }: { isCollapsed: boolean; isMobile: boolean; onOpenMobile: () => void; isOpenMobile: boolean; onEnterImmersive: () => void }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const { showToast } = useToast();
   const { commands, executeCommand } = useCommand();
@@ -301,6 +303,20 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile }: { isColla
               <Menu size={24} />
             </button>
           )}
+          {/*
+            Clears the screen of everything the clinic's own interface draws -
+            this bar and the menu down the left - so the page itself can be
+            read without a frame around it. The way back is a matching button
+            that stays on screen, plus the Escape key.
+          */}
+          <button
+            onClick={onEnterImmersive}
+            className="p-2.5 -ml-1 shrink-0 rounded-xl text-slate-400 hover:text-teal-600 hover:bg-slate-100 focus-visible:outline-teal-500 cursor-pointer transition-colors"
+            aria-label="Hide the menus for a clear, full-screen view"
+            title="Hide the menus (Esc to bring them back)"
+          >
+            <EyeOff size={20} />
+          </button>
           <div className="relative group w-full md:w-[320px] lg:w-[400px] flex-1 z-50">
             <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors" size={18} />
             <input
@@ -429,6 +445,16 @@ const PageWrapper = ({ children }: { children: React.ReactNode }) => {
 const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () => void }) => {
   const [isMobile, setIsMobile] = useState(false);
   const [isOpenMobile, setIsOpenMobile] = useState(false);
+  /*
+   * Immersive mode: everything the app draws around the page - the top bar,
+   * the left menu, the mobile dock - is taken off the screen so the content
+   * has the full window to itself.
+   *
+   * Deliberately not remembered between visits. Someone who lands on a site
+   * with all of its navigation already hidden has no way to know what is
+   * missing, so each visit starts with the menus present.
+   */
+  const [isImmersive, setIsImmersive] = useState(false);
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -440,45 +466,69 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // Escape is the reflex for "give me the normal screen back", and it is the
+  // way out for anyone who cannot see or reach the restore button.
+  useEffect(() => {
+    if (!isImmersive) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsImmersive(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isImmersive]);
+
   return (
     <div className="min-h-screen bg-transparent flex flex-col relative w-full overflow-x-clip">
       <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[var(--z-toast)] focus:px-4 focus:py-2 focus:bg-teal-600 focus:text-white focus:rounded-lg focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
         Skip to main content
       </a>
-      <Sidebar 
-        isCollapsed={isCollapsed} 
-        onToggle={onToggle} 
-        isMobile={isMobile}
-        isOpenMobile={isOpenMobile}
-        onCloseMobile={() => setIsOpenMobile(false)}
-      />
-      <div 
+      {!isImmersive && (
+        <Sidebar
+          isCollapsed={isCollapsed}
+          onToggle={onToggle}
+          isMobile={isMobile}
+          isOpenMobile={isOpenMobile}
+          onCloseMobile={() => setIsOpenMobile(false)}
+        />
+      )}
+      <div
         className="min-h-screen flex flex-col relative w-full"
-        style={{ 
-          paddingLeft: isMobile ? '0px' : (isCollapsed ? 'var(--layout-sidebar-collapsed-width)' : 'var(--layout-sidebar-width)'),
+        style={{
+          // In immersive mode there is no menu down the left, so the space it
+          // was being held open for is given back to the page.
+          paddingLeft: (isMobile || isImmersive) ? '0px' : (isCollapsed ? 'var(--layout-sidebar-collapsed-width)' : 'var(--layout-sidebar-width)'),
           zIndex: 'var(--z-content)',
           transitionProperty: 'padding-left',
           transitionDuration: 'var(--layout-transition-duration)',
           transitionTimingFunction: 'var(--layout-transition-ease)'
         }}
       >
-        <Header 
-          isCollapsed={isCollapsed} 
-          isMobile={isMobile}
-          onOpenMobile={() => setIsOpenMobile(true)}
-          isOpenMobile={isOpenMobile}
-        />
-        <main 
-          className="flex-1 px-[var(--layout-shell-padding)] pb-[calc(100px+var(--layout-safe-area))] pt-[var(--layout-main-offset-top)] max-w-[var(--layout-content-max-width)] mx-auto w-full relative z-[var(--z-content)]"
+        {!isImmersive && (
+          <Header
+            isCollapsed={isCollapsed}
+            isMobile={isMobile}
+            onOpenMobile={() => setIsOpenMobile(true)}
+            isOpenMobile={isOpenMobile}
+            onEnterImmersive={() => setIsImmersive(true)}
+          />
+        )}
+        <main
+          className="flex-1 px-[var(--layout-shell-padding)] pb-[calc(100px+var(--layout-safe-area))] max-w-[var(--layout-content-max-width)] mx-auto w-full relative z-[var(--z-content)]"
           role="main"
           id="main-content"
+          style={{
+            // The top offset exists only to clear the fixed header. With the
+            // header gone it would be a band of empty space at the top of the
+            // page, which is the opposite of what this mode is for.
+            paddingTop: isImmersive ? 'calc(var(--layout-safe-area) + 1.5rem)' : 'var(--layout-main-offset-top)',
+          }}
         >
           <Breadcrumbs />
           <Outlet />
         </main>
-        
+
         {/* Mobile bottom navigation dock */}
-        <MobileNavDock />
+        {!isImmersive && <MobileNavDock />}
         
         {/* Footer */}
         <footer className="px-[var(--layout-shell-padding)] pb-12 pt-32 border-t border-slate-100 bg-white/80 backdrop-blur-3xl relative z-[var(--z-content)] overflow-hidden">
@@ -638,6 +688,32 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
         </footer>
 
       </div>
+
+      {/*
+        The way out of immersive mode. It has to live outside the content
+        column and sit above everything, because the bar it replaces is gone.
+        Kept quiet until it is wanted: faint by default, fully opaque on
+        hover or keyboard focus.
+      */}
+      {isImmersive && (
+        <motion.button
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.9 }}
+          transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          onClick={() => setIsImmersive(false)}
+          className="fixed top-4 right-4 flex items-center gap-2 px-4 py-3 rounded-2xl bg-slate-950/70 hover:bg-slate-950/90 text-white backdrop-blur-xl border border-white/15 shadow-2xl opacity-40 hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-teal-400 transition-opacity cursor-pointer"
+          style={{
+            zIndex: 'var(--z-toast)',
+            top: 'calc(1rem + var(--layout-safe-area))',
+          }}
+          aria-label="Show the menus again"
+          title="Show the menus again (Esc)"
+        >
+          <Eye size={18} />
+          <span className="text-[11px] font-bold uppercase tracking-widest">Show menus</span>
+        </motion.button>
+      )}
     </div>
   );
 };
