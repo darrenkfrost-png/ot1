@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense, useMemo, useCallback } from 'react';
+import { useState, useEffect, Suspense, useMemo, useCallback } from 'react';
 import { BOOKING_URL, SOCIAL_LINKS, GOVERNANCE_DOCS, CLINIC } from './constants';
 import { BrowserRouter, Routes, Route, Outlet, Link, NavLink, useLocation } from 'react-router-dom';
 import { 
@@ -30,17 +30,25 @@ import {
   HelpCircle
 } from 'lucide-react';
 import { cn } from './lib/utils';
-const TreatmentsPage = lazy(() => import('./pages/TreatmentsPage'));
-const TreatmentDetailPage = lazy(() => import('./pages/TreatmentDetailPage'));
-const PractitionerDetailPage = lazy(() => import('./pages/PractitionerDetailPage'));
-const PractitionersPage = lazy(() => import('./pages/PractitionersPage'));
-const GalleryPage = lazy(() => import('./pages/GalleryPage'));
-const ResourcesPage = lazy(() => import('./pages/ResourcesPage'));
-const HomePage = lazy(() => import('./pages/HomePage'));
-const DashboardPage = lazy(() => import('./pages/DashboardPage'));
-const LocationsPage = lazy(() => import('./pages/LocationsPage'));
-const ContactPage = lazy(() => import('./pages/ContactPage'));
-const FaqPage = lazy(() => import('./pages/FaqPage'));
+/*
+ * Every page is loaded on demand, which means every page is a separate file
+ * whose name changes on each deploy. lazyWithRetry is what stops a tab that
+ * was open across a deploy from crashing on the next link click - see
+ * src/utils/chunkGuard.ts for the full story.
+ */
+import { lazyWithRetry } from './utils/lazyWithRetry';
+
+const TreatmentsPage = lazyWithRetry(() => import('./pages/TreatmentsPage'));
+const TreatmentDetailPage = lazyWithRetry(() => import('./pages/TreatmentDetailPage'));
+const PractitionerDetailPage = lazyWithRetry(() => import('./pages/PractitionerDetailPage'));
+const PractitionersPage = lazyWithRetry(() => import('./pages/PractitionersPage'));
+const GalleryPage = lazyWithRetry(() => import('./pages/GalleryPage'));
+const ResourcesPage = lazyWithRetry(() => import('./pages/ResourcesPage'));
+const HomePage = lazyWithRetry(() => import('./pages/HomePage'));
+const DashboardPage = lazyWithRetry(() => import('./pages/DashboardPage'));
+const LocationsPage = lazyWithRetry(() => import('./pages/LocationsPage'));
+const ContactPage = lazyWithRetry(() => import('./pages/ContactPage'));
+const FaqPage = lazyWithRetry(() => import('./pages/FaqPage'));
 
 import Screensaver from './components/Screensaver';
 import ScrollToTop from './components/ScrollToTop';

@@ -54,6 +54,16 @@ export default defineConfig(({mode}) => {
           ]
         },
         workbox: {
+          /*
+           * Without these, a returning visitor can keep being served the
+           * previous deploy's files out of the service worker cache, which is
+           * the state that makes pages fail to load on a link click. Old
+           * caches are dropped on activate, and the new worker takes over the
+           * page immediately rather than waiting for every tab to close.
+           */
+          cleanupOutdatedCaches: true,
+          clientsClaim: true,
+          skipWaiting: true,
           runtimeCaching: [
             {
               urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
