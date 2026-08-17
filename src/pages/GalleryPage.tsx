@@ -1,6 +1,6 @@
 import { GALLERY_IMAGES } from '../data/images';
 import { motion, AnimatePresence } from 'motion/react';
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, X, Download, Home, Play, Sparkles, Maximize2, RotateCw } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Link } from 'react-router-dom';
@@ -9,20 +9,20 @@ import { useAnalytics } from '../context/AnalyticsContext';
 import { CLINIC } from '../data/clinic';
 
 export default function GalleryPage() {
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const [activeCategory, setActiveCategory] = useState('All');
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const { showToast } = useToast();
   const { trackClick } = useAnalytics();
 
-  const categories = ['All', 'Interior', 'Clinical', 'Equipment'];
-
-  // Categorize images (simulated categorization based on index)
-  const filteredImages = useMemo(() => {
-    if (activeCategory === 'All') return GALLERY_IMAGES;
-    if (activeCategory === 'Interior') return GALLERY_IMAGES.slice(0, 4);
-    if (activeCategory === 'Clinical') return GALLERY_IMAGES.slice(4, 8);
-    return GALLERY_IMAGES.slice(8);
-  }, [activeCategory]);
+  /*
+   * The filters that used to sit here - All / Interior / Clinical / Equipment -
+   * did not filter anything. They cut the list by position, as the comment on
+   * them admitted ("simulated categorization based on index"), so "Interior"
+   * showed the first four guides, which are sciatica infographics, and
+   * "Equipment" showed everything from the ninth onward. A control that
+   * promises to sort by subject and instead returns an arbitrary slice is
+   * worse than no control, so it is gone until the guides carry real subjects.
+   */
+  const filteredImages = GALLERY_IMAGES;
 
   const [isTourOpen, setIsTourOpen] = useState(false);
   const tourVideoUrl = "https://drive.google.com/file/d/1WyllusrCUOg_Vo7qmkwZPhlI74PaOfug/preview";
@@ -96,22 +96,6 @@ export default function GalleryPage() {
       </header>
 
       <div className="space-y-10">
-        <div className="flex items-center justify-center flex-wrap gap-4">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={cn(
-                "px-8 py-3 rounded-2xl text-xs font-bold uppercase tracking-widest transition-all",
-                activeCategory === cat 
-                  ? "bg-teal-700 text-white shadow-lg shadow-teal-500/20" 
-                  : "bg-white text-slate-400 border border-slate-100 hover:border-teal-200 hover:text-teal-600"
-              )}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
 
         <motion.div 
           layout
