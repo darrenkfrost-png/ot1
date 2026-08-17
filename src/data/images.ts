@@ -6,7 +6,7 @@
  * the originals totalled 113.9MB of PNG. They are now served from this
  * project as WebP capped at a 1400px long edge - 5.1MB for all 58.
  */
-export const GALLERY_IMAGES = [
+const ALL_GUIDE_IMAGES = [
   "/images/gallery-01.webp",
   "/images/gallery-02.webp",
   "/images/gallery-03.webp",
@@ -66,3 +66,57 @@ export const GALLERY_IMAGES = [
   "/images/gallery-57.webp",
   "/images/gallery-58.webp",
 ];
+
+/**
+ * GUIDES HELD BACK FROM THE GALLERY — audited 2026-08-17.
+ *
+ * These are not deleted and nothing is lost: the artwork is still in
+ * public/images and this list is the record of why each one is not shown.
+ * Restoring a guide is a matter of deleting its line once the image is fixed.
+ *
+ * They are withheld because the artwork carries mistakes that would mislead a
+ * patient. The clinic's real details are the ones in src/data/clinic.ts:
+ * 180 High Street, Herne Bay, Kent, CT6 5AJ · 01227 366473 ·
+ * osteopathyandwellbeing.co.uk.
+ *
+ * There are no source files for these — they exist only as images — so they
+ * cannot be text-edited. Correcting one means regenerating the artwork.
+ */
+const WITHHELD: Record<string, string> = {
+  // Prints an address that is not the clinic's: "70 Canterbury Road, Herne
+  // Bay, CT6 5SB". Someone following it arrives at the wrong building.
+  '/images/gallery-04.webp': 'wrong address',
+  '/images/gallery-12.webp': 'wrong address',
+  '/images/gallery-21.webp': 'wrong address',
+  '/images/gallery-23.webp': 'wrong address',
+  '/images/gallery-27.webp': 'wrong address',
+  '/images/gallery-30.webp': 'wrong address',
+  '/images/gallery-34.webp': 'wrong address',
+  '/images/gallery-36.webp': 'wrong address',
+  '/images/gallery-39.webp': 'wrong address',
+  '/images/gallery-48.webp': 'wrong address',
+
+  // A clinic name, telephone number and domain that are all somebody else's:
+  // "Herne Bay Clinic · T: 0123 456 7857 · hernebayclinic.com".
+  '/images/gallery-01.webp': 'fake phone number and wrong practice name',
+
+  // The template was never filled in - these render the field names.
+  '/images/gallery-20.webp': 'placeholder "[Address], [Phone Number], [Website]"',
+  '/images/gallery-10.webp': 'placeholder "[CT6 Logo]"',
+
+  // The body text is meaningless - garbled characters rendered as if they were
+  // clinical explanation ("Cavitation is a neroromary of cavitation... broazing
+  // the element and the neural reset in the neural reset"), and it is signed
+  // "Safe, Regulated, Evidence-Based." This is the most serious of the set.
+  '/images/gallery-43.webp': 'body text is gibberish',
+
+  // Not a patient guide at all - the bare CT6 logo, 512x512, sitting in the
+  // gallery as though it were one.
+  '/images/gallery-32.webp': 'not a guide, just the logo mark',
+};
+
+/** The guides actually shown to patients. */
+export const GALLERY_IMAGES = ALL_GUIDE_IMAGES.filter((src) => !(src in WITHHELD));
+
+/** What is being held back and why - for the clinic's own reference. */
+export const WITHHELD_GUIDES = WITHHELD;
