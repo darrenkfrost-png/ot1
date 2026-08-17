@@ -472,3 +472,92 @@
     @apply outline-none ring-2 ring-teal-500/50 ring-offset-1;
   }
 }
+
+
+/*
+ * READING HIGHLIGHT
+ * ------------------------------------------------------------------
+ * Whatever passage the reader's cursor or finger is over lifts into a bright
+ * gold highlight, so the line being read separates itself from the page.
+ *
+ * It is a highlighter pen, not gold lettering. Gold text on a white page is
+ * pale and low-contrast - it would look striking and read worse, which is the
+ * opposite of the point. Painting a gold band behind the words and forcing the
+ * text itself to near-black gives a genuine jump in contrast, and because both
+ * the background and the text colour are set explicitly it stays legible on
+ * the dark hero panels as well as the white ones.
+ *
+ * The band is drawn with box-shadow rather than padding. Padding would resize
+ * the element on hover and shove the rest of the page around as the reader
+ * moves down it; a spread shadow paints outside the box without affecting
+ * layout, so nothing moves.
+ *
+ * NO :has() IN THESE SELECTORS. A selector list is all-or-nothing: if a
+ * browser cannot parse one selector in it, it throws away the whole rule,
+ * including the selectors it did understand. The first version excluded
+ * gradient headings with :not(:has(.text-transparent)) and paired that with
+ * the touch-class selector - the :has() took the touch highlight down with
+ * it, so the class was being applied and nothing happened at all. Gradient
+ * text is now protected by a plain :not(.text-transparent) on the descendant
+ * rule instead.
+ *
+ * Writing these as separate rules is not a defence, incidentally: the
+ * minifier merges them back into one comma-separated rule. The only real
+ * protection is keeping every selector here to widely-parsed syntax.
+ */
+#main-content :is(p, li, blockquote, dd, dt, figcaption, h1, h2, h3, h4, h5, h6):hover {
+  background-color: #fcd34d;
+  color: #1c1917;
+  border-radius: 0.4rem;
+  box-shadow:
+    0 0 0 0.4rem #fcd34d,
+    0 0 1.75rem rgba(251, 191, 36, 0.55);
+  transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
+}
+
+#main-content :is(p, li, blockquote, dd, dt, figcaption, h1, h2, h3, h4, h5, h6).reading-touch-active {
+  background-color: #fcd34d;
+  color: #1c1917;
+  border-radius: 0.4rem;
+  box-shadow:
+    0 0 0 0.4rem #fcd34d,
+    0 0 1.75rem rgba(251, 191, 36, 0.55);
+  transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
+}
+
+/*
+ * Anything inside the highlighted passage comes along with it, or a muted
+ * span keeps its pale grey and turns unreadable on the gold.
+ *
+ * Gradient headings are the exception. Their colour is a clipped background
+ * image and the text itself is deliberately transparent, so recolouring them
+ * would erase the gradient - they are left exactly as they are.
+ */
+#main-content :is(p, li, blockquote, dd, dt, figcaption, h1, h2, h3, h4, h5, h6):hover
+  :is(span, strong, em, b, i, small, time):not(.text-transparent) {
+  color: #1c1917;
+}
+
+#main-content :is(p, li, blockquote, dd, dt, figcaption, h1, h2, h3, h4, h5, h6).reading-touch-active
+  :is(span, strong, em, b, i, small, time):not(.text-transparent) {
+  color: #1c1917;
+}
+
+/* A link keeps its own identity - it just darkens enough to hold up on gold. */
+#main-content :is(p, li, blockquote, dd, dt, figcaption):hover a {
+  color: #134e4a;
+  text-decoration-color: #134e4a;
+}
+
+#main-content :is(p, li, blockquote, dd, dt, figcaption).reading-touch-active a {
+  color: #134e4a;
+  text-decoration-color: #134e4a;
+}
+
+/* The highlight is a reading aid, so it stays; only the easing is dropped. */
+@media (prefers-reduced-motion: reduce) {
+  #main-content :is(p, li, blockquote, dd, dt, figcaption, h1, h2, h3, h4, h5, h6):hover,
+  #main-content :is(p, li, blockquote, dd, dt, figcaption, h1, h2, h3, h4, h5, h6).reading-touch-active {
+    transition: none;
+  }
+}

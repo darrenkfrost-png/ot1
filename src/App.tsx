@@ -63,6 +63,7 @@ import IntroVideo from './components/IntroVideo';
 import PageMeta from './components/PageMeta';
 import ThemePicker from './components/ThemePicker';
 import MobileNavDock from './components/MobileNavDock';
+import ReadingHighlight from './components/ReadingHighlight';
 import Breadcrumbs from './components/Breadcrumbs';
 import { Logo, REPLAY_INTRO_EVENT } from './components/Logo';
 import { EmblemWatermark, SpineMotif } from './components/AnatomyMotif';
@@ -526,6 +527,10 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
           <Breadcrumbs />
           <Outlet />
         </main>
+
+        {/* Lights up the passage under a finger on touch screens; pointer
+            devices are handled by :hover in index.css. Renders nothing. */}
+        <ReadingHighlight />
 
         {/* Mobile bottom navigation dock */}
         {!isImmersive && <MobileNavDock />}
