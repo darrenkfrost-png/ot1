@@ -61,23 +61,6 @@ export default function PractitionersPage() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-16 pb-24">
-      <nav aria-label="Breadcrumb" className="mt-8">
-        <ol className="flex items-center gap-2 text-sm text-slate-400 font-medium whitespace-nowrap overflow-x-auto">
-          <li>
-            <Link to="/" className="hover:text-teal-600 transition-colors flex items-center gap-1.5 focus-visible:outline-teal-500 rounded px-1 py-0.5">
-              <Home size={14} className="mb-0.5" /> Home
-            </Link>
-          </li>
-          <li aria-hidden="true" className="text-slate-300">
-            <ChevronRight size={12} strokeWidth={3} />
-          </li>
-          <li aria-current="page">
-            <span className="text-teal-600 font-bold px-1 py-0.5 truncate block">
-              Practitioners
-            </span>
-          </li>
-        </ol>
-      </nav>
 
       <header className="relative bg-slate-950 rounded-[4rem] p-12 md:p-24 text-white shadow-3xl overflow-hidden group holographic-border">
         <div className="absolute inset-0 z-0 opacity-40">

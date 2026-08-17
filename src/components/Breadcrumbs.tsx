@@ -28,6 +28,9 @@ export default function Breadcrumbs() {
         case 'locations': return 'Locations';
         case 'contact': return 'Contact Us';
         case 'dashboard': return 'Progress Board';
+        // Without this the fallback title-cases the path into "Faq", which is
+        // not what the page is called anywhere else in the interface.
+        case 'faq': return 'Questions';
         default: return path.charAt(0).toUpperCase() + path.slice(1);
       }
     } else if (index === 1) {

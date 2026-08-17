@@ -46,17 +46,6 @@ export default function FaqPage() {
       {/* Quiet anatomy in the margin — texture, not illustration. */}
       <SpineMotif className="hidden xl:block fixed top-24 right-10 w-24 h-[460px] text-teal-700" opacity={7} />
 
-      <nav aria-label="Breadcrumb">
-        <ol className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-400">
-          <li>
-            <Link to="/" className="hover:text-teal-600 transition-colors flex items-center gap-1.5 focus-visible:outline-teal-500 rounded px-1 py-0.5">
-              <Home size={14} /> Home
-            </Link>
-          </li>
-          <li aria-hidden="true"><ChevronRight size={14} /></li>
-          <li className="text-slate-700" aria-current="page">Questions</li>
-        </ol>
-      </nav>
 
       <header className="space-y-6">
         <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-teal-50 border border-teal-100 text-teal-700 text-[11px] font-black uppercase tracking-[0.3em]">

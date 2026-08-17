@@ -86,23 +86,6 @@ export default function GalleryPage() {
 
   return (
     <div className="max-w-7xl mx-auto p-4 md:p-8 space-y-16">
-      <nav aria-label="Breadcrumb" className="mt-4">
-        <ol className="flex items-center gap-2 text-sm text-slate-400 font-medium whitespace-nowrap overflow-x-auto text-center justify-center sm:justify-start">
-          <li>
-            <Link to="/" className="hover:text-teal-600 transition-colors flex items-center gap-1.5 focus-visible:outline-teal-500 rounded px-1 py-0.5">
-              <Home size={14} className="mb-0.5" /> Home
-            </Link>
-          </li>
-          <li aria-hidden="true" className="text-slate-300">
-            <ChevronRight size={12} strokeWidth={3} />
-          </li>
-          <li aria-current="page">
-            <span className="text-teal-600 font-bold px-1 py-0.5 truncate block">
-              Clinic Gallery
-            </span>
-          </li>
-        </ol>
-      </nav>
 
       <header className="text-center space-y-6 max-w-2xl mx-auto">
         <span className="inline-flex items-center gap-2 text-teal-600 font-bold text-xs uppercase tracking-[0.3em]">
