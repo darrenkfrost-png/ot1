@@ -239,8 +239,8 @@ export default function PractitionersPage() {
         <div className="order-1 lg:order-2 space-y-8">
            <div className="space-y-4">
              <span className="text-teal-600 font-bold text-xs uppercase tracking-[0.3em]">Continuous Development</span>
-             <h2 className="text-4xl md:text-5xl font-display font-medium text-slate-900 tracking-tighter leading-tight">Beyond the Clinic:<br/><span className="text-teal-600 underline decoration-teal-100 underline-offset-8">Academic Rigor</span>.</h2>
-             <p className="text-xl text-slate-500 font-light leading-relaxed">Our practitioners don't just treat; they contribute to the global clinical discourse. From publishing peer-reviewed papers to leading university seminars, we stay at the cutting edge of anatomical science.</p>
+             <h2 className="text-4xl md:text-5xl font-display font-medium text-slate-50 tracking-tighter leading-tight">Beyond the Clinic:<br/><span className="text-teal-600 underline decoration-teal-100 underline-offset-8">Academic Rigor</span>.</h2>
+             <p className="text-xl text-slate-300 font-light leading-relaxed">Our practitioners don't just treat; they contribute to the global clinical discourse. From publishing peer-reviewed papers to leading university seminars, we stay at the cutting edge of anatomical science.</p>
            </div>
            
            <div className="space-y-6 pt-4">

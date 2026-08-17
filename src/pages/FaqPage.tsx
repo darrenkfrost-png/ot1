@@ -65,7 +65,7 @@ export default function FaqPage() {
         <h1 className="text-5xl md:text-6xl font-display font-medium text-slate-900 tracking-tight leading-[1.05]">
           Questions people ask <span className="text-teal-600">before their first visit.</span>
         </h1>
-        <p className="text-lg text-slate-500 font-light leading-relaxed max-w-2xl">
+        <p className="text-lg text-slate-300 font-light leading-relaxed max-w-2xl">
           Straight answers about what osteopathy is, what happens in an appointment, and how the
           profession is regulated. If your question is not here, ask us — we would rather answer it
           than have you guess.

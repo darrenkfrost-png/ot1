@@ -205,7 +205,7 @@ const Sidebar = ({ isCollapsed, onToggle, isMobile, isOpenMobile, onCloseMobile 
                           transition={{ duration: 0.2 }}
                           className={cn(
                             "font-black uppercase tracking-[0.3em] text-[9.5px] flex-1",
-                            isActive ? "text-white" : "text-slate-400 group-hover:text-slate-900"
+                            isActive ? "text-white" : "text-slate-700 group-hover:text-slate-900"
                           )}
                         >
                           {item.label}

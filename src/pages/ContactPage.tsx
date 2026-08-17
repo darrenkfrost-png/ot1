@@ -99,11 +99,11 @@ export default function ContactPage() {
         <div className="lg:col-span-5 space-y-12">
           <div className="space-y-6">
             <span className="text-sm font-black text-teal-600 uppercase tracking-[0.4em]">Get in Touch</span>
-            <h1 className="text-5xl md:text-7xl font-display font-medium text-slate-900 tracking-tight leading-[0.9]">
+            <h1 className="text-5xl md:text-7xl font-display font-medium text-slate-50 tracking-tight leading-[0.9]">
               Let's start your <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-emerald-500">recovery.</span>
             </h1>
-            <p className="text-xl text-slate-500 font-light leading-relaxed max-w-sm">
+            <p className="text-xl text-slate-300 font-light leading-relaxed max-w-sm">
               Professional osteopathic care and holistic wellbeing support is just a message away.
             </p>
           </div>

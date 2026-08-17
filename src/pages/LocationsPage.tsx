@@ -38,8 +38,8 @@ export default function LocationsPage() {
     >
       <div className="text-center mb-16 space-y-4">
         <span className="text-sm font-black text-teal-600 uppercase tracking-[0.4em]">Clinical Network</span>
-        <h1 className="text-5xl md:text-7xl font-display font-medium text-slate-900 tracking-tight">Our Locations</h1>
-        <p className="text-xl text-slate-500 font-light max-w-2xl mx-auto">
+        <h1 className="text-5xl md:text-7xl font-display font-medium text-slate-50 tracking-tight">Our Locations</h1>
+        <p className="text-xl text-slate-300 font-light max-w-2xl mx-auto">
           Accessible, professional clinical spaces designed for your comfort and recovery across Kent and London.
         </p>
       </div>

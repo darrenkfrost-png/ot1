@@ -117,7 +117,7 @@ export default function ResourcesPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         <div className="lg:col-span-8 space-y-16">
           <section>
-            <h2 className="text-3xl font-display font-semibold text-slate-900 mb-10 tracking-tight flex items-center gap-3">
+            <h2 className="text-3xl font-display font-semibold text-slate-50 mb-10 tracking-tight flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center">
                 <FileText size={20} />
               </div>

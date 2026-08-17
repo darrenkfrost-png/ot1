@@ -47,11 +47,11 @@ export default function Breadcrumbs() {
 
   return (
     <nav aria-label="Breadcrumb" className="mb-8 w-full">
-      <ol className="flex items-center space-x-2 text-sm text-slate-500 overflow-x-auto whitespace-nowrap custom-scrollbar pb-2">
+      <ol className="flex items-center space-x-2 text-sm text-slate-300 overflow-x-auto whitespace-nowrap custom-scrollbar pb-2">
         <li className="flex items-center">
           <Link 
             to="/" 
-            className="flex items-center gap-1.5 hover:text-teal-600 transition-colors focus-visible:outline-teal-500 rounded p-1"
+            className="flex items-center gap-1.5 hover:text-teal-300 transition-colors focus-visible:outline-teal-500 rounded p-1"
           >
             <Home size={14} />
             <span className="font-medium">Home</span>
@@ -66,13 +66,13 @@ export default function Breadcrumbs() {
             <li key={href} className="flex items-center">
               <ChevronRight size={14} className="mx-1 text-slate-400 shrink-0" />
               {isLast ? (
-                <span className="font-semibold text-slate-800 ml-1 truncate max-w-[200px] sm:max-w-xs px-1" aria-current="page">
+                <span className="font-semibold text-white ml-1 truncate max-w-[200px] sm:max-w-xs px-1" aria-current="page">
                   {getBreadcrumbLabel(part, index, pathParts)}
                 </span>
               ) : (
                 <Link 
                   to={href}
-                  className="ml-1 hover:text-teal-600 font-medium transition-colors focus-visible:outline-teal-500 rounded p-1 truncate max-w-[150px] sm:max-w-xs"
+                  className="ml-1 hover:text-teal-300 font-medium transition-colors focus-visible:outline-teal-500 rounded p-1 truncate max-w-[150px] sm:max-w-xs"
                 >
                   {getBreadcrumbLabel(part, index, pathParts)}
                 </Link>

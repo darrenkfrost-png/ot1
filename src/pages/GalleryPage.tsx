@@ -108,8 +108,8 @@ export default function GalleryPage() {
         <span className="inline-flex items-center gap-2 text-teal-600 font-bold text-xs uppercase tracking-[0.3em]">
           <Sparkles size={16} /> Visual Journey
         </span>
-        <h1 className="text-5xl md:text-6xl font-display font-medium text-slate-900 tracking-tight leading-tight">State-of-the-Art <span className="text-teal-600">Clinical Spaces</span></h1>
-        <p className="text-xl text-slate-500 font-light leading-relaxed">Illustrated guides to the problems we treat, and a look inside the clinic in Herne Bay.</p>
+        <h1 className="text-5xl md:text-6xl font-display font-medium text-slate-50 tracking-tight leading-tight">State-of-the-Art <span className="text-teal-600">Clinical Spaces</span></h1>
+        <p className="text-xl text-slate-300 font-light leading-relaxed">Illustrated guides to the problems we treat, and a look inside the clinic in Herne Bay.</p>
       </header>
 
       <div className="space-y-10">
