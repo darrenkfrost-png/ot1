@@ -196,8 +196,8 @@ export default function HomePage() {
         {[
           { label: "Clinical Booking", icon: Calendar, path: "/treatments", color: "bg-teal-700 border-teal-500 text-white shadow-[0_0_40px_rgba(20,184,166,0.2)]", sub: "Priority Scheduling", desc: "Instant confirmation for all clinics.", hoverColor: "group-hover:bg-teal-800" },
           { label: "Our Treatments", icon: Stethoscope, path: "/treatments", color: "bg-slate-900 border-slate-700 text-white shadow-xl", sub: "What We Offer", desc: "Osteopathy, acupuncture, massage, foot care.", hoverColor: "group-hover:bg-slate-800" },
-          { label: "Meet the Team", icon: Users, path: "/practitioners", color: "bg-white/60 backdrop-blur-3xl border-white/40 text-slate-900 shadow-premium", sub: "Expert Practitioners", desc: "View clinical backgrounds.", hoverColor: "group-hover:bg-white" },
-          { label: "Patient Dashboard", icon: Activity, path: "/dashboard", color: "bg-white/60 backdrop-blur-3xl border-white/40 text-slate-900 shadow-premium", sub: "Recovery Hub", desc: "Track your health progress.", hoverColor: "group-hover:bg-white" }
+          { label: "Meet the Team", icon: Users, path: "/practitioners", color: "bg-white/95 backdrop-blur-3xl border-white/40 text-slate-900 shadow-premium", sub: "Expert Practitioners", desc: "View clinical backgrounds.", hoverColor: "group-hover:bg-white" },
+          { label: "Patient Dashboard", icon: Activity, path: "/dashboard", color: "bg-white/95 backdrop-blur-3xl border-white/40 text-slate-900 shadow-premium", sub: "Recovery Hub", desc: "Track your health progress.", hoverColor: "group-hover:bg-white" }
         ].map((action, i) => (
           <motion.div key={i} variants={fadeInUp}>
             <Link 
@@ -221,9 +221,17 @@ export default function HomePage() {
                      <action.icon size={28} />
                    </div>
                    <h4 className="font-display font-bold text-2xl tracking-tight leading-tight mb-2 drop-shadow-sm">{action.label}</h4>
-                   <p className={cn("text-[10px] font-black uppercase tracking-[0.25em]", action.color.includes('bg-teal') || action.color.includes('bg-slate') ? "text-white/70" : "text-teal-600")}>{action.sub}</p>
+                   <p className={cn("text-[10px] font-black uppercase tracking-[0.25em]", action.color.includes('bg-teal') || action.color.includes('bg-slate') ? "text-white/90" : "text-teal-700")}>{action.sub}</p>
                  </div>
-                 <p className={cn("text-sm font-medium relative z-10 line-clamp-2", action.color.includes('white') ? "text-slate-500" : "text-white/60")}>{action.desc}</p>
+                 {/*
+                   * These cards are translucent, so the colour behind the text
+                   * is the card blended with the dark page - rgb(159,162,170)
+                   * for the pale ones - not the page and not white. Measured
+                   * against that real backdrop, grey-500 came out at 1.86:1
+                   * and the 60% white at 3.01:1, both well under the 4.5:1
+                   * floor. Grey-800 gives 5.73:1 and 90% white 4.76:1.
+                   */}
+                 <p className={cn("text-sm font-medium relative z-10 line-clamp-2", action.color.includes('white') ? "text-slate-800" : "text-white/90")}>{action.desc}</p>
                </div>
                
                {/* Background Decoration */}
@@ -308,7 +316,7 @@ export default function HomePage() {
       </section>
 
       {/* Real-Time Health Insights - Holographic Frame */}
-      <section className="bg-white/60 backdrop-blur-3xl crystal-glass rounded-[4rem] p-6 sm:p-12 lg:p-20 shadow-[0_20px_60px_-15px_rgba(31,38,135,0.1)] border border-white/80 relative overflow-hidden holographic-border">
+      <section className="bg-white/95 backdrop-blur-3xl crystal-glass rounded-[4rem] p-6 sm:p-12 lg:p-20 shadow-[0_20px_60px_-15px_rgba(31,38,135,0.1)] border border-white/80 relative overflow-hidden holographic-border">
         <div className="absolute inset-0 neural-grid opacity-[0.03] pointer-events-none mix-blend-screen mix-blend-lighten z-0"></div>
         <div className="absolute -top-[50%] -left-[10%] w-[120%] h-[200%] bg-gradient-to-br from-teal-500/5 via-transparent to-blue-500/5 pointer-events-none z-0 transform -rotate-12 blur-3xl"></div>
         
