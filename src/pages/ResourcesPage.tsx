@@ -152,7 +152,7 @@ export default function ResourcesPage() {
                     rel="noopener noreferrer"
                     className="flex items-center gap-6 p-6 bg-white rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-premium hover:border-teal-50 transition-all duration-300 group h-full"
                   >
-                    <div className="p-4 bg-teal-50 rounded-2xl text-teal-600 transition-colors group-hover:bg-teal-600 group-hover:text-white">
+                    <div className="p-4 bg-teal-50 rounded-2xl text-teal-600 transition-colors group-hover:bg-teal-700 group-hover:text-white">
                       <FileText size={24} />
                     </div>
                     <div className="flex-1">
@@ -212,7 +212,7 @@ export default function ResourcesPage() {
                         className="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
                       />
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-16 h-16 rounded-full bg-slate-950/60 border border-white/20 flex items-center justify-center text-white group-hover:bg-teal-600 group-hover:scale-110 transition-all">
+                        <div className="w-16 h-16 rounded-full bg-slate-950/60 border border-white/20 flex items-center justify-center text-white group-hover:bg-teal-700 group-hover:scale-110 transition-all">
                           <PlayCircle size={30} />
                         </div>
                       </div>
@@ -374,7 +374,7 @@ export default function ResourcesPage() {
                 href={activeVideo.url} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl font-semibold transition-all"
+                className="w-full flex items-center justify-center gap-2 py-3 bg-teal-700 hover:bg-teal-700 text-white rounded-2xl font-semibold transition-all"
               >
                 {activeVideo.youtubeId ? 'Watch on YouTube' : 'Watch on external site'}
               </a>

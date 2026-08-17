@@ -116,7 +116,7 @@ export default function PractitionersPage() {
                 className={cn(
                   "px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.25em] transition-all",
                   activeSpecialty === spec 
-                    ? "bg-teal-600 text-white shadow-2xl shadow-teal-500/30 ring-4 ring-teal-500/10" 
+                    ? "bg-teal-700 text-white shadow-2xl shadow-teal-500/30 ring-4 ring-teal-500/10" 
                     : "bg-white text-slate-400 border border-slate-100 hover:border-teal-200 hover:text-teal-600 shadow-sm"
                 )}
               >
@@ -196,7 +196,7 @@ export default function PractitionersPage() {
                        <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Appointments</span>
                        <span className="text-sm font-bold text-slate-900 group-hover:text-teal-600">Book or ask about fees</span>
                     </div>
-                    <div className="w-12 h-12 rounded-2xl bg-teal-50 flex items-center justify-center group-hover:bg-teal-600 group-hover:text-white transition-all shadow-sm">
+                    <div className="w-12 h-12 rounded-2xl bg-teal-50 flex items-center justify-center group-hover:bg-teal-700 group-hover:text-white transition-all shadow-sm">
                       <ChevronRight size={24} />
                     </div>
                   </div>
@@ -250,7 +250,7 @@ export default function PractitionersPage() {
                 { title: "Bespoke Training Hub", desc: "Internal education program ensuring every junior therapist meets our master-level standards." }
               ].map((item, i) => (
                 <div key={i} className="flex gap-6 group">
-                   <div className="w-12 h-12 rounded-2xl bg-teal-50 flex items-center justify-center text-teal-600 shrink-0 group-hover:bg-teal-600 group-hover:text-white transition-all shadow-sm">
+                   <div className="w-12 h-12 rounded-2xl bg-teal-50 flex items-center justify-center text-teal-600 shrink-0 group-hover:bg-teal-700 group-hover:text-white transition-all shadow-sm">
                       <Sparkles size={22} />
                    </div>
                    <div>

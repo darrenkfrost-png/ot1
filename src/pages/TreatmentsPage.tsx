@@ -111,7 +111,7 @@ export default function TreatmentsPage() {
         ].map((stat, i) => (
           <div key={i} className="relative bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] crystal-glass holographic-border flex flex-col items-center text-center group hover:-translate-y-2 transition-all overflow-hidden">
              <div className="absolute inset-0 neural-grid opacity-[0.03] pointer-events-none mix-blend-screen mix-blend-lighten z-0"></div>
-             <div className="relative z-10 w-14 h-14 bg-teal-50 rounded-2xl flex items-center justify-center text-teal-600 mb-6 group-hover:bg-teal-600 group-hover:text-white transition-all duration-500 shadow-sm border border-teal-100/50">
+             <div className="relative z-10 w-14 h-14 bg-teal-50 rounded-2xl flex items-center justify-center text-teal-600 mb-6 group-hover:bg-teal-700 group-hover:text-white transition-all duration-500 shadow-sm border border-teal-100/50">
                <stat.icon size={24} />
              </div>
              <div className="relative z-10 text-3xl font-display font-bold text-slate-900 mb-1">{stat.val}</div>
@@ -131,7 +131,7 @@ export default function TreatmentsPage() {
                 className={cn(
                   "px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.25em] transition-all",
                   activeCategory === cat 
-                    ? "bg-teal-600 text-white shadow-2xl shadow-teal-500/30 ring-4 ring-teal-500/10" 
+                    ? "bg-teal-700 text-white shadow-2xl shadow-teal-500/30 ring-4 ring-teal-500/10" 
                     : "bg-white text-slate-400 border border-slate-100 hover:border-teal-200 hover:text-teal-600 shadow-sm"
                 )}
               >
@@ -300,7 +300,7 @@ export default function TreatmentsPage() {
                 { title: "Long-term Recovery Strategy", desc: "Structured plans designed around your lifestyle, workspace, and physical goals." }
               ].map((item, i) => (
                 <div key={i} className="flex gap-6 group">
-                  <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 text-teal-400 flex items-center justify-center shrink-0 group-hover:bg-teal-600 group-hover:text-white transition-all">
+                  <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 text-teal-400 flex items-center justify-center shrink-0 group-hover:bg-teal-700 group-hover:text-white transition-all">
                     <CheckCircle2 size={24} />
                   </div>
                   <div>
@@ -316,7 +316,7 @@ export default function TreatmentsPage() {
                 href={BOOKING_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-12 py-6 bg-teal-600 text-white rounded-2xl font-bold text-lg hover:bg-teal-500 transition-all shadow-2xl shadow-teal-900/40 active:scale-95 flex items-center justify-center gap-3 group"
+                className="px-12 py-6 bg-teal-700 text-white rounded-2xl font-bold text-lg hover:bg-teal-800 transition-all shadow-2xl shadow-teal-900/40 active:scale-95 flex items-center justify-center gap-3 group"
                 aria-label="Book an appointment — opens our booking system in a new tab"
               >
                 Book an assessment <ChevronRight size={22} className="group-hover:translate-x-1 transition-transform" />
@@ -400,7 +400,7 @@ export default function TreatmentsPage() {
               href={BOOKING_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-teal-600 text-white font-bold hover:bg-teal-500 transition-all shadow-lg shadow-teal-500/25 focus-visible:outline-teal-400"
+              className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-teal-700 text-white font-bold hover:bg-teal-800 transition-all shadow-lg shadow-teal-500/25 focus-visible:outline-teal-400"
               aria-label="Book an appointment — opens our booking system in a new tab"
             >
               <Calendar size={18} /> Book an appointment

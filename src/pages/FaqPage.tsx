@@ -141,7 +141,7 @@ export default function FaqPage() {
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => trackClick('FAQ Book Online')}
-          className="shrink-0 inline-flex items-center justify-center gap-3 px-9 py-5 rounded-2xl bg-teal-600 hover:bg-teal-500 text-white font-bold transition-all active:scale-[0.98] shadow-lg shadow-teal-500/25 focus-visible:outline-teal-400"
+          className="shrink-0 inline-flex items-center justify-center gap-3 px-9 py-5 rounded-2xl bg-teal-700 hover:bg-teal-800 text-white font-bold transition-all active:scale-[0.98] shadow-lg shadow-teal-500/25 focus-visible:outline-teal-400"
           aria-label="Book an appointment online — opens our booking system in a new tab"
         >
           <Calendar size={20} />

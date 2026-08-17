@@ -123,7 +123,7 @@ const IntroVideo: React.FC<IntroVideoProps> = ({ onComplete }) => {
 
         <button
           onClick={finish}
-          className="group flex items-center gap-3 px-6 h-12 rounded-2xl bg-white/10 hover:bg-teal-600 backdrop-blur-xl border border-white/20 hover:border-teal-500 text-white text-[11px] font-black uppercase tracking-[0.3em] transition-all active:scale-95 focus-visible:outline-teal-400"
+          className="group flex items-center gap-3 px-6 h-12 rounded-2xl bg-white/10 hover:bg-teal-700 backdrop-blur-xl border border-white/20 hover:border-teal-500 text-white text-[11px] font-black uppercase tracking-[0.3em] transition-all active:scale-95 focus-visible:outline-teal-400"
         >
           Skip intro
           <SkipForward size={16} className="group-hover:translate-x-1 transition-transform" />

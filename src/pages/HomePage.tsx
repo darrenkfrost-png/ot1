@@ -143,7 +143,7 @@ export default function HomePage() {
                 href={BOOKING_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto px-12 py-6 rounded-2xl bg-teal-600 hover:bg-teal-500 text-white font-bold text-xl transition-all shadow-[0_0_40px_rgba(20,184,166,0.3)] hover:shadow-[0_0_60px_rgba(20,184,166,0.5)] hover:-translate-y-1.5 active:scale-[0.98] flex items-center justify-center gap-4 group cinematic-glow"
+                className="w-full sm:w-auto px-12 py-6 rounded-2xl bg-teal-700 hover:bg-teal-800 text-white font-bold text-xl transition-all shadow-[0_0_40px_rgba(20,184,166,0.3)] hover:shadow-[0_0_60px_rgba(20,184,166,0.5)] hover:-translate-y-1.5 active:scale-[0.98] flex items-center justify-center gap-4 group cinematic-glow"
                 aria-label="Book an assessment — opens our booking system in a new tab"
               >
                 <Calendar size={22} className="group-hover:rotate-12 transition-transform" />
@@ -194,7 +194,7 @@ export default function HomePage() {
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
       >
         {[
-          { label: "Clinical Booking", icon: Calendar, path: "/treatments", color: "bg-teal-600 border-teal-500 text-white shadow-[0_0_40px_rgba(20,184,166,0.2)]", sub: "Priority Scheduling", desc: "Instant confirmation for all clinics.", hoverColor: "group-hover:bg-teal-500" },
+          { label: "Clinical Booking", icon: Calendar, path: "/treatments", color: "bg-teal-700 border-teal-500 text-white shadow-[0_0_40px_rgba(20,184,166,0.2)]", sub: "Priority Scheduling", desc: "Instant confirmation for all clinics.", hoverColor: "group-hover:bg-teal-800" },
           { label: "Our Treatments", icon: Stethoscope, path: "/treatments", color: "bg-slate-900 border-slate-700 text-white shadow-xl", sub: "What We Offer", desc: "Osteopathy, acupuncture, massage, foot care.", hoverColor: "group-hover:bg-slate-800" },
           { label: "Meet the Team", icon: Users, path: "/practitioners", color: "bg-white/60 backdrop-blur-3xl border-white/40 text-slate-900 shadow-premium", sub: "Expert Practitioners", desc: "View clinical backgrounds.", hoverColor: "group-hover:bg-white" },
           { label: "Patient Dashboard", icon: Activity, path: "/dashboard", color: "bg-white/60 backdrop-blur-3xl border-white/40 text-slate-900 shadow-premium", sub: "Recovery Hub", desc: "Track your health progress.", hoverColor: "group-hover:bg-white" }
@@ -361,7 +361,7 @@ export default function HomePage() {
                     ))}
                 </div>
 
-                <Link to="/practitioners" className="inline-flex items-center gap-4 bg-slate-950 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-teal-600 hover:-translate-y-1 transition-all shadow-[0_10px_30px_rgba(15,23,42,0.2)] group">
+                <Link to="/practitioners" className="inline-flex items-center gap-4 bg-slate-950 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-teal-700 hover:-translate-y-1 transition-all shadow-[0_10px_30px_rgba(15,23,42,0.2)] group">
                     Meet the Practitioners <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
                 </Link>
             </motion.div>
@@ -387,7 +387,7 @@ export default function HomePage() {
                ].map((item, i) => (
                  <div key={i} className="bg-white/80 backdrop-blur-sm border border-slate-100 p-8 rounded-[2.5rem] hover:bg-white hover:shadow-[0_20px_40px_rgba(0,0,0,0.05)] hover:border-teal-100 hover:-translate-y-1 transition-all duration-500 group relative overflow-hidden">
                     <div className="absolute -right-12 -top-12 w-32 h-32 bg-slate-50 rounded-full group-hover:scale-150 group-hover:bg-teal-50/50 transition-all duration-700 -z-10"></div>
-                    <div className="w-14 h-14 bg-slate-50 border border-slate-100 rounded-[1.2rem] shadow-sm flex items-center justify-center text-slate-800 mb-6 group-hover:scale-110 group-hover:bg-teal-600 group-hover:text-white transition-all duration-500 group-hover:border-transparent">
+                    <div className="w-14 h-14 bg-slate-50 border border-slate-100 rounded-[1.2rem] shadow-sm flex items-center justify-center text-slate-800 mb-6 group-hover:scale-110 group-hover:bg-teal-700 group-hover:text-white transition-all duration-500 group-hover:border-transparent">
                       <item.icon size={26} strokeWidth={1.5} />
                     </div>
                     <p className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-600 mb-2">{item.label}</p>
@@ -593,7 +593,7 @@ export default function HomePage() {
                    whileHover={{ y: -5 }}
                    className="flex gap-5 group cursor-pointer p-4 rounded-3xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all"
                  >
-                    <div className="shrink-0 w-16 h-16 rounded-[1.2rem] bg-teal-50 flex items-center justify-center text-teal-600 shadow-sm border border-teal-100/50 group-hover:bg-teal-600 group-hover:text-white transition-all duration-500">
+                    <div className="shrink-0 w-16 h-16 rounded-[1.2rem] bg-teal-50 flex items-center justify-center text-teal-600 shadow-sm border border-teal-100/50 group-hover:bg-teal-700 group-hover:text-white transition-all duration-500">
                       <item.icon size={26} strokeWidth={1.5} />
                     </div>
                     <div className="space-y-1 mt-1">
@@ -608,7 +608,7 @@ export default function HomePage() {
                ))}
             </div>
 
-            <Link to="/resources" className="mt-8 inline-flex items-center gap-4 px-10 py-5 bg-slate-900 hover:bg-teal-600 text-white rounded-2xl text-xs font-black uppercase tracking-[0.2em] transition-all shadow-xl hover:-translate-y-1 group">
+            <Link to="/resources" className="mt-8 inline-flex items-center gap-4 px-10 py-5 bg-slate-900 hover:bg-teal-700 text-white rounded-2xl text-xs font-black uppercase tracking-[0.2em] transition-all shadow-xl hover:-translate-y-1 group">
               Explore Resource Hub <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
             </Link>
         </motion.div>
@@ -732,7 +732,7 @@ export default function HomePage() {
                     {/* Said "Dialing … clinical intake" and dialled nothing. */}
                     <Link
                       to="/contact"
-                      className="flex-1 py-5 bg-teal-600 hover:bg-teal-500 text-white rounded-2xl font-bold uppercase tracking-widest text-[#10px] transition-all shadow-[0_10px_20px_rgba(20,184,166,0.2)] hover:-translate-y-1 flex items-center justify-center gap-3 group/btn"
+                      className="flex-1 py-5 bg-teal-700 hover:bg-teal-800 text-white rounded-2xl font-bold uppercase tracking-widest text-[#10px] transition-all shadow-[0_10px_20px_rgba(20,184,166,0.2)] hover:-translate-y-1 flex items-center justify-center gap-3 group/btn"
                     >
                       Contact Intake <Phone size={16} className="group-hover/btn:rotate-12 transition-transform" />
                     </Link>

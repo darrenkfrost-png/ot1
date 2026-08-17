@@ -121,7 +121,7 @@ export default function GalleryPage() {
               className={cn(
                 "px-8 py-3 rounded-2xl text-xs font-bold uppercase tracking-widest transition-all",
                 activeCategory === cat 
-                  ? "bg-teal-600 text-white shadow-lg shadow-teal-500/20" 
+                  ? "bg-teal-700 text-white shadow-lg shadow-teal-500/20" 
                   : "bg-white text-slate-400 border border-slate-100 hover:border-teal-200 hover:text-teal-600"
               )}
             >
@@ -191,7 +191,7 @@ export default function GalleryPage() {
                 setIsTourOpen(true);
                 trackClick("Virtual Tour Video Started");
              }}
-             className="px-10 py-5 bg-teal-600 hover:bg-teal-500 text-white rounded-2xl font-bold flex items-center gap-3 transition-all shadow-xl shadow-teal-500/10 group active:scale-95"
+             className="px-10 py-5 bg-teal-700 hover:bg-teal-800 text-white rounded-2xl font-bold flex items-center gap-3 transition-all shadow-xl shadow-teal-500/10 group active:scale-95"
            >
              Watch Tour Video <Play size={20} className="group-hover:translate-x-1 transition-transform" />
            </button>

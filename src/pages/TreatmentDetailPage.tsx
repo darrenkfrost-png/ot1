@@ -79,7 +79,7 @@ export default function TreatmentDetailPage() {
         </div>
         <Link 
           to="/treatments" 
-          className="group flex items-center gap-3 px-8 py-4 bg-teal-600 text-white rounded-2xl font-bold shadow-xl shadow-teal-900/20 hover:bg-teal-500 hover:-translate-y-1 transition-all active:scale-[0.98] z-10 relative"
+          className="group flex items-center gap-3 px-8 py-4 bg-teal-700 text-white rounded-2xl font-bold shadow-xl shadow-teal-900/20 hover:bg-teal-800 hover:-translate-y-1 transition-all active:scale-[0.98] z-10 relative"
         >
           <Home size={20} />
           Back to Treatments
@@ -234,7 +234,7 @@ export default function TreatmentDetailPage() {
                 ))}
               </ul>
             </div>
-            <div className="bg-teal-600 p-8 rounded-[2.5rem] text-white shadow-xl shadow-teal-900/10 space-y-6">
+            <div className="bg-teal-700 p-8 rounded-[2.5rem] text-white shadow-xl shadow-teal-900/10 space-y-6">
               <h3 className="text-xl font-display font-bold flex items-center gap-2">
                 <ShieldCheck size={20} className="text-teal-200" />
                 Clinical Approach
@@ -389,7 +389,7 @@ export default function TreatmentDetailPage() {
                   trackClick("Book Assessment Clicked");
                   window.open(BOOKING_URL, '_blank');
                 }}
-                className="w-full flex items-center justify-center gap-3 py-5 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl font-bold text-lg transition-all shadow-xl shadow-teal-600/20 active:scale-[0.98] group"
+                className="w-full flex items-center justify-center gap-3 py-5 bg-teal-700 hover:bg-teal-700 text-white rounded-2xl font-bold text-lg transition-all shadow-xl shadow-teal-600/20 active:scale-[0.98] group"
               >
                 Book Assessment
                 <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />

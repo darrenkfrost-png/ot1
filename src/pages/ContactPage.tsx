@@ -280,7 +280,7 @@ export default function ContactPage() {
                   <div className="pt-4">
                     <button
                       disabled={isSubmitting}
-                      className="w-full py-6 bg-teal-600 hover:bg-teal-700 text-white rounded-3xl font-bold text-xl transition-all shadow-xl shadow-teal-600/20 active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-50 disabled:grayscale group"
+                      className="w-full py-6 bg-teal-700 hover:bg-teal-700 text-white rounded-3xl font-bold text-xl transition-all shadow-xl shadow-teal-600/20 active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-50 disabled:grayscale group"
                     >
                       {isSubmitting ? (
                         <>
@@ -314,7 +314,7 @@ export default function ContactPage() {
                 key="success"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="h-full bg-teal-600 rounded-[4rem] p-16 text-center flex flex-col items-center justify-center text-white space-y-8"
+                className="h-full bg-teal-700 rounded-[4rem] p-16 text-center flex flex-col items-center justify-center text-white space-y-8"
               >
                 <div className="w-32 h-32 rounded-[3rem] bg-white/20 flex items-center justify-center mb-4">
                    <CheckCircle2 size={64} className="text-white" />

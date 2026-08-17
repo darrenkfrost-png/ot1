@@ -664,7 +664,7 @@ export default function SettingsPanel() {
                                  <button 
                                     onClick={runSystemDiagnostic}
                                     disabled={scanState === 'running'}
-                                    className="px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all text-white flex items-center gap-3 bg-teal-600 hover:bg-teal-500 hover:shadow-teal-500/25 active:scale-95 shadow-lg cursor-pointer"
+                                    className="px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all text-white flex items-center gap-3 bg-teal-700 hover:bg-teal-800 hover:shadow-teal-500/25 active:scale-95 shadow-lg cursor-pointer"
                                  >
                                     <RefreshCw size={14} className={scanState === 'running' ? "animate-spin" : ""} />
                                     {scanState === 'running' ? 'Scanning...' : scanState === 'completed' ? 'Re-Run Scan' : 'Execute Diagnostic'}

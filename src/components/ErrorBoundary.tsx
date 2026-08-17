@@ -84,7 +84,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
               <a
                 href={`tel:${CLINIC.telephoneLink}`}
-                className="w-full flex items-center justify-center gap-2 py-3 bg-teal-600 hover:bg-teal-500 text-white rounded-xl font-bold tracking-wide transition-colors"
+                className="w-full flex items-center justify-center gap-2 py-3 bg-teal-700 hover:bg-teal-800 text-white rounded-xl font-bold tracking-wide transition-colors"
               >
                 <Phone size={18} /> Call {CLINIC.telephone}
               </a>

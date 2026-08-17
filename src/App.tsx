@@ -398,7 +398,7 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile, onEnterImme
             href={BOOKING_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-teal-500/25 hover:bg-teal-700 hover:shadow-teal-500/40 transition-all active:scale-95 focus-visible:outline-teal-500 group"
+            className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-teal-700 text-white rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-teal-500/25 hover:bg-teal-700 hover:shadow-teal-500/40 transition-all active:scale-95 focus-visible:outline-teal-500 group"
             aria-label="Book an appointment online — opens our booking system in a new tab"
           >
             <Calendar size={16} className="group-hover:rotate-12 transition-transform" />
@@ -480,7 +480,7 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
 
   return (
     <div className="min-h-screen bg-transparent flex flex-col relative w-full overflow-x-clip">
-      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[var(--z-toast)] focus:px-4 focus:py-2 focus:bg-teal-600 focus:text-white focus:rounded-lg focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[var(--z-toast)] focus:px-4 focus:py-2 focus:bg-teal-700 focus:text-white focus:rounded-lg focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
         Skip to main content
       </a>
       {!isImmersive && (
@@ -558,7 +558,7 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
                         href={social.url}
                         target="_blank"
                         rel="noopener noreferrer me"
-                        className="w-11 h-11 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-teal-600 hover:text-white hover:scale-110 transition-all shadow-sm focus-visible:outline-teal-500"
+                        className="w-11 h-11 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-teal-700 hover:text-white hover:scale-110 transition-all shadow-sm focus-visible:outline-teal-500"
                         aria-label={`Visit our ${social.label} page — opens in a new tab`}
                       >
                         <Zap size={18} />
@@ -817,7 +817,7 @@ function AppContent() {
                       </div>
                       <Link 
                         to="/" 
-                        className="group flex items-center gap-3 px-10 py-5 bg-teal-600 text-white rounded-2xl font-bold text-lg shadow-2xl shadow-teal-900/20 hover:bg-teal-500 hover:-translate-y-1 transition-all active:scale-[0.98] cinematic-glow z-10 relative"
+                        className="group flex items-center gap-3 px-10 py-5 bg-teal-700 text-white rounded-2xl font-bold text-lg shadow-2xl shadow-teal-900/20 hover:bg-teal-800 hover:-translate-y-1 transition-all active:scale-[0.98] cinematic-glow z-10 relative"
                       >
                         <Home size={20} />
                         Return to Dashboard

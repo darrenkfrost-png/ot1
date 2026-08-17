@@ -100,7 +100,7 @@ export default function LocationsPage() {
                     trackClick(`Get Directions: ${loc.name}`);
                     showToast(`Launching navigation to ${loc.name}...`, 'info');
                   }}
-                  className="w-full flex items-center justify-center gap-3 py-4 bg-slate-950 text-white rounded-2xl font-bold transition-all hover:bg-teal-600 group/btn"
+                  className="w-full flex items-center justify-center gap-3 py-4 bg-slate-950 text-white rounded-2xl font-bold transition-all hover:bg-teal-700 group/btn"
                 >
                   <Navigation size={18} className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
                   Get Directions
@@ -141,7 +141,7 @@ export default function LocationsPage() {
                  <img src="https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&q=80&w=800" loading="lazy" decoding="async" className="w-full h-full object-cover opacity-50" alt="Clinical Hub" />
                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
               </div>
-              <div className="absolute -bottom-6 -left-6 bg-teal-600 p-8 rounded-[2.5rem] shadow-2xl text-white">
+              <div className="absolute -bottom-6 -left-6 bg-teal-700 p-8 rounded-[2.5rem] shadow-2xl text-white">
                  <div className="text-4xl font-bold mb-1">100%</div>
                  <div className="text-[10px] uppercase font-black tracking-widest opacity-80">Certified Spaces</div>
               </div>
