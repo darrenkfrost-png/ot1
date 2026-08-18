@@ -572,7 +572,7 @@ export default function HomePage() {
                  <motion.div 
                    key={i}
                    whileHover={{ y: -5 }}
-                   className="flex gap-5 group cursor-pointer p-4 rounded-3xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all"
+                   className="flex gap-5 group cursor-pointer p-4 rounded-3xl bg-white hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all"
                  >
                     <div className="shrink-0 w-16 h-16 rounded-[1.2rem] bg-teal-50 flex items-center justify-center text-teal-600 shadow-sm border border-teal-100/50 group-hover:bg-teal-700 group-hover:text-white transition-all duration-500">
                       <item.icon size={26} strokeWidth={1.5} />
@@ -581,7 +581,7 @@ export default function HomePage() {
                       <h4 className="font-bold text-[17px] text-slate-900 group-hover:text-teal-700 transition-colors tracking-tight">{item.title}</h4>
                       <div className="flex items-center gap-2 mb-1.5">
                          <div className="w-1 h-1 rounded-full bg-teal-500"></div>
-                         <p className="text-[9px] font-black text-teal-600 uppercase tracking-[0.2em]">{item.count}</p>
+                         <p className="text-[9px] font-black text-teal-800 uppercase tracking-[0.2em]">{item.count}</p>
                       </div>
                       <p className="text-xs text-slate-500 font-medium leading-relaxed">{item.desc}</p>
                     </div>
