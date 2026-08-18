@@ -299,7 +299,7 @@ export default function DashboardPage() {
       return { status: "Elevated Compensatory Guarding", desc: "Your indicators suggest heavy mechanical muscle guarding. Immediate joint mobilization is contraindicated. Focus on gentle decompression breath-work.", color: "text-red-500", border: "border-red-500/20", bg: "bg-red-500/5" };
     }
     if (bioScoreLimit < 55) {
-      return { status: "Moderate ROM Restriction", desc: "Anatomical ranges of motion are compressed. Recommended matching: Cranio-Cervical Myofascial Release or spinal mobilization therapy.", color: "text-amber-500", border: "border-amber-500/20", bg: "bg-amber-500/5" };
+      return { status: "Moderate ROM Restriction", desc: "Anatomical ranges of motion are compressed. Recommended matching: Cranio-Cervical Myofascial Release or spinal mobilization therapy.", color: "text-amber-700", border: "border-amber-500/20", bg: "bg-amber-500/5" };
     }
     return { status: "Nominal Kinetic Integrity", desc: "Joint kinematics are within physiological norms. Maintain active recovery stretching and progress to load-bearing neck strengthening.", color: "text-teal-400", border: "border-teal-500/20", bg: "bg-teal-500/5" };
   }, [painLevel, bioScoreLimit]);
@@ -409,7 +409,7 @@ export default function DashboardPage() {
             <h2 className="text-3xl font-display font-bold text-slate-50 tracking-tight">Personal Health Progress</h2>
         </div>
         
-        <div className="bg-white/60 backdrop-blur-3xl p-8 lg:p-12 rounded-[3.5rem] shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] border border-white/60 relative overflow-hidden group crystal-glass holographic-border">
+        <div className="bg-white/95 backdrop-blur-3xl p-8 lg:p-12 rounded-[3.5rem] shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] border border-white/60 relative overflow-hidden group crystal-glass holographic-border">
             <div className="absolute inset-0 neural-grid opacity-[0.03] pointer-events-none mix-blend-screen mix-blend-lighten z-0"></div>
             <div className="absolute top-0 right-0 w-64 h-64 bg-teal-50/50 rounded-full blur-[80px] -mr-32 -mt-32 pointer-events-none group-hover:bg-teal-100/50 transition-colors z-0"></div>
             
@@ -417,8 +417,8 @@ export default function DashboardPage() {
                {/* Left Controls/Stats */}
                <div className="lg:col-span-1 flex flex-col justify-between space-y-8">
                   <div className="space-y-4">
-                      <h3 className="text-xl font-bold text-slate-100">Cervical Spine Rehabilitation</h3>
-                      <p className="text-sm text-slate-300 font-light leading-relaxed">
+                      <h3 className="text-xl font-bold text-slate-900">Cervical Spine Rehabilitation</h3>
+                      <p className="text-sm text-slate-600 font-light leading-relaxed">
                           Your weekly mobility and core strength levels show positive trajectory. Real-time updates depend on your daily exercise completions.
                       </p>
                   </div>
@@ -480,25 +480,25 @@ export default function DashboardPage() {
                        // Live requirements evaluation
                        let requirementsMet = false;
                        let statusText = "Pending";
-                       let highlightColor = "text-slate-400";
+                       let highlightColor = "text-slate-600";
                        let bgDot = "bg-slate-200";
 
                        if (i === 0) {
                          requirementsMet = true;
                          statusText = "Completed & Audited";
-                         highlightColor = "text-teal-600";
+                         highlightColor = "text-teal-800";
                          bgDot = "bg-teal-500 text-white";
                        } else if (i === 1) {
                          const flexionCheck = romNeckFlexion >= 75;
                          const rotationCheck = romNeckRotation >= 85;
                          requirementsMet = flexionCheck && rotationCheck;
                          statusText = requirementsMet ? "Completed & Met" : "Requires Slider Adjustment";
-                         highlightColor = requirementsMet ? "text-emerald-600" : "text-amber-500 font-bold animate-pulse";
+                         highlightColor = requirementsMet ? "text-emerald-600" : "text-amber-700 font-bold animate-pulse";
                          bgDot = requirementsMet ? "bg-emerald-500 text-white" : "bg-amber-400 text-slate-950";
                        } else if (i === 2) {
                          requirementsMet = exercises.filter(ex => ex.completed).length >= 2;
                          statusText = requirementsMet ? "Completed & Met" : "Active Treatment";
-                         highlightColor = "text-teal-600";
+                         highlightColor = "text-teal-800";
                          bgDot = "bg-teal-500 text-white";
                        } else if (i === 3) {
                          requirementsMet = painLevel < 3;
@@ -665,12 +665,12 @@ export default function DashboardPage() {
                 <HeartPulse className="text-teal-600 animate-pulse" size={24} />
                 <h3 className="text-2xl font-bold text-slate-900 font-display">Daily Rehab Checklist</h3>
               </div>
-              <span className="text-[10px] font-black uppercase tracking-wider bg-teal-50 text-teal-600 border border-teal-500/20 px-3 py-1 rounded-full">
+              <span className="text-[10px] font-black uppercase tracking-wider bg-teal-50 text-teal-800 border border-teal-500/20 px-3 py-1 rounded-full">
                 {exercises.filter(ex => ex.completed).length}/{exercises.length} Complete
               </span>
             </div>
             
-            <p className="text-sm text-slate-500 font-light leading-relaxed">
+            <p className="text-sm text-slate-600 font-light leading-relaxed">
               Completing daily exercises lowers your calculated somatic pain metrics and updates your visual kinetic recovery lines.
             </p>
 
@@ -774,8 +774,8 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
                 <div className="flex justify-between items-center text-sm">
-                  <span className="font-bold text-slate-200">Cervical Flexion ROM</span>
-                  <span className="font-mono text-indigo-600 font-bold">{romNeckFlexion}° <span className="text-xs text-slate-400">/ 80°</span></span>
+                  <span className="font-bold text-slate-700">Cervical Flexion ROM</span>
+                  <span className="font-mono text-indigo-600 font-bold">{romNeckFlexion}° <span className="text-xs text-slate-600">/ 80°</span></span>
                 </div>
                 <input
                   type="range"
@@ -831,7 +831,7 @@ export default function DashboardPage() {
                 />
                 <div className="flex justify-between text-[9px] font-bold text-slate-400 uppercase">
                   <span className="text-teal-500">None (0)</span>
-                  <span className="text-amber-500">Tolerable (5)</span>
+                  <span className="text-amber-700">Tolerable (5)</span>
                   <span className="text-red-500">Severe (10)</span>
                 </div>
               </div>
@@ -959,7 +959,7 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center p-6 bg-slate-50 border border-slate-100 rounded-2xl shadow-inner font-sans">
             <div className="md:col-span-4 flex flex-col justify-center items-center text-center p-3 border-r border-slate-200">
               <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Kinetic Alignment Score</span>
-              <span className={cn("text-5xl font-display font-black my-2", bioScoreLimit > 70 ? "text-emerald-500" : bioScoreLimit > 45 ? "text-amber-500" : "text-red-500")}>
+              <span className={cn("text-5xl font-display font-black my-2", bioScoreLimit > 70 ? "text-emerald-500" : bioScoreLimit > 45 ? "text-amber-700" : "text-red-500")}>
                 {bioScoreLimit}%
               </span>
               <span className="text-[9px] font-bold text-slate-400 uppercase">Biomechanical Safety</span>
@@ -967,7 +967,7 @@ export default function DashboardPage() {
             
             <div className="md:col-span-8 space-y-2 pl-3">
               <div className="flex items-center gap-2">
-                <AlertTriangle size={15} className={cn(painLevel >= 7 ? "text-red-500" : "text-amber-500")} />
+                <AlertTriangle size={15} className={cn(painLevel >= 7 ? "text-red-500" : "text-amber-700")} />
                 <span className={cn("text-xs font-black uppercase tracking-wider", advice.color)}>{advice.status}</span>
               </div>
               <p className="text-xs text-slate-500 font-light leading-relaxed">{advice.desc}</p>
@@ -1056,13 +1056,13 @@ export default function DashboardPage() {
                         <div className="space-y-1">
                           <div className="flex justify-between">
                             <span className="text-slate-500">FLEXION ROM:</span>
-                            <span className={cn(romNeckFlexion >= 65 ? "text-emerald-400" : "text-amber-500")}>
+                            <span className={cn(romNeckFlexion >= 65 ? "text-emerald-400" : "text-amber-700")}>
                               {romNeckFlexion}° / 80° {romNeckFlexion >= 65 ? "(OK)" : "(LIMIT)"}
                             </span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-slate-500">ROTATION ROM:</span>
-                            <span className={cn(romNeckRotation >= 70 ? "text-emerald-400" : "text-amber-500")}>
+                            <span className={cn(romNeckRotation >= 70 ? "text-emerald-400" : "text-amber-700")}>
                               {romNeckRotation}° / 90° {romNeckRotation >= 70 ? "(OK)" : "(LIMIT)"}
                             </span>
                           </div>
@@ -1322,7 +1322,7 @@ export default function DashboardPage() {
           <div className="bg-slate-50 rounded-[3rem] p-10 border border-slate-100 hover:shadow-xl transition-all font-sans">
               <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center gap-3">
-                    <Zap size={24} className="text-amber-500" />
+                    <Zap size={24} className="text-amber-700" />
                     <h3 className="text-2xl font-bold text-slate-900 font-display">Recommended Actions</h3>
                   </div>
               </div>

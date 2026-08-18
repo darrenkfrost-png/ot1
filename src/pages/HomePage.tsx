@@ -147,7 +147,7 @@ export default function HomePage() {
           transition={{ delay: 2, duration: 1 }}
           className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 hidden sm:flex pointer-events-none"
         >
-           <span className="text-[9px] font-black uppercase tracking-[0.4em] text-white/40">Scroll to Explore</span>
+           <span className="text-[9px] font-black uppercase tracking-[0.4em] text-white/70">Scroll to Explore</span>
            <div className="w-px h-12 bg-gradient-to-b from-white/40 to-transparent relative overflow-hidden">
              <motion.div 
                 animate={{ y: [0, 48] }}
@@ -313,7 +313,7 @@ export default function HomePage() {
                   </p>
                 </div>
 
-                <div className="space-y-8 bg-white/50 backdrop-blur-md p-8 rounded-[2rem] border border-white shadow-sm">
+                <div className="space-y-8 bg-white/95 backdrop-blur-md p-8 rounded-[2rem] border border-white shadow-sm">
                     {/* Checkable figures only. A 98.4% recovery rate and a
                         4.9/5 satisfaction score were stated here with nothing
                         behind them; the real Google rating is better anyway. */}
@@ -366,12 +366,12 @@ export default function HomePage() {
                  { icon: Clock, label: "Open", val: "Mon–Sat", desc: "Weekdays 8am–8pm." },
                  { icon: MapPin, label: "Location", val: "Herne Bay", desc: "180 High Street, CT6 5AJ." }
                ].map((item, i) => (
-                 <div key={i} className="bg-white/80 backdrop-blur-sm border border-slate-100 p-8 rounded-[2.5rem] hover:bg-white hover:shadow-[0_20px_40px_rgba(0,0,0,0.05)] hover:border-teal-100 hover:-translate-y-1 transition-all duration-500 group relative overflow-hidden">
+                 <div key={i} className="bg-white/95 backdrop-blur-sm border border-slate-100 p-8 rounded-[2.5rem] hover:bg-white hover:shadow-[0_20px_40px_rgba(0,0,0,0.05)] hover:border-teal-100 hover:-translate-y-1 transition-all duration-500 group relative overflow-hidden">
                     <div className="absolute -right-12 -top-12 w-32 h-32 bg-slate-50 rounded-full group-hover:scale-150 group-hover:bg-teal-50/50 transition-all duration-700 -z-10"></div>
                     <div className="w-14 h-14 bg-slate-50 border border-slate-100 rounded-[1.2rem] shadow-sm flex items-center justify-center text-slate-800 mb-6 group-hover:scale-110 group-hover:bg-teal-700 group-hover:text-white transition-all duration-500 group-hover:border-transparent">
                       <item.icon size={26} strokeWidth={1.5} />
                     </div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-600 mb-2">{item.label}</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-800 mb-2">{item.label}</p>
                     <h3 className="font-display font-medium text-2xl text-slate-900 mb-2">{item.val}</h3>
                     <p className="text-sm text-slate-500 font-medium">{item.desc}</p>
                  </div>
@@ -550,7 +550,7 @@ export default function HomePage() {
                 <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-slate-100 border border-slate-200 text-slate-600 font-bold text-[10px] uppercase tracking-[0.3em] shadow-sm">
                   <BookOpen size={16} className="text-teal-600" /> Knowledge Center
                 </div>
-                <h2 className="text-5xl md:text-7xl font-display font-medium text-slate-900 leading-[1.05] tracking-tight">
+                <h2 className="text-5xl md:text-7xl font-display font-medium text-slate-50 leading-[1.05] tracking-tight">
                   Your Health, <br/>
                   <span className="relative">
                     <span className="relative z-10 text-teal-600">Fully Mastered</span>

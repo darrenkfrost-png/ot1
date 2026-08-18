@@ -98,8 +98,8 @@ export default function TreatmentsPage() {
                <stat.icon size={24} />
              </div>
              <div className="relative z-10 text-3xl font-display font-bold text-slate-900 mb-1">{stat.val}</div>
-             <div className="relative z-10 text-[10px] font-black uppercase tracking-[0.2em] text-teal-600 mb-1">{stat.label}</div>
-             <div className="relative z-10 text-xs text-slate-400 font-light">{stat.sub}</div>
+             <div className="relative z-10 text-[10px] font-black uppercase tracking-[0.2em] text-teal-700 mb-1">{stat.label}</div>
+             <div className="relative z-10 text-xs text-slate-600 font-light">{stat.sub}</div>
           </div>
         ))}
       </section>
@@ -115,7 +115,7 @@ export default function TreatmentsPage() {
                   "px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.25em] transition-all",
                   activeCategory === cat 
                     ? "bg-teal-700 text-white shadow-2xl shadow-teal-500/30 ring-4 ring-teal-500/10" 
-                    : "bg-white text-slate-400 border border-slate-100 hover:border-teal-200 hover:text-teal-600 shadow-sm"
+                    : "bg-white text-slate-600 border border-slate-100 hover:border-teal-200 hover:text-teal-600 shadow-sm"
                 )}
               >
                 {cat}
@@ -241,7 +241,7 @@ export default function TreatmentsPage() {
                  </div>
                  <div>
                    <h4 className="font-bold text-slate-900 text-sm">{item.author}</h4>
-                   <p className="text-[10px] text-slate-400 uppercase tracking-widest">Google review</p>
+                   <p className="text-[10px] text-slate-600 uppercase tracking-widest">Google review</p>
                  </div>
                </div>
             </div>
@@ -261,7 +261,7 @@ export default function TreatmentsPage() {
             Been treated here? Leave a review
             <ExternalLink size={13} className="opacity-50" aria-hidden="true" />
           </a>
-          <p className="mt-3 text-xs text-slate-400">Opens Google in a new tab</p>
+          <p className="mt-3 text-xs text-slate-500">Opens Google in a new tab</p>
         </div>
       </section>
 
