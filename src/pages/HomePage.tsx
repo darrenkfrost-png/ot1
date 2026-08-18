@@ -44,28 +44,6 @@ export default function HomePage() {
 
   return (
     <div className="space-y-32 max-w-7xl mx-auto pb-48">
-      {/* Operating Phase Indicator */}
-      <motion.div 
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 0.4, x: 0 }}
-        transition={{ delay: 1, duration: 1 }}
-        className="fixed top-[100px] right-12 z-[45] hidden xl:flex flex-col items-end gap-1 hover:opacity-100 transition-opacity cursor-default pr-4 border-r border-teal-500/20"
-      >
-         <div className="text-[10px] font-black uppercase tracking-[0.4em] text-teal-500 flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse"></div> System State
-         </div>
-         <div className="text-xs text-white font-mono tracking-tighter">PHASE_04 // ACTIVE_REHAB</div>
-         <div className="flex gap-1.5 mt-2">
-            {[...Array(4)].map((_, i) => (
-              <motion.div 
-                key={i}
-                animate={{ opacity: [0.3, 1, 0.3] }}
-                transition={{ duration: 2, delay: i * 0.4, repeat: Infinity }}
-                className="w-8 h-1 bg-teal-500/40 rounded-full"
-              />
-            ))}
-         </div>
-      </motion.div>
 
       {/* Hero Section - Elevated Cinematic */}
       <section ref={heroRef} className="relative rounded-[4rem] overflow-hidden min-h-[850px] flex flex-col justify-center p-8 sm:p-16 lg:p-32 text-white shadow-glow-teal group holographic-border">
@@ -108,10 +86,6 @@ export default function HomePage() {
                <span className="px-6 py-2.5 rounded-full bg-teal-500/15 backdrop-blur-xl border border-teal-400/25 text-teal-100 text-[11px] font-black tracking-[0.4em] inline-flex items-center gap-3 shadow-[0_0_20px_rgba(20,184,166,0.2)] uppercase">
                  <Sparkles size={14} className="text-teal-300 animate-pulse" /> The Gold Standard
                </span>
-               <div className="hidden sm:flex items-center gap-3 px-5 py-2 bg-slate-950/40 backdrop-blur-md rounded-full border border-slate-700/50 shadow-inner">
-                  <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)] animate-pulse" />
-                  <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-300">CT6 Live: Systems Nominal • Low Latency</span>
-               </div>
             </motion.div>
             
             {/* "Transformative." is the longest word here and at text-6xl it ran off
@@ -126,9 +100,6 @@ export default function HomePage() {
                <p className="text-xl md:text-3xl text-slate-300/90 max-w-2xl leading-relaxed font-light border-l-[6px] border-teal-500 pl-8 drop-shadow-sm opacity-90">
                  Osteopathy, acupuncture, massage and foot care in Herne Bay, from practitioners registered with their professional bodies.
                </p>
-               <div className="absolute top-0 right-[-100px] hidden xl:block mix-blend-overlay">
-                  <div className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-500/50 rotate-90 origin-left translate-y-12 whitespace-nowrap tracking-widest">Clinical Excellence • Est. 2012</div>
-               </div>
             </motion.div>
           </motion.div>
           
