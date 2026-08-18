@@ -655,10 +655,10 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
                   <div className="flex gap-4">
                     <div className="mt-1 text-teal-800 shrink-0"><Phone size={20} /></div>
                     <div className="text-slate-600 text-sm leading-relaxed font-light">
-                      <a href={`tel:${CLINIC.telephoneLink}`} className="font-bold text-slate-900 hover:text-teal-800 transition-colors block mb-1">
+                      <a href={`tel:${CLINIC.telephoneLink}`} className="font-bold text-slate-900 hover:text-teal-800 transition-colors inline-flex items-center min-h-[44px] mb-1">
                         {CLINIC.telephone}
                       </a>
-                      <a href={`mailto:${CLINIC.email}`} className="hover:text-teal-800 transition-colors break-all">
+                      <a href={`mailto:${CLINIC.email}`} className="hover:text-teal-800 transition-colors break-all inline-flex items-center min-h-[44px]">
                         {CLINIC.email}
                       </a>
                     </div>
@@ -703,7 +703,7 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
                   href={CLINIC.regulator.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-teal-800 transition-colors focus-visible:outline-teal-500"
+                  className="inline-flex items-center min-h-[40px] hover:text-teal-800 transition-colors focus-visible:outline-teal-500"
                 >
                   {CLINIC.regulator.abbreviation} regulated
                 </a>
