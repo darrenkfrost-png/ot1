@@ -12,6 +12,8 @@ import { cn } from '../lib/utils';
 import { TREATMENTS, PRACTITIONERS } from '../data';
 import { BOOKING_URL, CLINIC } from '../constants';
 import { REVIEWS, REVIEWS_SOURCE } from '../data/reviews';
+import { VIDEOS } from '../data/resources';
+import { GALLERY_IMAGES } from '../data/images';
 
 export default function HomePage() {
   const { showToast } = useToast();
@@ -562,8 +564,8 @@ export default function HomePage() {
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 w-full max-w-2xl">
                {[
-                 { icon: Video, title: "Video Masterclasses", count: "40+ Clips", desc: "Step-by-step guidance on postural correction and biomechanics." },
-                 { icon: FileText, title: "Anatomy Guides", count: "15 PDF Books", desc: "Detailed breakdowns of spinal health and joint longevity." },
+                 { icon: Video, title: "Video Masterclasses", count: `${VIDEOS.length} films`, desc: "Step-by-step guidance on postural correction and biomechanics." },
+                 { icon: FileText, title: 'Illustrated Guides', count: `${GALLERY_IMAGES.length} illustrated guides`, desc: "Detailed breakdowns of spinal health and joint longevity." },
                  { icon: Stethoscope, title: "Exercise Plans", count: "Per Patient", desc: "The home exercises your practitioner sets for you." },
                  { icon: Smartphone, title: "Mobile Ready", count: "Always On", desc: "Access your clinical data and advice from any device." }
                ].map((item, i) => (

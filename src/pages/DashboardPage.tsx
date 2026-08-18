@@ -425,10 +425,8 @@ export default function DashboardPage() {
                   
                   <div className="space-y-4">
                      {[
-                         { label: "Overall Mobility", val: `${chartData[chartData.length - 1].mobility}%`, desc: "Live Active Tracking", color: "text-emerald-500" },
+                         { label: "Overall Mobility", val: `${chartData[chartData.length - 1].mobility}%`, desc: 'From the readings above', color: "text-emerald-500" },
                          { label: "Pain Index", val: `${chartData[chartData.length - 1].painLevel}/10`, desc: "Current Status", color: "text-teal-500" },
-                         { label: "Symmetric Load", val: "94%", desc: "Target 95%", color: "text-blue-500" },
-                         { label: "Vagal Coherence", val: "88%", desc: "HRV Bio-Feedback", color: "text-indigo-600" },
                      ].map((stat, i) => (
                          <div key={i} className="flex items-center justify-between p-4 rounded-2xl bg-white border border-slate-100/80 shadow-sm hover:shadow-lg transition-all cursor-default">
                              <div>
