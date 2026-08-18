@@ -140,7 +140,7 @@ export default function ResourcesPage() {
                     </div>
                     <div className="flex-1">
                       <h3 className="font-semibold text-slate-900 leading-snug mb-1 group-hover:text-teal-700 transition-colors">{pdf.title}</h3>
-                      <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Download PDF</span>
+                      <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Open the guide</span>
                     </div>
                     <Download className="text-slate-200 group-hover:text-teal-400 transition-colors" size={20} />
                   </a>
@@ -228,7 +228,7 @@ export default function ResourcesPage() {
                 <h3 className="text-lg font-bold">Emergency Info</h3>
               </div>
               <p className="text-red-900/70 text-sm leading-relaxed mb-6 font-medium">
-                Our clinics are for elective clinical care. If you are experiencing a medical emergency, please contact 999 or go to your nearest Accident & Emergency department immediately.
+                Our clinic is for elective clinical care. If you are experiencing a medical emergency, please contact 999 or go to your nearest Accident & Emergency department immediately.
               </p>
               <div className="space-y-4">
                 <a href="tel:999" className="flex items-center justify-between p-4 bg-white rounded-2xl text-red-600 font-bold border border-red-200 transition-all hover:bg-red-600 hover:text-white">

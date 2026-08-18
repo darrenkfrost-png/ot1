@@ -1,6 +1,22 @@
+/**
+ * Patient guides offered on the Resources page.
+ *
+ * These were listed as "Manual 1" and "Manual 2", labelled "Download PDF", and
+ * pointed at Google Drive. Everything about that was wrong:
+ *
+ *  · They are not PDFs. Drive serves them as image/png.
+ *  · They are not manuals, and nobody clicks a link called "Manual 2".
+ *  · They were 19MB and 17MB, from a host that throttles browsers. The same
+ *    artwork already sits in this project at 33KB, served from the site - the
+ *    reason the gallery stopped using Drive (see src/data/images.ts).
+ *  · "Manual 1" was not a document at all. It is the file the gallery holds as
+ *    gallery-58: a blank page carrying two logo marks. A patient clicking
+ *    "Download PDF" was handed 19MB of branding.
+ *
+ * What remains is the one real guide, under the title printed on the artwork.
+ */
 export const PDFs = [
-  { title: "Manual 1", url: "https://drive.google.com/file/d/1vXQRm-L697fzlO9NMur36cViT-T0m41Z/view?usp=drive_link" },
-  { title: "Manual 2", url: "https://drive.google.com/file/d/1nRSm_wJ0dmwN0s0wuq7kPeznR_0_DtMS/view?usp=drive_link" },
+  { title: 'Sciatica: similar symptoms, different causes', url: '/images/gallery-57.webp' },
 ];
 
 /**

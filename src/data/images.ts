@@ -113,6 +113,9 @@ const WITHHELD: Record<string, string> = {
   // Not a patient guide at all - the bare CT6 logo, 512x512, sitting in the
   // gallery as though it were one.
   '/images/gallery-32.webp': 'not a guide, just the logo mark',
+  // Same again: a blank page carrying two logo marks. It was also being served
+  // from the Resources page as a 19MB "Manual 1" PDF download.
+  '/images/gallery-58.webp': 'not a guide, just the logo mark',
 };
 
 /** The guides actually shown to patients. */
