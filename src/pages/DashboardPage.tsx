@@ -382,7 +382,7 @@ export default function DashboardPage() {
                     <Activity size={14} className="animate-pulse" /> Patient Portal
                 </span>
                 <h1 className="text-5xl lg:text-7xl font-display font-bold tracking-tighter leading-none text-white">
-                    Welcome back, <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-300">Richard.</span>
+                    Your <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-300">Progress Board.</span>
                 </h1>
                 <p className="text-slate-400 max-w-xl text-lg font-light leading-relaxed">
                     Access your personalized biomechanical metrics, complete daily rehabilitation assignments, and run pre-visit triage reports.
@@ -425,8 +425,8 @@ export default function DashboardPage() {
                   
                   <div className="space-y-4">
                      {[
-                         { label: "Overall Mobility", val: `${chartData[chartData.length - 1].mobility}%`, desc: 'From the readings above', color: "text-emerald-500" },
-                         { label: "Pain Index", val: `${chartData[chartData.length - 1].painLevel}/10`, desc: "Current Status", color: "text-teal-500" },
+                         { label: "Overall Mobility", val: `${chartData[chartData.length - 1].mobility}%`, desc: 'From the readings above', color: "text-emerald-600" },
+                         { label: "Pain Index", val: `${chartData[chartData.length - 1].painLevel}/10`, desc: "Current Status", color: "text-teal-600" },
                      ].map((stat, i) => (
                          <div key={i} className="flex items-center justify-between p-4 rounded-2xl bg-white border border-slate-100/80 shadow-sm hover:shadow-lg transition-all cursor-default">
                              <div>
@@ -470,10 +470,10 @@ export default function DashboardPage() {
                       {/* Treatment Milestones */}
              <div className="mt-12 pt-8 border-t border-slate-100">
                 <div className="flex items-center justify-between mb-6">
-                   <h4 className="text-sm font-bold uppercase tracking-widest text-slate-100 flex items-center gap-2">
+                   <h4 className="text-sm font-bold uppercase tracking-widest text-slate-800 flex items-center gap-2">
                      <Target size={18} className="text-teal-500" /> Kinetic Recovery Milestone Explorer
                    </h4>
-                   <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">Click cards to analyze diagnostic criteria</span>
+                   <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Click cards to analyze diagnostic criteria</span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                    {['Inflammation Reduced', 'Full Range of Motion', 'Load Bearing Achieved', 'Functional Discharge'].map((m, i) => {
@@ -753,8 +753,8 @@ export default function DashboardPage() {
 
           <div className="mt-8 p-4 bg-teal-500/5 rounded-2xl border border-teal-500/10 flex items-center gap-4">
             <Award className="text-teal-600 shrink-0" size={24} />
-            <p className="text-[11px] text-slate-500 font-medium font-sans">
-              Richard is currently on a <span className="font-bold text-teal-600">5-day streak!</span> Keep moving to preserve bone density and joint lubrication.
+            <p className="text-[11px] text-slate-600 font-medium font-sans">
+              A little movement each day helps preserve bone density and joint lubrication.
             </p>
           </div>
         </div>
