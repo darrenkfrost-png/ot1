@@ -100,7 +100,7 @@ export default function PractitionersPage() {
                   "px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.25em] transition-all",
                   activeSpecialty === spec 
                     ? "bg-teal-700 text-white shadow-2xl shadow-teal-500/30 ring-4 ring-teal-500/10" 
-                    : "bg-white text-slate-400 border border-slate-100 hover:border-teal-200 hover:text-teal-600 shadow-sm"
+                    : "bg-white text-slate-600 border border-slate-100 hover:border-teal-200 hover:text-teal-600 shadow-sm"
                 )}
               >
                 {spec}
@@ -146,7 +146,7 @@ export default function PractitionersPage() {
               }}
             >
               <Link to={`/practitioners/${p.id}`} className="block group h-full">
-                <div className="bg-white/60 backdrop-blur-3xl crystal-glass rounded-[2.5rem] p-7 border border-white/60 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] hover:shadow-premium hover:-translate-y-2 hover:border-teal-300 transition-all duration-500 h-full flex flex-col overflow-hidden holographic-border relative z-0">
+                <div className="bg-white/95 backdrop-blur-3xl crystal-glass rounded-[2.5rem] p-7 border border-white/60 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] hover:shadow-premium hover:-translate-y-2 hover:border-teal-300 transition-all duration-500 h-full flex flex-col overflow-hidden holographic-border relative z-0">
                    <div className="absolute inset-0 neural-grid opacity-[0.03] pointer-events-none mix-blend-screen mix-blend-lighten z-[-1]"></div>
                    <div className="aspect-[4/5] rounded-[2rem] overflow-hidden mb-8 relative">
                     <img src={p.image} alt={p.name} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 grayscale group-hover:grayscale-0" />
@@ -257,15 +257,15 @@ export default function PractitionersPage() {
           <div className="flex flex-wrap justify-center gap-12 pt-8">
             <div className="space-y-2">
                <div className="text-4xl font-display font-bold text-teal-400">{PRACTITIONERS.length}</div>
-               <div className="text-xs font-bold uppercase tracking-widest text-slate-500">Practitioners</div>
+               <div className="text-xs font-bold uppercase tracking-widest text-slate-400">Practitioners</div>
             </div>
             <div className="space-y-2">
                <div className="text-4xl font-display font-bold text-teal-400">2012</div>
-               <div className="text-xs font-bold uppercase tracking-widest text-slate-500">Practising Since</div>
+               <div className="text-xs font-bold uppercase tracking-widest text-slate-400">Practising Since</div>
             </div>
             <div className="space-y-2">
                <div className="text-4xl font-display font-bold text-teal-400">5.0</div>
-               <div className="text-xs font-bold uppercase tracking-widest text-slate-500">From 56 Google Reviews</div>
+               <div className="text-xs font-bold uppercase tracking-widest text-slate-400">From 56 Google Reviews</div>
             </div>
           </div>
         </div>
@@ -277,7 +277,7 @@ export default function PractitionersPage() {
       <section className="bg-slate-5/50 backdrop-blur-xl border border-slate-100 rounded-[3rem] p-8 md:p-16 space-y-12 shadow-inner">
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 pb-6 border-b border-slate-100">
           <div className="space-y-3">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-teal-50 border border-teal-100 rounded-full text-[10px] font-black uppercase text-teal-600 tracking-wider">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-teal-50 border border-teal-100 rounded-full text-[10px] font-black uppercase text-teal-800 tracking-wider">
                <HelpCircle size={12} /> Patient Support Center
             </span>
             <h2 className="text-4xl md:text-5xl font-display font-medium text-slate-900 tracking-tight">
