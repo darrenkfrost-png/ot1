@@ -11,7 +11,7 @@ import { useToast } from './ToastSystem';
 export default function SettingsPanel() {
   const { settings, updateSetting, resetSettings } = useSettings();
   const [isOpen, setIsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'visuals' | 'theme' | 'ai' | 'accessibility' | 'behavior' | 'diagnostics'>('theme');
+  const [activeTab, setActiveTab] = useState<'visuals' | 'theme' | 'accessibility' | 'diagnostics'>('theme');
   const { trackClick } = useAnalytics();
   const { showToast } = useToast();
 
@@ -175,8 +175,6 @@ export default function SettingsPanel() {
                   
                   <TabButton active={activeTab === 'theme'} onClick={() => setActiveTab('theme')} icon={<ImageIcon size={18} />} label="Canvas & Art" />
                   <TabButton active={activeTab === 'visuals'} onClick={() => setActiveTab('visuals')} icon={<Eye size={18} />} label="Visual Engine" />
-                  <TabButton active={activeTab === 'behavior'} onClick={() => setActiveTab('behavior')} icon={<Target size={18} />} label="App Behavior" />
-                  <TabButton active={activeTab === 'ai'} onClick={() => setActiveTab('ai')} icon={<Brain size={18} />} label="AI Systems" />
                   <TabButton active={activeTab === 'accessibility'} onClick={() => setActiveTab('accessibility')} icon={<Volume2 size={18} />} label="Accessibility" />
                   <TabButton active={activeTab === 'diagnostics'} onClick={() => setActiveTab('diagnostics')} icon={<Activity size={18} />} label="Diagnostics" />
                </div>
@@ -385,24 +383,6 @@ export default function SettingsPanel() {
                                </div>
 
                                <div className="space-y-6 pt-10 border-t border-slate-100">
-                                   <ToggleOption 
-                                      label="Glassmorphism & Frosted Blur" 
-                                      description="Enable premium refraction effects (requires modern GPU acceleration)." 
-                                      enabled={settings.blurEffects} 
-                                      onToggle={() => updateSetting('blurEffects', !settings.blurEffects)} 
-                                   />
-                                   <ToggleOption 
-                                      label="Holographic Overlays" 
-                                      description="Add subtle spectral lighting effects to primary interactive elements." 
-                                      enabled={settings.holographicEffects} 
-                                      onToggle={() => updateSetting('holographicEffects', !settings.holographicEffects)} 
-                                   />
-                                   <ToggleOption 
-                                      label="Parallax Depth Interaction" 
-                                      description="Perspective-shifting layers across the main dashboard components." 
-                                      enabled={settings.parallaxEnabled} 
-                                      onToggle={() => updateSetting('parallaxEnabled', !settings.parallaxEnabled)} 
-                                   />
                                    <ToggleOption
                                       label="Motion Transitions"
                                       description="Fluid page and route animations for a cohesive clinical experience."
@@ -414,171 +394,6 @@ export default function SettingsPanel() {
                                       description="Hide the microphone, assistant and this settings button, leaving the page on its own. A small control by the microphone brings them back."
                                       enabled={settings.hideOverlays}
                                       onToggle={() => updateSetting('hideOverlays', !settings.hideOverlays)}
-                                   />
-                               </div>
-                           </div>
-                        </div>
-                     )}
-
-                     {activeTab === 'behavior' && (
-                        <div className="space-y-12 pb-10 animate-in fade-in slide-in-from-right-4 duration-500">
-                           <div className="space-y-3">
-                             <h2 className="text-3xl font-display font-medium text-slate-900 tracking-tight">App Behavior</h2>
-                             <p className="text-slate-500 font-light text-base leading-relaxed">Tune how the application responds and handles user sessions.</p>
-                           </div>
-
-                           <div className="space-y-10">
-                               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                                   <div className="space-y-4">
-                                      <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-600 block">Dashboard Layout</label>
-                                      <div className="flex bg-slate-50 p-1.5 rounded-2xl w-full border border-slate-100">
-                                          {['grid', 'list', 'dense'].map(l => (
-                                              <button
-                                                 key={l}
-                                                 onClick={() => updateSetting('dashboardLayout', l as any)}
-                                                 className={cn("flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all", settings.dashboardLayout === l ? "bg-white text-slate-950 shadow-premium" : "text-slate-400 hover:text-slate-600")}
-                                              >{l}</button>
-                                          ))}
-                                      </div>
-                                   </div>
-                               </div>
-
-                               <div className="space-y-6 pt-10 border-t border-slate-100">
-                                   <ToggleOption 
-                                      label="Push Notifications" 
-                                      description="Receive real-time clinic updates and appointment reminders." 
-                                      enabled={settings.enableNotifications} 
-                                      onToggle={() => updateSetting('enableNotifications', !settings.enableNotifications)} 
-                                   />
-                                   <ToggleOption 
-                                      label="Notification Acoustics" 
-                                      description="Play specialized clinical chimes for system notifications." 
-                                      enabled={settings.notificationSound} 
-                                      onToggle={() => updateSetting('notificationSound', !settings.notificationSound)} 
-                                   />
-                                   <ToggleOption 
-                                      label="Logo Identity Cycling" 
-                                      description="Seamlessly cycle between original and clinical logo versions." 
-                                      enabled={settings.showLogoCycling} 
-                                      onToggle={() => updateSetting('showLogoCycling', !settings.showLogoCycling)} 
-                                   />
-                                   <ToggleOption 
-                                      label="Live Dashboard Statistics" 
-                                      description="Display real-time recovery and clinic-wide health metrics." 
-                                      enabled={settings.showClinicalStats} 
-                                      onToggle={() => updateSetting('showClinicalStats', !settings.showClinicalStats)} 
-                                   />
-                                   <ToggleOption 
-                                      label="Auto-Save Session Drafts" 
-                                      description="Preserve your AI consultation progress automatically." 
-                                      enabled={settings.autoSaveDrafts} 
-                                      onToggle={() => updateSetting('autoSaveDrafts', !settings.autoSaveDrafts)} 
-                                   />
-                                   <ToggleOption 
-                                      label="Experimental Core Features" 
-                                      description="Enable unreleased clinical AI modules (Beta)." 
-                                      enabled={settings.experimentalFeatures} 
-                                      onToggle={() => updateSetting('experimentalFeatures', !settings.experimentalFeatures)} 
-                                   />
-                               </div>
-                           </div>
-                        </div>
-                     )}
-
-                     {activeTab === 'ai' && (
-                        <div className="space-y-12 pb-10 animate-in fade-in slide-in-from-right-4 duration-500">
-                           <div className="space-y-3">
-                             <h2 className="text-3xl font-display font-medium text-slate-900 tracking-tight">AI & Neuro-Systems</h2>
-                             <p className="text-slate-500 font-light text-base leading-relaxed">Tune the behavior and reasoning density of the AI Clinical Consultant.</p>
-                           </div>
-
-                           <div className="space-y-10">
-                               <div className="space-y-6">
-                                  <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-600 block">Clinical Persona Bias</label>
-                                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                      {[
-                                         { id: 'clinical', title: 'Clinical Expert', desc: 'Precise, objective, formal terminology.' },
-                                         { id: 'friendly', title: 'Supportive Guide', desc: 'Empathetic, clear, patient focus.' },
-                                         { id: 'direct', title: 'Concise Core', desc: 'Logical, fast, direct data points.' }
-                                      ].map(p => (
-                                          <button
-                                             key={p.id}
-                                             onClick={() => updateSetting('aiAssistantPersona', p.id as any)}
-                                             className={cn("flex-1 text-left p-6 rounded-3xl border-2 transition-all group", settings.aiAssistantPersona === p.id ? "bg-slate-950 border-slate-950 text-white shadow-2xl" : "bg-slate-50 border-transparent hover:border-slate-200")}
-                                          >
-                                              <div className="flex items-center gap-2 mb-2">
-                                                <Ghost size={16} className={cn(settings.aiAssistantPersona === p.id ? "text-teal-400" : "text-slate-300")} />
-                                                <div className="font-bold text-sm">{p.title}</div>
-                                              </div>
-                                              <div className={cn("text-xs leading-relaxed font-light", settings.aiAssistantPersona === p.id ? "text-slate-400" : "text-slate-500")}>{p.desc}</div>
-                                          </button>
-                                      ))}
-                                  </div>
-                               </div>
-
-                               <div className="space-y-6 pt-10 border-t border-slate-100">
-                                  <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-600 block">AI Response Detail Level</label>
-                                  <div className="flex bg-slate-50 p-1.5 rounded-2xl w-full border border-slate-100">
-                                      {(['concise', 'standard', 'verbose'] as const).map(level => (
-                                          <button
-                                             key={level}
-                                             onClick={() => updateSetting('aiResponseDetail', level)}
-                                             className={cn("flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all", settings.aiResponseDetail === level ? "bg-slate-950 text-white shadow-premium" : "text-slate-400 hover:text-slate-600")}
-                                          >{level}</button>
-                                      ))}
-                                  </div>
-                                  <p className="text-[10px] text-slate-400 font-light italic">
-                                     {settings.aiResponseDetail === 'concise' ? 'Engine will return single-sentence technical markers only.' : 
-                                      settings.aiResponseDetail === 'verbose' ? 'Comprehensive structural analysis with detailed preventative therapy steps.' :
-                                      'Balanced clinical feedback optimized for standard consultations.'}
-                                  </p>
-                               </div>
-
-                               <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pt-10 border-t border-slate-100">
-                                   <div className="space-y-6">
-                                      <div className="flex justify-between items-center">
-                                          <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-600">Vocal Velocity</label>
-                                          <span className="text-xs font-black text-slate-400">{settings.aiVoiceSpeed}x</span>
-                                      </div>
-                                      <input 
-                                         type="range" min="0.5" max="2" step="0.1"
-                                         value={settings.aiVoiceSpeed}
-                                         onChange={(e) => updateSetting('aiVoiceSpeed', parseFloat(e.target.value))}
-                                         className="w-full accent-teal-600 h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer"
-                                      />
-                                   </div>
-                                   <div className="space-y-6">
-                                      <div className="flex justify-between items-center">
-                                          <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-600">Confidence Cut-off</label>
-                                          <span className="text-xs font-black text-slate-400">{Math.round(settings.aiConfidenceThreshold * 100)}%</span>
-                                      </div>
-                                      <input 
-                                         type="range" min="0.5" max="1" step="0.05"
-                                         value={settings.aiConfidenceThreshold}
-                                         onChange={(e) => updateSetting('aiConfidenceThreshold', parseFloat(e.target.value))}
-                                         className="w-full accent-teal-600 h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer"
-                                      />
-                                   </div>
-                               </div>
-
-                               <div className="space-y-6 pt-10 border-t border-slate-100">
-                                   <ToggleOption 
-                                      label="Voice Wake Activation" 
-                                      description="Allow the AI Core to listen for wake words when app is active." 
-                                      enabled={settings.enableVoiceWake} 
-                                      onToggle={() => updateSetting('enableVoiceWake', !settings.enableVoiceWake)} 
-                                   />
-                                   <ToggleOption 
-                                      label="Predictive Logic Modules" 
-                                      description="Anticipate physiological trends based on recent patient inputs." 
-                                      enabled={settings.aiPredictiveSuggestions} 
-                                      onToggle={() => updateSetting('aiPredictiveSuggestions', !settings.aiPredictiveSuggestions)} 
-                                   />
-                                   <ToggleOption 
-                                      label="AI Auto-Speak Responses" 
-                                      description="Automatically read assistant responses aloud using text-to-speech." 
-                                      enabled={settings.aiAutoSpeak} 
-                                      onToggle={() => updateSetting('aiAutoSpeak', !settings.aiAutoSpeak)} 
                                    />
                                </div>
                            </div>
@@ -608,28 +423,10 @@ export default function SettingsPanel() {
 
                                <div className="space-y-6 pt-10 border-t border-slate-100">
                                    <ToggleOption 
-                                      label="Enhanced High Contrast" 
-                                      description="Eliminate chromatic nuance for maximum legibility." 
-                                      enabled={settings.highContrastMode} 
-                                      onToggle={() => updateSetting('highContrastMode', !settings.highContrastMode)} 
-                                   />
-                                   <ToggleOption 
                                       label="Reduce UI Fluidity" 
                                       description="Minimalize animations and transitions for sensitive users." 
                                       enabled={settings.reduceMotion} 
                                       onToggle={() => updateSetting('reduceMotion', !settings.reduceMotion)} 
-                                   />
-                                   <ToggleOption 
-                                      label="Tactile Haptics" 
-                                      description="Vibrate the framework during critical data intersections." 
-                                      enabled={settings.hapticFeedback} 
-                                      onToggle={() => updateSetting('hapticFeedback', !settings.hapticFeedback)} 
-                                   />
-                                   <ToggleOption 
-                                      label="Semantic Screen Reader Support" 
-                                      description="Enforce strict HTML hierarchy for assist-tech devices." 
-                                      enabled={settings.screenReaderOptimized} 
-                                      onToggle={() => updateSetting('screenReaderOptimized', !settings.screenReaderOptimized)} 
                                    />
                                </div>
                            </div>

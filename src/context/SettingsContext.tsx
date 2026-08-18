@@ -142,6 +142,15 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
      // Set body background to wallpaper color to avoid white flashes and support transparent themes
      document.body.style.backgroundColor = settings.activeWallpaper === 'none' ? '#f8fafc' : 'var(--app-bg)';
      document.documentElement.style.setProperty('--color-accent-dynamic', settings.colorAccent);
+
+     /*
+      * The two accessibility settings that do real work. Text size scales the
+      * root em so every rem-sized thing follows; reduced motion sets a class
+      * the stylesheet uses to stop animation for people who need stillness.
+      * Both existed as switches before, wired to storage and nothing else.
+      */
+     document.documentElement.style.fontSize = `${Math.round((settings.fontSizeMultiplier || 1) * 100)}%`;
+     document.documentElement.classList.toggle('reduce-motion', !!settings.reduceMotion);
   }, [settings]);
 
   const updateSetting = <K extends keyof Settings>(key: K, value: Settings[K]) => {

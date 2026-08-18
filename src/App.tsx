@@ -156,7 +156,13 @@ const Sidebar = ({ isCollapsed, onToggle, isMobile, isOpenMobile, onCloseMobile 
              <Logo size={42} replayIntroOnClick className="shrink-0 shadow-lg shadow-teal-500/10 group-hover/sidebar:rotate-[360deg] transition-transform duration-1000" variant="gradient" />
              <div className="absolute -inset-2 bg-teal-400/20 blur-xl rounded-full opacity-0 group-hover/sidebar:opacity-100 transition-opacity"></div>
           </div>
-          {(!isCollapsed || isMobile) && <span className="font-display font-bold text-[var(--panel-text)] tracking-tighter whitespace-nowrap text-2xl">CT6</span>}
+          {/* The practice trademark, not just the postcode mark. */}
+          {(!isCollapsed || isMobile) && (
+            <span className="flex flex-col leading-tight whitespace-nowrap">
+              <span className="font-display font-bold text-[var(--panel-text)] tracking-tight text-[15px]">Osteopathy &amp; Wellbeing</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.35em] text-teal-600">@CT6 · Herne Bay</span>
+            </span>
+          )}
         </div>
       </div>
       <nav id="main-navigation" className="flex-1 py-12 px-5 space-y-3 overflow-y-auto custom-scrollbar" aria-label="Main Navigation">

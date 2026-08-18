@@ -351,6 +351,32 @@
   .crystal-glass {
     @apply bg-white/10 backdrop-blur-2xl border border-white/20 shadow-premium;
   }
+
+  /*
+   * THE CALM HALO - a slow breath of light around the card surfaces.
+   *
+   * Meditative rather than electric: three soft colours (teal, sky, lavender)
+   * drift through a wide, low-alpha glow on a ~14s cycle, deliberately slower
+   * than a resting breath so it reads as ambience, not activity. Drawn with
+   * box-shadow only: no layout impact, no pseudo-element to collide with the
+   * ones several cards already use.
+   *
+   * Applied alongside crystal-glass automatically; anything else can opt in
+   * with the class on its own.
+   */
+  .calm-halo,
+  .crystal-glass {
+    animation: calm-halo-breathe 14s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .calm-halo,
+    .crystal-glass {
+      /* The stillness keeps a faint resting glow rather than losing the light. */
+      animation: none;
+      box-shadow: 0 0 42px -12px rgba(45, 212, 191, 0.28);
+    }
+  }
 }
 
 @layer utilities {
@@ -575,4 +601,27 @@
   #main-content :is(p, li, blockquote, dd, dt, figcaption, h1, h2, h3, h4, h5, h6).reading-touch-active {
     transition: none;
   }
+}
+
+/* Soft meditational drift for the calm halo: teal -> sky -> lavender -> teal. */
+@keyframes calm-halo-breathe {
+  0%, 100% { box-shadow: 0 0 38px -14px rgba(45, 212, 191, 0.32); }
+  33%      { box-shadow: 0 0 52px -12px rgba(125, 168, 255, 0.30); }
+  66%      { box-shadow: 0 0 48px -12px rgba(196, 160, 255, 0.26); }
+}
+
+/*
+ * Honoured when the visitor turns on "Reduce UI Fluidity" in Settings - the
+ * switch existed for months wired to nothing. Everything that moves stops:
+ * keyframe animation, transitions, smooth scrolling, the calm halo included.
+ * (The OS-level preference is already respected separately via the
+ * prefers-reduced-motion media queries above.)
+ */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
 }
