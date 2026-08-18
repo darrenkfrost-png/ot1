@@ -269,6 +269,41 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile, onEnterImme
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
+  /*
+   * REAL SEARCH, not an announcement of one.
+   *
+   * Pressing Enter used to say "Matching across our diagnostic database" and,
+   * a second and a half later, "Search complete... Displaying closest relative
+   * content" - while displaying nothing at all. There was no database and no
+   * search, and the dropdown openly invited it: "Press Enter to perform a
+   * clinical search". This searches what the site actually holds: the
+   * treatments, the conditions each one lists, and the practitioners.
+   */
+  const contentMatches = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (q.length < 2) return [] as { label: string; hint: string; path: string }[];
+    const hits: { label: string; hint: string; path: string }[] = [];
+    for (const t of TREATMENTS) {
+      const byCondition = t.conditions?.some((c) => c.toLowerCase().includes(q)) ?? false;
+      const byName = t.title.toLowerCase().includes(q) || t.desc.toLowerCase().includes(q);
+      if (byName || byCondition) {
+        hits.push({
+          label: t.title,
+          // Say why it matched when the word is not in the title, or a result
+          // for "sciatica" sitting under "Osteopathy" reads as a mistake.
+          hint: byCondition && !byName ? 'Treats this' : 'Treatment',
+          path: '/treatments/' + t.id,
+        });
+      }
+    }
+    for (const person of PRACTITIONERS) {
+      if (person.name.toLowerCase().includes(q) || (person.role || '').toLowerCase().includes(q)) {
+        hits.push({ label: person.name, hint: person.role || 'Practitioner', path: '/practitioners/' + person.id });
+      }
+    }
+    return hits.slice(0, 6);
+  }, [searchQuery]);
+
   const filteredCommands = useMemo(() => {
     return commands.filter(cmd => 
       cmd.label.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -334,9 +369,9 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile, onEnterImme
                     executeCommand(filteredCommands[0].id);
                     setSearchQuery('');
                     (e.target as HTMLInputElement).blur();
-                  } else if (searchQuery.trim()) {
-                    showToast(`Clinical search initialized. Matching "${searchQuery.trim()}" across our diagnostic database...`, "loading");
-                    setTimeout(() => showToast(`Search complete. No exact clinical matches for "${searchQuery.trim()}". Displaying closest relative content.`, "info"), 1500);
+                  } else if (contentMatches.length > 0) {
+                    window.location.assign(contentMatches[0].path);
+                    setSearchQuery('');
                   }
                 }
               }}
@@ -350,7 +385,20 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile, onEnterImme
                   exit={{ opacity: 0, y: 5, scale: 0.98 }}
                   className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50 py-2 max-h-[300px] overflow-y-auto"
                 >
-                  {filteredCommands.length > 0 ? (
+                  {contentMatches.map((m) => (
+                    <a
+                      key={m.path}
+                      href={m.path}
+                      onMouseDown={() => setSearchQuery('')}
+                      className="block w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="text-sm font-bold text-slate-800">{m.label}</span>
+                        <span className="text-[10px] uppercase font-bold tracking-widest text-teal-800 bg-teal-50 px-2 py-0.5 rounded-md shrink-0">{m.hint}</span>
+                      </div>
+                    </a>
+                  ))}
+                  {(filteredCommands.length > 0 || contentMatches.length > 0) ? (
                     filteredCommands.map((cmd) => (
                       <button
                         key={cmd.id}
@@ -370,7 +418,7 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile, onEnterImme
                     ))
                   ) : (
                     <div className="px-4 py-6 text-center text-sm text-slate-500">
-                      No commands found for "{searchQuery}". Press Enter to perform a clinical search.
+                      Nothing matches "{searchQuery}". Try a treatment, a condition we treat, or a practitioner’s name.
                     </div>
                   )}
                 </motion.div>
