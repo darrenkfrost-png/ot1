@@ -473,7 +473,7 @@ export default function DashboardPage() {
                    <h4 className="text-sm font-bold uppercase tracking-widest text-slate-100 flex items-center gap-2">
                      <Target size={18} className="text-teal-500" /> Kinetic Recovery Milestone Explorer
                    </h4>
-                   <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Click cards to analyze diagnostic criteria</span>
+                   <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">Click cards to analyze diagnostic criteria</span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                    {['Inflammation Reduced', 'Full Range of Motion', 'Load Bearing Achieved', 'Functional Discharge'].map((m, i) => {
@@ -511,7 +511,7 @@ export default function DashboardPage() {
                          <div 
                            key={i} 
                            onClick={() => { setSelectedMilestone(i); playAcousticPing(440, 0.08, 'triangle'); }}
-                           className="flex flex-col gap-3 p-4 rounded-2xl bg-slate-50/50 hover:bg-teal-50/30 border border-transparent hover:border-teal-100 hover:shadow-md cursor-pointer transition-all duration-300 relative group"
+                           className="flex flex-col gap-3 p-4 rounded-2xl bg-slate-50 hover:bg-teal-50/30 border border-transparent hover:border-teal-100 hover:shadow-md cursor-pointer transition-all duration-300 relative group"
                          >
                             <div className="flex items-center gap-3">
                                <div className={cn("w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-[10px] font-black", bgDot)}>
@@ -658,7 +658,7 @@ export default function DashboardPage() {
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         {/* Daily Exercise & Log Tracker */}
-        <div className="lg:col-span-5 bg-white/70 backdrop-blur-3xl crystal-glass rounded-[3rem] border border-slate-100 p-8 shadow-premium flex flex-col justify-between">
+        <div className="lg:col-span-5 bg-white/95 backdrop-blur-3xl crystal-glass rounded-[3rem] border border-slate-100 p-8 shadow-premium flex flex-col justify-between">
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -760,7 +760,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Biomechanical ROM & Pain Joint Simulator */}
-        <div className="lg:col-span-7 bg-white/70 backdrop-blur-3xl crystal-glass rounded-[3rem] border border-slate-100 p-8 shadow-premium space-y-8 flex flex-col justify-between">
+        <div className="lg:col-span-7 bg-white/95 backdrop-blur-3xl crystal-glass rounded-[3rem] border border-slate-100 p-8 shadow-premium space-y-8 flex flex-col justify-between">
           <div className="space-y-6">
             <div className="flex items-center gap-3">
               <Sliders className="text-indigo-600" size={24} />
@@ -1339,7 +1339,7 @@ export default function DashboardPage() {
                              <h4 className="font-bold text-slate-800 group-hover:text-teal-600 transition-colors">{act.title}</h4>
                           </div>
                           <div className="flex items-center gap-4">
-                             <span className="text-xs text-slate-400 font-medium whitespace-nowrap">{act.dur}</span>
+                             <span className="text-xs text-slate-600 font-medium whitespace-nowrap">{act.dur}</span>
                              <ChevronRight size={18} className="text-slate-300 group-hover:text-teal-500 group-hover:translate-x-1 transition-all" />
                           </div>
                       </div>
