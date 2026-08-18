@@ -116,7 +116,7 @@ export default function HomePage() {
                 href={BOOKING_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto px-12 py-6 rounded-2xl bg-teal-700 hover:bg-teal-800 text-white font-bold text-xl transition-all shadow-[0_0_40px_rgba(20,184,166,0.3)] hover:shadow-[0_0_60px_rgba(20,184,166,0.5)] hover:-translate-y-1.5 active:scale-[0.98] flex items-center justify-center gap-4 group cinematic-glow"
+                className="calm-cta w-full sm:w-auto px-12 py-6 rounded-2xl bg-teal-700 hover:bg-teal-800 text-white font-bold text-xl transition-all shadow-[0_0_40px_rgba(20,184,166,0.3)] hover:shadow-[0_0_60px_rgba(20,184,166,0.5)] hover:-translate-y-1.5 active:scale-[0.98] flex items-center justify-center gap-4 group cinematic-glow"
                 aria-label="Book an assessment — opens our booking system in a new tab"
               >
                 <Calendar size={22} className="group-hover:rotate-12 transition-transform" />

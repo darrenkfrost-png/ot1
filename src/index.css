@@ -625,3 +625,27 @@
   transition-duration: 0.01ms !important;
   scroll-behavior: auto !important;
 }
+
+/*
+ * The calm light, carried to the interactive landmarks.
+ *
+ * calm-cta breathes gently on the primary booking actions - the one place a
+ * glow should draw the eye - in the same teal the buttons already wear, and a
+ * beat faster than the cards so the action reads warmer than the ambience.
+ * calm-active rests under the current navigation item: a still, soft light,
+ * no animation, because the sidebar is a wayfinder and not a spectacle.
+ * Both fall silent under .reduce-motion and the OS preference like the rest.
+ */
+.calm-cta {
+  animation: calm-cta-breathe 9s ease-in-out infinite;
+}
+@keyframes calm-cta-breathe {
+  0%, 100% { box-shadow: 0 0 26px -8px rgba(20, 184, 166, 0.45); }
+  50%      { box-shadow: 0 0 44px -6px rgba(20, 184, 166, 0.62); }
+}
+.calm-active {
+  box-shadow: 0 0 24px -6px rgba(45, 212, 191, 0.4);
+}
+@media (prefers-reduced-motion: reduce) {
+  .calm-cta { animation: none; box-shadow: 0 0 26px -8px rgba(20, 184, 166, 0.45); }
+}

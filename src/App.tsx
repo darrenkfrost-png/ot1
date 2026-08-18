@@ -198,7 +198,7 @@ const Sidebar = ({ isCollapsed, onToggle, isMobile, isOpenMobile, onCloseMobile 
                     )}
                     <div className={cn(
                       "p-1.5 rounded-xl transition-all shrink-0",
-                      isActive ? "bg-teal-500/10 text-teal-400" : "text-slate-400 group-hover:text-teal-500 group-hover:bg-teal-500/5"
+                      isActive ? "calm-active bg-teal-500/10 text-teal-400" : "text-slate-400 group-hover:text-teal-500 group-hover:bg-teal-500/5"
                     )}>
                       <item.icon size={22} className={isActive ? "animate-pulse" : ""} strokeWidth={isActive ? 2.5 : 2} />
                     </div>
@@ -451,7 +451,7 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile, onEnterImme
             href={BOOKING_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-teal-700 text-white rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-teal-500/25 hover:bg-teal-700 hover:shadow-teal-500/40 transition-all active:scale-95 focus-visible:outline-teal-500 group"
+            className="calm-cta hidden sm:flex items-center gap-2 px-5 py-2.5 bg-teal-700 text-white rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-teal-500/25 hover:bg-teal-700 hover:shadow-teal-500/40 transition-all active:scale-95 focus-visible:outline-teal-500 group"
             aria-label="Book an appointment online — opens our booking system in a new tab"
           >
             <Calendar size={16} className="group-hover:rotate-12 transition-transform" />
