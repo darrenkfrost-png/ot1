@@ -189,7 +189,7 @@ export default function HomePage() {
                  <div>
                    <div className={cn(
                      "w-14 h-14 rounded-[1.2rem] flex items-center justify-center mb-6 transition-transform group-hover:scale-110 group-hover:rotate-3 duration-500 shadow-lg",
-                     action.color.includes('white') ? "bg-teal-50 text-teal-600 border border-teal-100/50" : "bg-white/10 text-white border border-white/20 backdrop-blur-md"
+                     action.color.includes('bg-white') ? "bg-teal-50 text-teal-600 border border-teal-100/50" : "bg-white/10 text-white border border-white/20 backdrop-blur-md"
                    )}>
                      <action.icon size={28} />
                    </div>
@@ -204,7 +204,7 @@ export default function HomePage() {
                    * and the 60% white at 3.01:1, both well under the 4.5:1
                    * floor. Grey-800 gives 5.73:1 and 90% white 4.76:1.
                    */}
-                 <p className={cn("text-sm font-medium relative z-10 line-clamp-2", action.color.includes('white') ? "text-slate-800" : "text-white/90")}>{action.desc}</p>
+                 <p className={cn("text-sm font-medium relative z-10 line-clamp-2", action.color.includes('bg-white') ? "text-slate-800" : "text-white/90")}>{action.desc}</p>
                </div>
                
                {/* Background Decoration */}
@@ -232,7 +232,7 @@ export default function HomePage() {
                  <MousePointerClick size={14} />
                  <span className="text-[10px] font-black uppercase tracking-[0.3em]">The CT6 Standard</span>
               </div>
-              <h2 className="text-5xl font-display font-medium tracking-tight text-slate-950 leading-[1.1]">A Multi-Tiered Approach to <span className="underline decoration-teal-300 underline-offset-8">Longevity</span>.</h2>
+              <h2 className="text-5xl font-display font-medium tracking-tight text-slate-50 leading-[1.1]">A Multi-Tiered Approach to <span className="underline decoration-teal-300 underline-offset-8">Longevity</span>.</h2>
               <p className="text-xl text-slate-400 font-light leading-relaxed">
                 We do not mask symptoms. We mathematically isolate the mechanical root cause and engineer recovery pathways that prioritize long-term physiological resilience.
               </p>
@@ -323,7 +323,7 @@ export default function HomePage() {
                       { label: "Practising since", value: "2012", color: "blue", delay: 0.6 }
                     ].map((stat, i) => (
                       <div key={i} className="space-y-3">
-                         <div className="flex justify-between text-sm font-bold uppercase tracking-[0.2em] text-slate-400">
+                         <div className="flex justify-between text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
                             <span>{stat.label}</span>
                             <span className={`text-${stat.color}-600 font-black`}>{stat.value}</span>
                          </div>
@@ -677,7 +677,7 @@ export default function HomePage() {
                  whileInView={{ opacity: 1, y: 0 }}
                  viewport={{ once: true }}
                  transition={{ delay: i * 0.2 }}
-                 className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-[3.5rem] p-12 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] hover:shadow-[0_30px_60px_-15px_rgba(20,184,166,0.15)] hover:border-teal-200 transition-all duration-500 group relative overflow-hidden"
+                 className="bg-white/95 backdrop-blur-xl border border-slate-200/60 rounded-[3.5rem] p-12 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] hover:shadow-[0_30px_60px_-15px_rgba(20,184,166,0.15)] hover:border-teal-200 transition-all duration-500 group relative overflow-hidden"
               >
                   <div className="absolute -right-24 -top-24 w-64 h-64 bg-slate-50 rounded-full group-hover:scale-[2] group-hover:bg-teal-50/40 transition-transform duration-[1.5s] -z-10 ease-out"></div>
                   
@@ -703,7 +703,7 @@ export default function HomePage() {
 
                   <div className="grid grid-cols-1 gap-3 mb-12 px-2">
                       {clinic.features.map((f, idx) => (
-                        <div key={idx} className="flex items-center gap-3 text-xs font-black text-slate-400 group-hover:text-slate-500 uppercase tracking-widest transition-colors">
+                        <div key={idx} className="flex items-center gap-3 text-xs font-black text-slate-600 group-hover:text-slate-700 uppercase tracking-widest transition-colors">
                             <CheckCircle2 size={14} className="text-teal-500" /> {f}
                         </div>
                       ))}

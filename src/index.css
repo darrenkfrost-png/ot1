@@ -145,9 +145,10 @@
     --panel-bg: rgba(255, 255, 255, 0.78);
     --panel-border: rgba(241, 245, 249, 0.6);
     --panel-text: #0f172a;
-    /* slate-400 measured 2.56:1 against these panels — below the 4.5:1 needed
-       for body text, and the navigation labels are small. slate-500 clears it. */
-    --panel-text-muted: #64748b;
+    /* Darkened twice, both by measurement: slate-400 was 2.56:1 on these
+       panels, and the slate-500 that replaced it still left the sidebar
+       COLLAPSE control at 4.19:1 on its hover surface. slate-600 clears both. */
+    --panel-text-muted: #475569;
     --panel-hover: rgba(241, 245, 249, 0.9);
     --app-bg: #0f172a;
   }

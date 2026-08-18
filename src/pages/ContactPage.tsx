@@ -114,7 +114,7 @@ export default function ContactPage() {
                 <Phone size={24} />
               </div>
               <div className="space-y-1">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Telephone</p>
+                <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Telephone</p>
                 <a href={`tel:${CLINIC.telephoneLink}`} className="text-xl font-bold text-slate-900 hover:text-teal-600 transition-colors block">
                   {CLINIC.telephone}
                 </a>
@@ -127,7 +127,7 @@ export default function ContactPage() {
                 <Mail size={24} />
               </div>
               <div className="space-y-1">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Email</p>
+                <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Email</p>
                 <a href={`mailto:${CLINIC.email}`} className="text-lg font-bold text-slate-900 hover:text-teal-600 transition-colors block break-all">
                   {CLINIC.email}
                 </a>
@@ -140,7 +140,7 @@ export default function ContactPage() {
                 <MapPin size={24} />
               </div>
               <div className="space-y-1">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">The Clinic</p>
+                <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">The Clinic</p>
                 <p className="text-xl font-bold text-slate-900">{CLINIC.address.town}, {CLINIC.address.county}</p>
                 <p className="text-xs text-slate-500 font-medium">{CLINIC.address.line1}, {CLINIC.address.postcode}</p>
               </div>
