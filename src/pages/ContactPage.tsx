@@ -153,8 +153,8 @@ export default function ContactPage() {
                   <ShieldCheck size={32} />
                 </div>
                 <div>
-                   <h3 className="text-lg font-bold">Data Privacy Guaranteed</h3>
-                   <p className="text-slate-400 text-sm font-light">Your clinical information is encrypted and handled following GDPR protocols.</p>
+                   <h3 className="text-lg font-bold">Your details, handled properly</h3>
+                   <p className="text-slate-400 text-sm font-light">What you send here reaches the clinic and is used to answer you, nothing else. Sent over an encrypted connection, and kept in line with GDPR.</p>
                 </div>
              </div>
              <div className="absolute top-0 right-0 w-32 h-32 bg-teal-500/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-1000"></div>
@@ -300,7 +300,7 @@ export default function ContactPage() {
                   <div className="flex items-center justify-center gap-8 pt-4">
                      <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
                         <Clock size={12} className="text-teal-500" />
-                        Response within 24h
+                        {CLINIC.openingHours[0].days}, {CLINIC.openingHours[0].hours}
                      </div>
                      <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
                         <MessageSquare size={12} className="text-teal-500" />

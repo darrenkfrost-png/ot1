@@ -167,7 +167,7 @@ export default function HomePage() {
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
       >
         {[
-          { label: "Clinical Booking", icon: Calendar, path: "/treatments", color: "bg-teal-700 border-teal-500 text-white shadow-[0_0_40px_rgba(20,184,166,0.2)]", sub: "Priority Scheduling", desc: "Instant confirmation for all clinics.", hoverColor: "group-hover:bg-teal-800" },
+          { label: "Clinical Booking", icon: Calendar, path: "/treatments", color: "bg-teal-700 border-teal-500 text-white shadow-[0_0_40px_rgba(20,184,166,0.2)]", sub: "Priority Scheduling", desc: "Book online at the Herne Bay clinic.", hoverColor: "group-hover:bg-teal-800" },
           { label: "Our Treatments", icon: Stethoscope, path: "/treatments", color: "bg-slate-900 border-slate-700 text-white shadow-xl", sub: "What We Offer", desc: "Osteopathy, acupuncture, massage, foot care.", hoverColor: "group-hover:bg-slate-800" },
           { label: "Meet the Team", icon: Users, path: "/practitioners", color: "bg-white/95 backdrop-blur-3xl border-white/40 text-slate-900 shadow-premium", sub: "Expert Practitioners", desc: "View clinical backgrounds.", hoverColor: "group-hover:bg-white" },
           { label: "Patient Dashboard", icon: Activity, path: "/dashboard", color: "bg-white/95 backdrop-blur-3xl border-white/40 text-slate-900 shadow-premium", sub: "Recovery Hub", desc: "Track your health progress.", hoverColor: "group-hover:bg-white" }
