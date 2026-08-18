@@ -440,7 +440,7 @@ export default function DashboardPage() {
                </div>
 
                {/* Right Chart */}
-               <div className="lg:col-span-3 h-[400px] w-full">
+               <div className="text-slate-600 lg:col-span-3 h-[400px] w-full">
                    <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={chartData} margin={{ top: 20, right: 20, left: -20, bottom: 0 }}>
                             <defs>
@@ -796,7 +796,7 @@ export default function DashboardPage() {
               <div className="space-y-4">
                 <div className="flex justify-between items-center text-sm">
                   <span className="font-bold text-slate-700">Cervical Rotation ROM</span>
-                  <span className="font-mono text-indigo-600 font-bold">{romNeckRotation}° <span className="text-xs text-slate-400">/ 90°</span></span>
+                  <span className="font-mono text-indigo-600 font-bold">{romNeckRotation}° <span className="text-xs text-slate-600">/ 90°</span></span>
                 </div>
                 <input
                   type="range"
@@ -958,7 +958,7 @@ export default function DashboardPage() {
           {/* Metric Outputs */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center p-6 bg-slate-50 border border-slate-100 rounded-2xl shadow-inner font-sans">
             <div className="md:col-span-4 flex flex-col justify-center items-center text-center p-3 border-r border-slate-200">
-              <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Kinetic Alignment Score</span>
+              <span className="text-[10px] font-black uppercase text-slate-600 tracking-wider">Kinetic Alignment Score</span>
               <span className={cn("text-5xl font-display font-black my-2", bioScoreLimit > 70 ? "text-emerald-500" : bioScoreLimit > 45 ? "text-amber-700" : "text-red-500")}>
                 {bioScoreLimit}%
               </span>

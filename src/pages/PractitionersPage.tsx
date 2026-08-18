@@ -163,12 +163,12 @@ export default function PractitionersPage() {
                     </div>
                   </div>
                   <div className="flex-1 space-y-6 px-2">
-                    <p className="text-slate-500 leading-relaxed font-light text-base line-clamp-3">{p.bio}</p>
+                    <p className="text-slate-600 leading-relaxed font-light text-base line-clamp-3">{p.bio}</p>
                     <div className="space-y-3">
-                       <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Clinical Focus Areas:</span>
+                       <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">Clinical Focus Areas:</span>
                        <div className="flex flex-wrap gap-2">
                          {p.specialisations?.map((spec, i) => (
-                           <span key={i} className="px-3 py-1.5 bg-slate-50 border border-slate-100 text-slate-600 text-[10px] font-bold uppercase tracking-widest rounded-lg group-hover:bg-teal-50 group-hover:text-teal-600 group-hover:border-teal-100 transition-colors">{spec}</span>
+                           <span key={i} className="px-3 py-1.5 bg-slate-50 border border-slate-100 text-slate-700 text-[10px] font-bold uppercase tracking-widest rounded-lg group-hover:bg-teal-50 group-hover:text-teal-600 group-hover:border-teal-100 transition-colors">{spec}</span>
                          ))}
                        </div>
                     </div>

@@ -160,7 +160,7 @@ const Sidebar = ({ isCollapsed, onToggle, isMobile, isOpenMobile, onCloseMobile 
           {(!isCollapsed || isMobile) && (
             <span className="flex flex-col leading-tight whitespace-nowrap">
               <span className="font-display font-bold text-[var(--panel-text)] tracking-tight text-[15px]">Osteopathy &amp; Wellbeing</span>
-              <span className="text-[10px] font-black uppercase tracking-[0.35em] text-teal-600">@CT6 · Herne Bay</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.35em] text-teal-800">@CT6 · Herne Bay</span>
             </span>
           )}
         </div>
