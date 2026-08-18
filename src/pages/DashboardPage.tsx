@@ -470,10 +470,10 @@ export default function DashboardPage() {
                       {/* Treatment Milestones */}
              <div className="mt-12 pt-8 border-t border-slate-100">
                 <div className="flex items-center justify-between mb-6">
-                   <h4 className="text-sm font-bold uppercase tracking-widest text-slate-800 flex items-center gap-2">
+                   <h4 className="text-sm font-bold uppercase tracking-widest text-slate-100 flex items-center gap-2">
                      <Target size={18} className="text-teal-500" /> Kinetic Recovery Milestone Explorer
                    </h4>
-                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Click cards to analyze diagnostic criteria</span>
+                   <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Click cards to analyze diagnostic criteria</span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                    {['Inflammation Reduced', 'Full Range of Motion', 'Load Bearing Achieved', 'Functional Discharge'].map((m, i) => {
@@ -696,8 +696,8 @@ export default function DashboardPage() {
                       {ex.completed && <CheckCircle2 size={14} />}
                     </div>
                     <div>
-                      <h4 className={cn("text-xs md:text-sm font-bold", ex.completed ? "line-through text-slate-400" : "text-slate-800")}>{ex.title}</h4>
-                      <p className="text-[10px] text-slate-400 uppercase mt-0.5">{ex.sets}</p>
+                      <h4 className={cn("text-xs md:text-sm font-bold", ex.completed ? "line-through text-slate-500" : "text-slate-800")}>{ex.title}</h4>
+                      <p className="text-[10px] text-slate-600 uppercase mt-0.5">{ex.sets}</p>
                     </div>
                   </div>
                   <ChevronRight size={16} className={cn("text-slate-300 transition-all", ex.completed ? "text-teal-500" : "group-hover:translate-x-1")} />
@@ -713,7 +713,7 @@ export default function DashboardPage() {
                 <h4 className="text-xs font-bold text-slate-800 uppercase tracking-widest flex items-center gap-1.5">
                   <Sparkles size={13} className="text-indigo-500" /> AI Active Prescriber
                 </h4>
-                <p className="text-[11px] text-slate-400 font-light mt-0.5">
+                <p className="text-[11px] text-slate-600 font-light mt-0.5">
                   Adapt daily rehabilitation to matches your live range of motion inputs.
                 </p>
               </div>

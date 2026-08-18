@@ -237,8 +237,8 @@ export default function PractitionersPage() {
                       <Sparkles size={22} />
                    </div>
                    <div>
-                      <h4 className="font-bold text-slate-900 text-lg mb-1 tracking-tight">{item.title}</h4>
-                      <p className="text-sm text-slate-500 font-light leading-relaxed">{item.desc}</p>
+                      <h4 className="font-bold text-slate-50 text-lg mb-1 tracking-tight">{item.title}</h4>
+                      <p className="text-sm text-slate-300 font-light leading-relaxed">{item.desc}</p>
                    </div>
                 </div>
               ))}
@@ -360,7 +360,7 @@ export default function PractitionersPage() {
               <item.icon size={24} />
             </div>
             <h4 className="font-bold text-slate-900 text-lg tracking-tight">{item.title}</h4>
-            <p className="text-sm text-slate-500 font-light leading-relaxed">{item.desc}</p>
+            <p className="text-sm text-slate-600 font-light leading-relaxed">{item.desc}</p>
           </div>
         ))}
       </section>
