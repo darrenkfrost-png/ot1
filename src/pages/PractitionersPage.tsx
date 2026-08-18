@@ -82,7 +82,7 @@ export default function PractitionersPage() {
             </div>
             <div className="flex items-center gap-3 px-6 py-3 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-xl">
               <Award size={20} className="text-white" />
-              <span className="text-sm font-bold uppercase tracking-widest text-slate-200">100+ Years Combined Exp</span>
+              <span className="text-sm font-bold uppercase tracking-widest text-slate-200">{PRACTITIONERS.length} Practitioners</span>
             </div>
           </div>
         </div>
