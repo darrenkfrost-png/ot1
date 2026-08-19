@@ -104,6 +104,11 @@ const AUDIT = () => {
       const cs = getComputedStyle(n);
       if (cs.backgroundImage && cs.backgroundImage !== 'none') return true;
       if ((cs.webkitBackgroundClip || cs.backgroundClip) === 'text') return true; // gradient lettering
+      // A sibling <img>/<video> painted under the text inside the same
+      // positioned box is a photo backdrop, even though no CSS background is
+      // set - the locations tags sit on exactly this and were being judged
+      // against white that is never visible.
+      if (n !== el && n.querySelector(':scope > img, :scope > video')) return true;
       n = n.parentElement;
     }
     return false;

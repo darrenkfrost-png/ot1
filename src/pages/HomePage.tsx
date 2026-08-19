@@ -688,7 +688,7 @@ export default function HomePage() {
                       <span className="px-5 py-2.5 bg-white border border-slate-100 text-slate-500 text-[9px] font-black uppercase tracking-[0.2em] rounded-full shadow-sm">Ready for Admittance</span>
                   </div>
                   <h3 className="text-3xl font-display font-medium text-slate-900 mb-3 tracking-tight">{clinic.location}</h3>
-                  <p className="text-slate-500 font-medium text-lg mb-8">{clinic.address}</p>
+                  <p className="text-slate-600 font-medium text-lg mb-8">{clinic.address}</p>
                   
                   <div className="space-y-5 mb-12 p-6 bg-slate-50/50 rounded-[2rem] border border-slate-100/50 group-hover:bg-white group-hover:border-teal-50 transition-colors">
                       <div className="flex items-center gap-4 text-base text-slate-600 font-medium">

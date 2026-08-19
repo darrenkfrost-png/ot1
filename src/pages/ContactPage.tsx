@@ -175,7 +175,7 @@ export default function ContactPage() {
                 <form onSubmit={handleSubmit} className="space-y-8">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-3">
-                      <label htmlFor="contact-name" className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1 block">Full Name</label>
+                      <label htmlFor="contact-name" className="text-xs font-black text-slate-600 uppercase tracking-widest ml-1 block">Full Name</label>
                       <input
                         required
                         id="contact-name"
@@ -189,7 +189,7 @@ export default function ContactPage() {
                       />
                     </div>
                     <div className="space-y-3">
-                      <label htmlFor="contact-email" className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1 block">Email Address</label>
+                      <label htmlFor="contact-email" className="text-xs font-black text-slate-600 uppercase tracking-widest ml-1 block">Email Address</label>
                       <input
                         required
                         id="contact-email"
@@ -206,7 +206,7 @@ export default function ContactPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-3">
-                      <label htmlFor="contact-phone" className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1 block">Phone Number</label>
+                      <label htmlFor="contact-phone" className="text-xs font-black text-slate-600 uppercase tracking-widest ml-1 block">Phone Number</label>
                       <input
                         id="contact-phone"
                         autoComplete="tel"
@@ -219,7 +219,7 @@ export default function ContactPage() {
                       />
                     </div>
                     <div className="space-y-3">
-                      <label htmlFor="contact-subject" className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1 block">Subject</label>
+                      <label htmlFor="contact-subject" className="text-xs font-black text-slate-600 uppercase tracking-widest ml-1 block">Subject</label>
                       <select
                         id="contact-subject"
                         name="subject"
@@ -236,7 +236,7 @@ export default function ContactPage() {
                   </div>
 
                   <div className="space-y-3">
-                    <label htmlFor="contact-message" className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1 block">Message</label>
+                    <label htmlFor="contact-message" className="text-xs font-black text-slate-600 uppercase tracking-widest ml-1 block">Message</label>
                     <textarea
                       required
                       id="contact-message"

@@ -51,7 +51,7 @@ export default function FaqPage() {
         <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-teal-50 border border-teal-100 text-teal-700 text-[11px] font-black uppercase tracking-[0.3em]">
           <HelpCircle size={15} /> Before you book
         </span>
-        <h1 className="text-5xl md:text-6xl font-display font-medium text-slate-900 tracking-tight leading-[1.05]">
+        <h1 className="text-5xl md:text-6xl font-display font-medium text-slate-50 tracking-tight leading-[1.05]">
           Questions people ask <span className="text-teal-600">before their first visit.</span>
         </h1>
         <p className="text-lg text-slate-300 font-light leading-relaxed max-w-2xl">

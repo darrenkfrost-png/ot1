@@ -140,7 +140,7 @@ export default function ResourcesPage() {
                     </div>
                     <div className="flex-1">
                       <h3 className="font-semibold text-slate-900 leading-snug mb-1 group-hover:text-teal-700 transition-colors">{pdf.title}</h3>
-                      <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Open the guide</span>
+                      <span className="text-[10px] text-slate-600 font-bold uppercase tracking-widest">Open the guide</span>
                     </div>
                     <Download className="text-slate-200 group-hover:text-teal-400 transition-colors" size={20} />
                   </a>
@@ -150,7 +150,7 @@ export default function ResourcesPage() {
           </section>
 
           <section>
-            <h2 className="text-3xl font-display font-semibold text-slate-900 mb-10 tracking-tight flex items-center gap-3">
+            <h2 className="text-3xl font-display font-semibold text-slate-50 mb-10 tracking-tight flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center">
                 <PlayCircle size={20} />
               </div>

@@ -365,7 +365,7 @@ export default function TreatmentsPage() {
       */}
       <section className="py-24">
         <div className="max-w-3xl mx-auto text-center space-y-6 bg-white rounded-[3rem] border border-slate-100 shadow-premium p-12 md:p-16">
-          <span className="text-teal-600 font-bold text-xs uppercase tracking-[0.3em]">Fees</span>
+          <span className="text-teal-700 font-bold text-xs uppercase tracking-[0.3em]">Fees</span>
           <h2 className="text-4xl md:text-5xl font-display font-medium text-slate-900 tracking-tight">
             What it costs
           </h2>

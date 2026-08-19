@@ -280,7 +280,7 @@ export default function PractitionersPage() {
             <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-teal-50 border border-teal-100 rounded-full text-[10px] font-black uppercase text-teal-800 tracking-wider">
                <HelpCircle size={12} /> Patient Support Center
             </span>
-            <h2 className="text-4xl md:text-5xl font-display font-medium text-slate-900 tracking-tight">
+            <h2 className="text-4xl md:text-5xl font-display font-medium text-slate-50 tracking-tight">
                Frequently Asked <span className="text-teal-600">Questions</span>
             </h2>
             <p className="text-slate-500 font-light text-base max-w-lg">
