@@ -302,13 +302,13 @@ export default function HomePage() {
               className="lg:col-span-5 space-y-10 order-2 lg:order-1"
             >
                 <div className="space-y-6">
-                  <span className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-teal-50 text-teal-600 font-bold text-[10px] uppercase tracking-[0.3em] border border-teal-100 shadow-sm">
+                  <span className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-teal-50 text-teal-800 font-bold text-[10px] uppercase tracking-[0.3em] border border-teal-100 shadow-sm">
                     <TrendingUp size={16} /> Live Telemetry
                   </span>
                   <h2 className="text-5xl md:text-6xl font-display font-medium text-slate-900 tracking-tight leading-[1.1]">
                     Real-time Data for <br/> <span className="relative inline-block"><span className="relative z-10 text-slate-950">Peak Performance</span><div className="absolute bottom-2 left-0 right-0 h-4 bg-teal-300/40 -z-0 -rotate-2"></div></span>.
                   </h2>
-                  <p className="text-xl text-slate-400 font-light leading-relaxed max-w-md drop-shadow-sm">
+                  <p className="text-xl text-slate-600 font-light leading-relaxed max-w-md drop-shadow-sm">
                     Our interconnected ecosystem monitors local clinic activity, success rates, and availability to give you the most accurate triage and recovery pathway.
                   </p>
                 </div>
@@ -325,7 +325,11 @@ export default function HomePage() {
                       <div key={i} className="space-y-3">
                          <div className="flex justify-between text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
                             <span>{stat.label}</span>
-                            <span className={`text-${stat.color}-600 font-black`}>{stat.value}</span>
+                            {/* Interpolated Tailwind classes are invisible to the
+                                scanner and only exist if the same literal appears
+                                elsewhere - the dead-class trap. Written out, and a
+                                shade deeper so the small figures clear 4.5:1. */}
+                            <span className={cn("font-black", stat.color === "teal" ? "text-teal-700" : stat.color === "blue" ? "text-blue-700" : "text-emerald-700")}>{stat.value}</span>
                          </div>
                          <div className="h-2.5 bg-slate-200/50 rounded-full overflow-hidden shadow-inner">
                             <motion.div 
@@ -654,7 +658,7 @@ export default function HomePage() {
             <span className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-full text-slate-500 font-bold text-xs uppercase tracking-[0.4em] shadow-sm">
               <MapPin size={16} className="text-teal-600" /> Clinical Reach
             </span>
-            <h2 className="text-5xl md:text-6xl font-display font-medium text-slate-900 tracking-tight leading-tight">Where to <br/>find us.</h2>
+            <h2 className="text-5xl md:text-6xl font-display font-medium text-slate-50 tracking-tight leading-tight">Where to <br/>find us.</h2>
             <p className="text-xl text-slate-400 font-light leading-relaxed max-w-2xl mx-auto">
               One clinic, on the High Street in Herne Bay.
             </p>

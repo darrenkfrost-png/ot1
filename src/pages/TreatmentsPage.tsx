@@ -211,8 +211,8 @@ export default function TreatmentsPage() {
       <section className="py-24 space-y-16">
         <div className="text-center space-y-4 max-w-3xl mx-auto">
           <span className="text-teal-600 font-bold text-xs uppercase tracking-[0.3em]">Patient Voices</span>
-          <h2 className="text-4xl md:text-5xl font-display font-medium text-slate-900 tracking-tight">What patients <span className="text-teal-600">actually said.</span></h2>
-          <p className="text-lg text-slate-500 font-light leading-relaxed">
+          <h2 className="text-4xl md:text-5xl font-display font-medium text-slate-50 tracking-tight">What patients <span className="text-teal-600">actually said.</span></h2>
+          <p className="text-lg text-slate-300 font-light leading-relaxed">
             Unedited, from our{' '}
             <a
               href={REVIEWS_SOURCE.url}
@@ -372,7 +372,7 @@ export default function TreatmentsPage() {
           <p className="text-lg text-slate-500 font-light leading-relaxed">
             Fees depend on the treatment and the length of the appointment. Ring the clinic
             on{' '}
-            <a href={`tel:${CLINIC.telephoneLink}`} className="text-teal-600 font-medium hover:underline focus-visible:outline-teal-500">
+            <a href={`tel:${CLINIC.telephoneLink}`} className="text-teal-700 font-medium hover:underline focus-visible:outline-teal-500">
               {CLINIC.telephone}
             </a>{' '}
             and we will tell you exactly what your appointment will cost before you book —

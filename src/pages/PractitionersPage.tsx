@@ -283,7 +283,7 @@ export default function PractitionersPage() {
             <h2 className="text-4xl md:text-5xl font-display font-medium text-slate-50 tracking-tight">
                Frequently Asked <span className="text-teal-600">Questions</span>
             </h2>
-            <p className="text-slate-500 font-light text-base max-w-lg">
+            <p className="text-slate-300 font-light text-base max-w-lg">
                Learn about the qualifications and expertise of our clinical team, and find answers to frequently asked questions about treatment.
             </p>
           </div>

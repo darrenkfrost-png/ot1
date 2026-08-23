@@ -211,7 +211,7 @@ export default function ResourcesPage() {
           </section>
 
           <section>
-            <h2 className="text-3xl font-display font-semibold text-slate-900 mb-10 tracking-tight">Frequently Asked Questions</h2>
+            <h2 className="text-3xl font-display font-semibold text-slate-50 mb-10 tracking-tight">Frequently Asked Questions</h2>
             <div className="space-y-2">
               {FAQS.map((faq, i) => (
                 <FAQItem key={i} question={faq.question} answer={faq.answer} />
@@ -225,7 +225,7 @@ export default function ResourcesPage() {
             <section className="bg-red-50 p-8 rounded-[2rem] border border-red-100 shadow-sm">
               <div className="flex items-center gap-3 text-red-600 mb-4">
                 <ShieldAlert size={24} />
-                <h3 className="text-lg font-bold">Emergency Info</h3>
+                <h3 className="text-lg font-bold text-red-800">Emergency Info</h3>
               </div>
               <p className="text-red-900/70 text-sm leading-relaxed mb-6 font-medium">
                 Our clinic is for elective clinical care. If you are experiencing a medical emergency, please contact 999 or go to your nearest Accident & Emergency department immediately.

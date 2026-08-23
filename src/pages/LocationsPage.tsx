@@ -67,7 +67,7 @@ export default function LocationsPage() {
             <div className="p-10 flex-1 flex flex-col space-y-6">
               <div>
                 <h3 className="text-2xl font-display font-bold text-slate-900 group-hover:text-teal-600 transition-colors mb-2">{loc.name}</h3>
-                <div className="flex gap-2 text-slate-400 font-medium text-sm">
+                <div className="flex gap-2 text-slate-600 font-medium text-sm">
                   <MapPin size={16} className="shrink-0 text-teal-500" />
                   <span>{loc.address}</span>
                 </div>

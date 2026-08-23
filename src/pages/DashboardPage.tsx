@@ -766,7 +766,7 @@ export default function DashboardPage() {
               <Sliders className="text-indigo-600" size={24} />
               <h3 className="text-2xl font-bold text-slate-900 font-display">Musculoskeletal Range of Motion (ROM)</h3>
             </div>
-            <p className="text-sm text-slate-500 font-light leading-relaxed">
+            <p className="text-sm text-slate-600 font-light leading-relaxed">
               Log cervical angles and current acute discomfort scales. The system compiles these to index safety alignments before hands-on treatment.
             </p>
 
@@ -1132,7 +1132,7 @@ export default function DashboardPage() {
               </p>
 
               <div className="space-y-2">
-                <label htmlFor="soap-symptoms" className="text-[10px] text-slate-500 font-black uppercase tracking-wider block">Subjective Symptoms Summary</label>
+                <label htmlFor="soap-symptoms" className="text-[10px] text-slate-400 font-black uppercase tracking-wider block">Subjective Symptoms Summary</label>
                 <textarea
                   id="soap-symptoms"
                   value={soapSymptoms}
@@ -1155,7 +1155,7 @@ export default function DashboardPage() {
             </div>
 
             <div className="lg:col-span-7 bg-slate-900/40 border border-slate-900 rounded-3xl p-6 relative flex flex-col justify-between font-mono text-[11px] leading-relaxed text-slate-400 overflow-hidden h-full min-h-[250px]">
-              <div className="absolute top-4 right-5 text-[8px] font-black tracking-widest text-slate-600">PRE-CHART COMPILER ACTIVE</div>
+              <div className="absolute top-4 right-5 text-[8px] font-black tracking-widest text-slate-400">PRE-CHART COMPILER ACTIVE</div>
               
               <div className="space-y-4 overflow-y-auto max-h-[280px] pr-2 scrollbar-thin">
                 {soapNoteResult ? (
@@ -1169,7 +1169,7 @@ export default function DashboardPage() {
                 ) : (
                   <div className="flex flex-col items-center justify-center text-center py-12 space-y-3">
                     <Brain className="text-slate-700" size={32} />
-                    <p className="text-xs text-slate-500 max-w-sm">
+                    <p className="text-xs text-slate-400 max-w-sm">
                       No active clinical draft generated yet. Fill in the subjective summary and click 'Draft Structured SOAP Note'.
                     </p>
                   </div>
@@ -1183,7 +1183,7 @@ export default function DashboardPage() {
       <section className="space-y-6">
         <div className="flex items-center gap-3 ml-4">
             <Cpu size={24} className="text-teal-600 animate-pulse" />
-            <h2 className="text-3xl font-display font-bold text-slate-900 tracking-tight">AI Subsystem Diagnostics & Audit Core</h2>
+            <h2 className="text-3xl font-display font-bold text-slate-50 tracking-tight">AI Subsystem Diagnostics & Audit Core</h2>
         </div>
 
         <div className="bg-slate-900/40 backdrop-blur-3xl p-10 rounded-[3.5rem] shadow-premium border border-slate-800 relative overflow-hidden group">
@@ -1329,7 +1329,7 @@ export default function DashboardPage() {
               
               <div className="space-y-4">
                   {[
-                      { title: "Watch: Phase 3 Core Stability", type: "Video", dur: "12 mins", color: "bg-teal-50 text-teal-600" },
+                      { title: "Watch: Phase 3 Core Stability", type: "Video", dur: "12 mins", color: "bg-teal-50 text-teal-800" },
                       { title: "Complete: Daily Mobility Form", type: "Survey", dur: "2 mins", color: "bg-blue-50 text-blue-600" },
                       { title: "Read: Return to Running Protocol", type: "Article", dur: "8 mins", color: "bg-purple-50 text-purple-600" }
                   ].map((act, i) => (
