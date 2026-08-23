@@ -458,7 +458,7 @@ export default function DashboardPage() {
                             <YAxis stroke="#94a3b8" tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }} axisLine={false} tickLine={false} />
                             <Tooltip 
                                 contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)', fontWeight: 'bold' }}
-                                itemStyle={{ fontWeight: 600 }}
+                                itemStyle={{ fontWeight: 600, color: '#334155' }}
                             />
                             <Area type="monotone" dataKey="mobility" stroke="#14b8a6" strokeWidth={3} fillOpacity={1} fill="url(#colorMobility)" name="Mobility Level (%)" activeDot={{ r: 6, fill: "#14b8a6", stroke: "#fff", strokeWidth: 2 }} />
                             <Area type="monotone" dataKey="strength" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorStrength)" name="Core Strength (%)" activeDot={{ r: 6, fill: "#3b82f6", stroke: "#fff", strokeWidth: 2 }} />
@@ -504,7 +504,7 @@ export default function DashboardPage() {
                          requirementsMet = painLevel < 3;
                          statusText = requirementsMet ? "Pre-approved" : "Target: Week 8 Discharge";
                          highlightColor = "text-slate-500";
-                         bgDot = "bg-slate-200 text-slate-450";
+                         bgDot = "bg-slate-200 text-slate-500";
                        }
 
                        return (
@@ -787,7 +787,7 @@ export default function DashboardPage() {
                   onChange={(e) => setRomNeckFlexion(Number(e.target.value))}
                   className="w-full accent-indigo-600 h-2 bg-slate-100 rounded-lg cursor-pointer"
                 />
-                <div className="flex justify-between text-[9px] font-bold text-slate-400 uppercase">
+                <div className="flex justify-between text-[9px] font-bold text-slate-600 uppercase">
                   <span>Restricted (20°)</span>
                   <span>Optimal (80°)</span>
                 </div>
@@ -808,7 +808,7 @@ export default function DashboardPage() {
                   onChange={(e) => setRomNeckRotation(Number(e.target.value))}
                   className="w-full accent-indigo-600 h-2 bg-slate-100 rounded-lg cursor-pointer"
                 />
-                <div className="flex justify-between text-[9px] font-bold text-slate-400 uppercase">
+                <div className="flex justify-between text-[9px] font-bold text-slate-600 uppercase">
                   <span>Guarded (30°)</span>
                   <span>Optimal (90°)</span>
                 </div>
@@ -817,7 +817,7 @@ export default function DashboardPage() {
               <div className="md:col-span-2 space-y-4 pt-2">
                 <div className="flex justify-between items-center text-sm">
                   <span className="font-bold text-slate-700">Subjective Discomfort (VAS Scale)</span>
-                  <span className="font-mono text-red-500 font-bold">{painLevel} <span className="text-xs text-slate-400">/ 10</span></span>
+                  <span className="font-mono text-red-500 font-bold">{painLevel} <span className="text-xs text-slate-600">/ 10</span></span>
                 </div>
                 <input
                   type="range"
@@ -830,16 +830,16 @@ export default function DashboardPage() {
                   className="w-full accent-red-500 h-2 bg-slate-100 rounded-lg cursor-pointer"
                 />
                 <div className="flex justify-between text-[9px] font-bold text-slate-400 uppercase">
-                  <span className="text-teal-500">None (0)</span>
+                  <span className="text-teal-700">None (0)</span>
                   <span className="text-amber-700">Tolerable (5)</span>
-                  <span className="text-red-500">Severe (10)</span>
+                  <span className="text-red-700">Severe (10)</span>
                 </div>
               </div>
 
               {/* AUTOMATED ROM CAMERA CALIBRATION MODULE (Upgrade) */}
               <div className="md:col-span-2 bg-slate-950 p-6 sm:p-8 rounded-3xl border border-slate-900 relative overflow-hidden flex flex-col sm:flex-row justify-between items-center gap-6">
                 <div className="space-y-3 flex-1">
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-350 font-bold text-[8px] uppercase tracking-widest border border-indigo-500/20">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300 font-bold text-[8px] uppercase tracking-widest border border-indigo-500/20">
                     <Camera size={11} className="animate-pulse" /> Diagnostic Optical Guide
                   </span>
                   <h4 className="text-sm font-bold text-white uppercase tracking-wider">ROM Vision Calibration</h4>
@@ -855,7 +855,7 @@ export default function DashboardPage() {
                     "h-12 px-6 rounded-xl text-[9px] uppercase tracking-widest font-black transition-all cursor-pointer flex items-center justify-center gap-2 border shadow-lg shrink-0 w-full sm:w-auto",
                     isCameraActive 
                       ? "bg-red-950/40 text-red-400 border-red-500/30 hover:bg-red-900/30" 
-                      : "bg-indigo-600 text-white border-indigo-550 hover:bg-indigo-500 shadow-indigo-500/10"
+                      : "bg-indigo-600 text-white border-indigo-600 hover:bg-indigo-500 shadow-indigo-500/10"
                   )}
                 >
                   {isCameraActive ? <CameraOff size={13} /> : <Camera size={13} />}
@@ -900,28 +900,28 @@ export default function DashboardPage() {
                               <button 
                                 type="button"
                                 onClick={() => { setRomNeckFlexion(prev => Math.max(30, prev - 5)); playAcousticPing(400, 0.08, 'sawtooth'); }}
-                                className="px-2 py-1 bg-slate-900 border border-slate-800 hover:border-teal-500/50 text-white rounded text-[8px] font-mono tracking-wider font-extrabold cursor-pointer hover:bg-slate-850 active:scale-95 transition-transform"
+                                className="px-2 py-1 bg-slate-900 border border-slate-800 hover:border-teal-500/50 text-white rounded text-[8px] font-mono tracking-wider font-extrabold cursor-pointer hover:bg-slate-800 active:scale-95 transition-transform"
                               >
                                 FLEX -5°
                               </button>
                               <button 
                                 type="button"
                                 onClick={() => { setRomNeckFlexion(prev => Math.min(80, prev + 5)); playAcousticPing(440, 0.08, 'sawtooth'); }}
-                                className="px-2 py-1 bg-slate-900 border border-slate-800 hover:border-teal-500/50 text-white rounded text-[8px] font-mono tracking-wider font-extrabold cursor-pointer hover:bg-slate-850 active:scale-95 transition-transform"
+                                className="px-2 py-1 bg-slate-900 border border-slate-800 hover:border-teal-500/50 text-white rounded text-[8px] font-mono tracking-wider font-extrabold cursor-pointer hover:bg-slate-800 active:scale-95 transition-transform"
                               >
                                 FLEX +5°
                               </button>
                               <button 
                                 type="button"
                                 onClick={() => { setRomNeckRotation(prev => Math.max(30, prev - 5)); playAcousticPing(300, 0.08, 'sawtooth'); }}
-                                className="px-2 py-1 bg-slate-900 border border-slate-800 hover:border-indigo-500/50 text-white rounded text-[8px] font-mono tracking-wider font-extrabold cursor-pointer hover:bg-slate-850 active:scale-95 transition-transform"
+                                className="px-2 py-1 bg-slate-900 border border-slate-800 hover:border-indigo-500/50 text-white rounded text-[8px] font-mono tracking-wider font-extrabold cursor-pointer hover:bg-slate-800 active:scale-95 transition-transform"
                               >
                                 ROT -5°
                               </button>
                               <button 
                                 type="button"
                                 onClick={() => { setRomNeckRotation(prev => Math.min(90, prev + 5)); playAcousticPing(340, 0.08, 'sawtooth'); }}
-                                className="px-2 py-1 bg-slate-900 border border-slate-800 hover:border-indigo-500/50 text-white rounded text-[8px] font-mono tracking-wider font-extrabold cursor-pointer hover:bg-slate-850 active:scale-95 transition-transform"
+                                className="px-2 py-1 bg-slate-900 border border-slate-800 hover:border-indigo-500/50 text-white rounded text-[8px] font-mono tracking-wider font-extrabold cursor-pointer hover:bg-slate-800 active:scale-95 transition-transform"
                               >
                                 ROT +5°
                               </button>
@@ -962,7 +962,7 @@ export default function DashboardPage() {
               <span className={cn("text-5xl font-display font-black my-2", bioScoreLimit > 70 ? "text-emerald-500" : bioScoreLimit > 45 ? "text-amber-700" : "text-red-500")}>
                 {bioScoreLimit}%
               </span>
-              <span className="text-[9px] font-bold text-slate-400 uppercase">Biomechanical Safety</span>
+              <span className="text-[9px] font-bold text-slate-600 uppercase">Biomechanical Safety</span>
             </div>
             
             <div className="md:col-span-8 space-y-2 pl-3">
@@ -1123,7 +1123,7 @@ export default function DashboardPage() {
           {/* AI SOAP CLINICAL NOTE GENERATOR (Upgrade) */}
           <div className="relative z-10 mt-12 pt-12 border-t border-slate-900 grid grid-cols-1 lg:grid-cols-12 gap-8 font-sans">
             <div className="lg:col-span-5 space-y-4">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-350 font-bold text-[8.5px] uppercase tracking-widest border border-indigo-500/20">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-300 font-bold text-[8.5px] uppercase tracking-widest border border-indigo-500/20">
                 <Brain size={12} className="animate-pulse" /> Telehealth Pre-Charter
               </span>
               <h4 className="text-xl font-display font-bold text-white tracking-tight">AI Clinical SOAP Drafter</h4>
@@ -1161,7 +1161,7 @@ export default function DashboardPage() {
                 {soapNoteResult ? (
                   <div className="space-y-3 font-sans text-slate-300">
                     <div className="p-3.5 bg-teal-500/5 border border-teal-500/15 rounded-xl flex items-center justify-between text-[11px]">
-                      <span className="font-bold text-teal-450">STATUS: CLINICAL SOAP FORMAT GENERATED</span>
+                      <span className="font-bold text-teal-500">STATUS: CLINICAL SOAP FORMAT GENERATED</span>
                       <span className="text-[8px] font-mono text-slate-500">SECURE-BASE_V3</span>
                     </div>
                     <pre className="whitespace-pre-wrap font-mono text-xs leading-5 text-slate-200 bg-slate-950 p-4 rounded-xl border border-slate-900/80">{soapNoteResult}</pre>
