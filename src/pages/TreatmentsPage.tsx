@@ -261,7 +261,7 @@ export default function TreatmentsPage() {
             Been treated here? Leave a review
             <ExternalLink size={13} className="opacity-50" aria-hidden="true" />
           </a>
-          <p className="mt-3 text-xs text-slate-500">Opens Google in a new tab</p>
+          <p className="mt-3 text-xs text-slate-400">Opens Google in a new tab</p>
         </div>
       </section>
 

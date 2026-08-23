@@ -168,7 +168,7 @@ export default function PractitionersPage() {
                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">Clinical Focus Areas:</span>
                        <div className="flex flex-wrap gap-2">
                          {p.specialisations?.map((spec, i) => (
-                           <span key={i} className="px-3 py-1.5 bg-slate-50 border border-slate-100 text-slate-700 text-[10px] font-bold uppercase tracking-widest rounded-lg group-hover:bg-teal-50 group-hover:text-teal-600 group-hover:border-teal-100 transition-colors">{spec}</span>
+                           <span key={i} className="px-3 py-1.5 bg-slate-50 border border-slate-100 text-slate-700 text-[10px] font-bold uppercase tracking-widest rounded-lg group-hover:bg-teal-50 group-hover:text-teal-800 group-hover:border-teal-100 transition-colors">{spec}</span>
                          ))}
                        </div>
                     </div>
@@ -177,7 +177,7 @@ export default function PractitionersPage() {
                     <div className="flex flex-col">
                        {/* "From £65.00" was invented. Fees come from the clinic. */}
                        <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Appointments</span>
-                       <span className="text-sm font-bold text-slate-900 group-hover:text-teal-600">Book or ask about fees</span>
+                       <span className="text-sm font-bold text-slate-900 group-hover:text-teal-700">Book or ask about fees</span>
                     </div>
                     <div className="w-12 h-12 rounded-2xl bg-teal-50 flex items-center justify-center group-hover:bg-teal-700 group-hover:text-white transition-all shadow-sm">
                       <ChevronRight size={24} />

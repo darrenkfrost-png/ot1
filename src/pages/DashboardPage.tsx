@@ -1305,7 +1305,7 @@ export default function DashboardPage() {
                   <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col sm:flex-row justify-between sm:items-center gap-4 opacity-75 font-sans">
                       <div className="flex items-start gap-4">
                           <div className="w-12 h-12 bg-slate-100 text-slate-500 rounded-xl flex flex-col items-center justify-center shrink-0">
-                              <span className="text-[10px] font-black uppercase leading-none mb-1">Nov</span>
+                              <span className="text-[10px] font-black uppercase leading-none mb-1 text-slate-600">Nov</span>
                               <span className="text-lg font-bold leading-none">12</span>
                           </div>
                           <div>

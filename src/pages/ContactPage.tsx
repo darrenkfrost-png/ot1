@@ -298,11 +298,11 @@ export default function ContactPage() {
                   </div>
                   
                   <div className="flex items-center justify-center gap-8 pt-4">
-                     <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                     <div className="flex items-center gap-2 text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">
                         <Clock size={12} className="text-teal-500" />
                         {CLINIC.openingHours[0].days}, {CLINIC.openingHours[0].hours}
                      </div>
-                     <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                     <div className="flex items-center gap-2 text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">
                         <MessageSquare size={12} className="text-teal-500" />
                         Professional Advice
                      </div>
