@@ -16,7 +16,7 @@ import {
   MessageSquare
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 import { useToast } from '../components/ToastSystem';
@@ -81,6 +81,17 @@ function FAQItem({ question, answer }: { question: string, answer: string }) {
 export default function ResourcesPage() {
   const [activeVideo, setActiveVideo] = useState<{ title: string; url: string; youtubeId?: string; blurb?: string } | null>(null);
   const { showToast } = useToast();
+
+  /* Clicking the backdrop only helps a pointer user; a keyboard user needs
+     Escape to leave the video. */
+  useEffect(() => {
+    if (!activeVideo) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setActiveVideo(null);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [activeVideo]);
 
   return (
     <div className="max-w-7xl mx-auto p-4 md:p-8 space-y-10">
@@ -307,8 +318,11 @@ export default function ResourcesPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[var(--z-modal)] bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-8" 
+            className="fixed inset-0 z-[var(--z-modal)] bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-8"
             onClick={() => setActiveVideo(null)}
+            role="dialog"
+            aria-modal="true"
+            aria-label={activeVideo.title}
           >
             <motion.div 
               initial={{ scale: 0.9, opacity: 0 }}
@@ -317,8 +331,9 @@ export default function ResourcesPage() {
               className="bg-white p-10 rounded-[2.5rem] w-full max-w-2xl shadow-2xl relative" 
               onClick={(e) => e.stopPropagation()}
             >
-              <button 
-                onClick={() => setActiveVideo(null)} 
+              <button
+                onClick={() => setActiveVideo(null)}
+                aria-label="Close video"
                 className="absolute top-6 right-6 p-2 bg-slate-100 hover:bg-slate-200 rounded-full transition"
               >
                 <X size={20} />

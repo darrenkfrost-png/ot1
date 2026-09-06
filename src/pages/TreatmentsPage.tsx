@@ -54,7 +54,10 @@ export default function TreatmentsPage() {
       <header className="relative bg-slate-950 rounded-[4rem] p-12 md:p-24 text-white shadow-3xl overflow-hidden group holographic-border">
         <div className="absolute inset-0 z-0 opacity-40">
            <div className="absolute inset-0 neural-grid opacity-30 mix-blend-screen pointer-events-none"></div>
-           <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=2000" fetchPriority="high" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[20s]" alt={`The ${CLINIC.name} clinic interior`} />
+           {/* A stock photograph, not our building — it sits behind a gradient
+               as atmosphere, so screen readers skip it rather than being told
+               it is the clinic. */}
+           <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=2000" fetchPriority="high" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[20s]" alt="" />
            <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent"></div>
         </div>
         <div className="relative z-10 max-w-3xl space-y-8">
@@ -84,12 +87,13 @@ export default function TreatmentsPage() {
           Every figure here can be checked. It previously read 99% patient
           retention, a 94.2% success rate and 12+ specialists — none of which
           came from anywhere, and the last of which contradicted the practice's
-          own team page.
+          own team page. The counts are counted and the rating comes from the
+          one place it lives, so no page can drift out of step with another.
         */}
         {[
-          { label: "Google rating", val: "5.0", sub: "from 56 reviews", icon: Heart },
+          { label: "Google rating", val: REVIEWS_SOURCE.rating, sub: `from ${REVIEWS_SOURCE.count} reviews`, icon: Heart },
           { label: "Practising since", val: "2012", sub: "in Herne Bay", icon: Clock },
-          { label: "Treatments", val: "15", sub: "across 8 disciplines", icon: Activity },
+          { label: "Treatments", val: `${TREATMENTS.length}`, sub: "from osteopathy to footcare", icon: Activity },
           { label: "Practitioners", val: `${PRACTITIONERS.length}`, sub: "at one clinic", icon: Users }
         ].map((stat, i) => (
           <div key={i} className="relative bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] crystal-glass holographic-border flex flex-col items-center text-center group hover:-translate-y-2 transition-all overflow-hidden">
@@ -267,18 +271,28 @@ export default function TreatmentsPage() {
 
       <section className="bg-slate-950 p-12 md:p-24 rounded-[5rem] text-white relative overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-10">
-           <img src="https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&q=80&w=2000" loading="lazy" decoding="async" className="w-full h-full object-cover" alt="Consulting room at the clinic" />
+           {/* Stock texture at 10% opacity — decorative, and not our room. */}
+           <img src="https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&q=80&w=2000" loading="lazy" decoding="async" className="w-full h-full object-cover" alt="" />
         </div>
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
           <div className="space-y-10">
             <div className="space-y-6">
               <h2 className="text-5xl md:text-6xl font-display font-medium tracking-tight leading-tight">Need assistance <span className="text-teal-400">choosing?</span></h2>
-              <p className="text-xl text-slate-400 font-light leading-relaxed">Our clinical triage team provides a free 15-minute consultation to help you find the right path for your specific condition.</p>
+              {/* There is no triage team and no free 15-minute consultation to
+                  honour — a promised freebie is a bill the clinic never agreed
+                  to pay. What genuinely exists is a phone that gets answered. */}
+              <p className="text-xl text-slate-400 font-light leading-relaxed">
+                Not sure which treatment fits? Ring the clinic on{' '}
+                <a href={`tel:${CLINIC.telephoneLink}`} className="text-teal-400 font-medium hover:underline focus-visible:outline-teal-400">
+                  {CLINIC.telephone}
+                </a>{' '}
+                and talk it through with us before you book anything.
+              </p>
             </div>
-            
+
             <div className="space-y-8">
               {[
-                { title: "Direct Clinical Triage", desc: "Speak with a senior practitioner before booking to ensure correct alignment with our specialists." },
+                { title: "Talk it through first", desc: "Ring before you book and we will say plainly which treatment fits — or whether we are the right people to help at all." },
                 { title: "Integrated Assessment", desc: "A combined session of physical diagnosis and initial treatment for all new patients." },
                 { title: "Long-term Recovery Strategy", desc: "Structured plans designed around your lifestyle, workspace, and physical goals." }
               ].map((item, i) => (

@@ -12,6 +12,12 @@ export const CLINIC = {
   name: 'Osteopathy & Wellbeing @CT6',
   legalName: 'Osteopathy & Wellbeing @CT6 Limited',
   companyNumber: '07936142',
+  /**
+   * When the practice began. Companies House shows the company incorporated
+   * in 2012 (07936142); every "practising since" figure reads this field so
+   * the year is typed exactly once.
+   */
+  establishedYear: 2012,
 
   address: {
     line1: '180 High Street',

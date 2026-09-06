@@ -18,13 +18,13 @@ import {
   Share2, 
   Cpu, 
   RefreshCw, 
-  Terminal, 
+  Terminal,
   Printer,
-  Camera,
-  CameraOff,
+  Info,
   Brain,
   Sparkles
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { 
   LineChart, 
   Line, 
@@ -40,6 +40,8 @@ import { cn } from '../lib/utils';
 import { useAnalytics } from '../context/AnalyticsContext';
 import { useToast } from '../components/ToastSystem';
 import { CLINIC } from '../data/clinic';
+import { PRACTITIONERS } from '../data';
+import { BOOKING_URL } from '../constants';
 
 interface AuditData {
   overallHealth: number;
@@ -79,6 +81,15 @@ export default function DashboardPage() {
 
   // UPGRADE 1: Interactive Milestone States
   const [selectedMilestone, setSelectedMilestone] = useState<number | null>(null);
+  const milestoneDialogRef = React.useRef<HTMLDivElement | null>(null);
+
+  // Keyboard and screen-reader users must land inside the dialog when it
+  // opens — focus also lets the dialog's own Escape handler receive the key.
+  useEffect(() => {
+    if (selectedMilestone !== null) {
+      milestoneDialogRef.current?.focus();
+    }
+  }, [selectedMilestone]);
 
   // UPGRADE 5: Sound Synthesizer function
   const playAcousticPing = useCallback((freq: number, duration: number, type: 'sine' | 'square' | 'triangle' | 'sawtooth' = 'sine') => {
@@ -110,44 +121,14 @@ export default function DashboardPage() {
   const [auditResult, setAuditResult] = useState<AuditData | null>(null);
 
   // ==========================================
-  // STATE-OF-THE-ART UPGRADES: Camera-guided ROM, PT Prescription, & SOAP draft states
+  // PT Prescription & SOAP draft states
   // ==========================================
-  const [isCameraActive, setIsCameraActive] = useState(false);
-  const [stream, setStream] = useState<MediaStream | null>(null);
-  const videoRef = React.useRef<HTMLVideoElement | null>(null);
-  
   const [isPrescribing, setIsPrescribing] = useState(false);
   const [isAiPrescribedMode, setIsAiPrescribedMode] = useState(false);
 
   const [soapSymptoms, setSoapSymptoms] = useState("Aching compression and rigid muscle tension at base of skull, worse during horizontal glances and deep sit work.");
   const [isGeneratingSoap, setIsGeneratingSoap] = useState(false);
   const [soapNoteResult, setSoapNoteResult] = useState<string | null>(null);
-
-  const startCamera = useCallback(async () => {
-    trackClick("Activate ROM Optical Guide Camera");
-    try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240 } });
-      setStream(mediaStream);
-      if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
-      }
-      setIsCameraActive(true);
-      showToast("Accessing video sensor. Live ROM calibration crosshair engaged.", "success");
-    } catch (err) {
-      // Camera not available — show fallback vector grid
-      showToast("Video feed restricted in preview. Engaged vector calibration wireframe grid.", "info");
-      setIsCameraActive(true); // Engages the elegant vector simulation
-    }
-  }, [trackClick, showToast]);
-
-  const stopCamera = useCallback(() => {
-    if (stream) {
-      stream.getTracks().forEach(track => track.stop());
-      setStream(null);
-    }
-    setIsCameraActive(false);
-    showToast("ROM sensor alignment closed.", "info");
-  }, [stream, showToast]);
 
   const handlePrescribeExercises = async () => {
     trackClick("Generate Custom AI Prescription Routine");
@@ -249,14 +230,6 @@ export default function DashboardPage() {
     }
   };
 
-  useEffect(() => {
-    return () => {
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-      }
-    };
-  }, [stream]);
-
   // Exercise log effect that updates chartData directly on completion
   const handleToggleExercise = useCallback((id: string) => {
     trackClick("Toggle Rehab Exercise Checkbox");
@@ -308,7 +281,7 @@ export default function DashboardPage() {
   const handleGenerateTriage = () => {
     trackClick("Generate Triage PDF Package");
     setIsGeneratingTriage(true);
-    showToast("Compiling mechanical metrics, joint ROM inputs, and clinical histories...", "loading");
+    showToast("Compiling your slider entries and logged exercises...", "loading");
     
     // Play double beep on build startup
     playAcousticPing(587.33, 0.15, 'sine'); // D5
@@ -322,7 +295,7 @@ export default function DashboardPage() {
           year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
         })
       });
-      showToast("Triage report package finalized and encrypted with clinical signature.", "success");
+      showToast("Your summary is ready below. It lives only in this browser — nothing has been sent anywhere.", "success");
       
       // Play a diagnostic sync chime sequence on success
       playAcousticPing(523.25, 0.12, 'triangle'); // C5
@@ -379,34 +352,48 @@ export default function DashboardPage() {
         <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-8">
             <div className="space-y-4">
                 <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-500/20 text-teal-300 font-bold text-[10px] uppercase tracking-widest border border-teal-500/20">
-                    <Activity size={14} className="animate-pulse" /> Patient Portal
+                    <Activity size={14} className="animate-pulse" /> Patient Tools — Preview
                 </span>
                 <h1 className="text-5xl lg:text-7xl font-display font-bold tracking-tighter leading-none text-white">
-                    Your <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-300">Progress Board.</span>
+                    The <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-300">Progress Board.</span>
                 </h1>
                 <p className="text-slate-400 max-w-xl text-lg font-light leading-relaxed">
-                    Access your personalized biomechanical metrics, complete daily rehabilitation assignments, and run pre-visit triage reports.
+                    Try the self-help tools we're building: log daily exercises, track movement and discomfort, and put together a summary sheet to bring to your appointment.
                 </p>
             </div>
             
-            <div className="flex gap-4">
+            <div className="flex gap-4" role="group" aria-label="Sample data — not a personal record">
                 <div className="text-center bg-white/5 backdrop-blur-md px-6 py-4 rounded-2xl border border-white/10">
                     <div className="text-[10px] uppercase font-black tracking-widest text-teal-400 mb-1">Current Phase</div>
                     <div className="text-2xl font-bold text-white">Active Rehab</div>
+                    <div className="text-[8px] uppercase font-black tracking-widest text-slate-400 mt-1.5">Sample data</div>
                 </div>
                 <div className="text-center bg-white/5 backdrop-blur-md px-6 py-4 rounded-2xl border border-white/10">
                     <div className="text-[10px] uppercase font-black tracking-widest text-emerald-400 mb-1">Goal Completion</div>
                     <div className="text-2xl font-bold text-white">78%</div>
+                    <div className="text-[8px] uppercase font-black tracking-widest text-slate-400 mt-1.5">Sample data</div>
                 </div>
             </div>
         </div>
       </section>
 
+      {/* Honesty notice — this page has no login, so nothing on it can be anyone's personal record */}
+      <section aria-label="Sample data notice" className="!mt-8">
+        <div className="flex items-start sm:items-center gap-4 p-6 rounded-[2rem] bg-teal-50 border border-teal-200 shadow-sm">
+          <Info size={22} className="text-teal-700 shrink-0" aria-hidden="true" />
+          <p className="text-sm text-slate-700 font-medium leading-relaxed">
+            A preview of the tools we're building — the numbers below are <span className="font-bold">sample data, not your record</span>.
+            Nothing you try here is saved or sent anywhere, so play with the sliders and checklists freely, then print the summary to bring to your visit.
+          </p>
+        </div>
+      </section>
+
       {/* Progress Chart Module */}
-      <section className="space-y-6">
+      <section className="space-y-6" role="region" aria-label="Sample progress data — a preview, not a personal record">
         <div className="flex items-center gap-3 ml-4">
             <TrendingUp size={24} className="text-teal-600" />
-            <h2 className="text-3xl font-display font-bold text-slate-50 tracking-tight">Personal Health Progress</h2>
+            <h2 className="text-3xl font-display font-bold text-slate-50 tracking-tight">Health Progress</h2>
+            <span className="text-[10px] font-black uppercase tracking-widest bg-amber-50 text-amber-800 border border-amber-200 px-3 py-1 rounded-full">Sample data</span>
         </div>
         
         <div className="bg-white/95 backdrop-blur-3xl p-8 lg:p-12 rounded-[3.5rem] shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] border border-white/60 relative overflow-hidden group crystal-glass holographic-border">
@@ -563,7 +550,9 @@ export default function DashboardPage() {
                             <>
                               <p>The acute inflammatory phase in your C4-C6 segment has reached clinical resolution. Tissue warmth, protective muscle guarding, and hyper-sensitivities are fully resolved.</p>
                               <div className="p-3.5 bg-emerald-50 rounded-xl border border-emerald-100 text-emerald-800 font-medium">
-                                Status: <span className="font-bold">Verified in clinic</span> by Dr. Sarah Jenkins on Oct 12.
+                                {/* This line named a clinician who does not work here,
+                                    and dated a verification that never happened. */}
+                                Status: <span className="font-bold">Sample milestone</span> — your practitioner sets real targets with you in clinic.
                               </div>
                             </>
                           )}
@@ -836,121 +825,13 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              {/* AUTOMATED ROM CAMERA CALIBRATION MODULE (Upgrade) */}
-              <div className="md:col-span-2 bg-slate-950 p-6 sm:p-8 rounded-3xl border border-slate-900 relative overflow-hidden flex flex-col sm:flex-row justify-between items-center gap-6">
-                <div className="space-y-3 flex-1">
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300 font-bold text-[8px] uppercase tracking-widest border border-indigo-500/20">
-                    <Camera size={11} className="animate-pulse" /> Diagnostic Optical Guide
-                  </span>
-                  <h4 className="text-sm font-bold text-white uppercase tracking-wider">ROM Vision Calibration</h4>
-                  <p className="text-xs text-slate-400 font-light leading-relaxed max-w-sm">
-                    Enable camera sensing. Place your head in the target crosshair to automatically calibrate neck rotation and flexion deflection rates.
-                  </p>
-                </div>
-                
-                <button
-                  type="button"
-                  onClick={isCameraActive ? stopCamera : startCamera}
-                  className={cn(
-                    "h-12 px-6 rounded-xl text-[9px] uppercase tracking-widest font-black transition-all cursor-pointer flex items-center justify-center gap-2 border shadow-lg shrink-0 w-full sm:w-auto",
-                    isCameraActive 
-                      ? "bg-red-950/40 text-red-400 border-red-500/30 hover:bg-red-900/30" 
-                      : "bg-indigo-600 text-white border-indigo-600 hover:bg-indigo-500 shadow-indigo-500/10"
-                  )}
-                >
-                  {isCameraActive ? <CameraOff size={13} /> : <Camera size={13} />}
-                  {isCameraActive ? "Halt Sensor" : "Calibrate ROM"}
-                </button>
-
-                <AnimatePresence>
-                  {isCameraActive && (
-                    <motion.div 
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 200 }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="absolute inset-x-0 bottom-0 overflow-hidden bg-black flex justify-center items-center h-[200px] border-t border-slate-900 z-10"
-                    >
-                      {stream ? (
-                        <video 
-                          ref={videoRef}
-                          autoPlay
-                          playsInline
-                          muted
-                          className="w-full h-full object-cover opacity-50 scale-x-[-1]"
-                        />
-                      ) : (
-                        <div className="absolute inset-x-0 inset-y-0 flex flex-col sm:flex-row justify-around items-center p-4 bg-slate-950">
-                          <div className="flex flex-col items-center text-center space-y-1">
-                            <svg className="w-12 h-12 text-teal-400/40 animate-pulse" viewBox="0 0 100 100" fill="none">
-                              <circle cx="50" cy="40" r="18" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 4" />
-                              <line x1="50" y1="10" x2="50" y2="90" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 2" />
-                              <line x1="10" y1="50" x2="90" y2="50" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 2" />
-                              <g transform={`rotate(${romNeckRotation - 60} 50 40)`}>
-                                <line x1="50" y1="15" x2="50" y2="65" stroke="#14b8a6" strokeWidth="2.5" />
-                                <circle cx="50" cy="15" r="3.5" fill="#14b8a6" />
-                              </g>
-                            </svg>
-                            <span className="text-[7px] font-mono text-slate-500 uppercase tracking-widest font-black">Vector calibration override active</span>
-                          </div>
-                          
-                          {/* Manual micro adjustment buttons */}
-                          <div className="flex flex-col gap-1.5 relative z-50">
-                            <div className="text-[7px] font-mono text-indigo-400 uppercase tracking-widest font-black text-center mb-0.5">Click to Micro-Adjust Alignment</div>
-                            <div className="grid grid-cols-2 gap-1.5">
-                              <button 
-                                type="button"
-                                onClick={() => { setRomNeckFlexion(prev => Math.max(30, prev - 5)); playAcousticPing(400, 0.08, 'sawtooth'); }}
-                                className="px-2 py-1 bg-slate-900 border border-slate-800 hover:border-teal-500/50 text-white rounded text-[8px] font-mono tracking-wider font-extrabold cursor-pointer hover:bg-slate-800 active:scale-95 transition-transform"
-                              >
-                                FLEX -5°
-                              </button>
-                              <button 
-                                type="button"
-                                onClick={() => { setRomNeckFlexion(prev => Math.min(80, prev + 5)); playAcousticPing(440, 0.08, 'sawtooth'); }}
-                                className="px-2 py-1 bg-slate-900 border border-slate-800 hover:border-teal-500/50 text-white rounded text-[8px] font-mono tracking-wider font-extrabold cursor-pointer hover:bg-slate-800 active:scale-95 transition-transform"
-                              >
-                                FLEX +5°
-                              </button>
-                              <button 
-                                type="button"
-                                onClick={() => { setRomNeckRotation(prev => Math.max(30, prev - 5)); playAcousticPing(300, 0.08, 'sawtooth'); }}
-                                className="px-2 py-1 bg-slate-900 border border-slate-800 hover:border-indigo-500/50 text-white rounded text-[8px] font-mono tracking-wider font-extrabold cursor-pointer hover:bg-slate-800 active:scale-95 transition-transform"
-                              >
-                                ROT -5°
-                              </button>
-                              <button 
-                                type="button"
-                                onClick={() => { setRomNeckRotation(prev => Math.min(90, prev + 5)); playAcousticPing(340, 0.08, 'sawtooth'); }}
-                                className="px-2 py-1 bg-slate-900 border border-slate-800 hover:border-indigo-500/50 text-white rounded text-[8px] font-mono tracking-wider font-extrabold cursor-pointer hover:bg-slate-800 active:scale-95 transition-transform"
-                              >
-                                ROT +5°
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-                        <svg className="w-full h-full text-indigo-500/25" viewBox="0 0 200 100" fill="none">
-                          <circle cx="100" cy="50" r="32" stroke="currentColor" strokeWidth="1" strokeDasharray="3 3" />
-                          <circle cx="100" cy="50" r="2.5" fill="currentColor" />
-                          <line x1="100" y1="10" x2="100" y2="90" stroke="currentColor" strokeWidth="0.5" />
-                          <line x1="50" y1="50" x2="150" y2="50" stroke="currentColor" strokeWidth="0.5" />
-                          <text x="138" y="53" fill="#14b8a6" className="font-mono text-[8px] font-bold">{romNeckFlexion}° Flexion</text>
-                          <text x="24" y="53" fill="#6366f1" className="font-mono text-[8px] font-bold">{romNeckRotation}° Rotation</text>
-                        </svg>
-                        
-                        <div className="absolute bottom-3 left-4 text-[7px] font-mono text-slate-500 bg-slate-950/80 px-2 py-0.5 rounded border border-slate-900">
-                          ALIGNMENT INTENSITY AUTO
-                        </div>
-                        <div className="absolute top-3 right-4 text-[7px] font-mono text-teal-400 bg-slate-950/80 px-2 py-0.5 rounded border border-slate-900 animate-pulse">
-                          ● LOCK STANDBY
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+              /*
+               * A "ROM Vision Calibration" panel stood here. It opened the
+               * camera, showed a crosshair, and measured nothing at all -
+               * the angles it "calibrated" came from the sliders above.
+               * Asking a patient for their camera on a medical site in
+               * exchange for theatre is not a feature, so it is gone.
+               */
 
             </div>
           </div>
@@ -1108,7 +989,7 @@ export default function DashboardPage() {
                             setTriageReport(null);
                             showToast("Intake slip invalidated. Re-generate to refresh.", "info");
                           }}
-                          className="px-4 py-4 bg-slate-800 hover:bg-slate-750 text-white rounded-2xl font-black uppercase tracking-wider text-[9px] transition-colors cursor-pointer"
+                          className="px-4 py-4 bg-slate-800 hover:bg-slate-700 text-white rounded-2xl font-black uppercase tracking-wider text-[9px] transition-colors cursor-pointer"
                         >
                           Reset
                         </button>
@@ -1193,7 +1074,12 @@ export default function DashboardPage() {
             <div className="space-y-4 max-w-2xl">
               <h3 className="text-2xl font-bold text-white font-display">Autonomous Clinical System Auditing</h3>
               <p className="text-sm text-slate-400 font-light leading-relaxed">
-                Connect directly with the clinic's server-agent node (Gemini 3.5 LLM core). This executes structural validation tests, verifies API routing statuses, audits diagnostic precision, and scores accessibility ratings.
+                {/* There is no server-agent node and no LLM core. What this
+                    button really does is check the things the browser can
+                    actually check, which is worth saying plainly. */}
+                Runs the checks this page can genuinely make from your browser: whether the
+                site's services answer, whether your device allows local storage, and how the
+                display is currently configured.
               </p>
             </div>
 
@@ -1283,39 +1169,26 @@ export default function DashboardPage() {
                   <h3 className="text-2xl font-bold text-slate-900 font-display">Upcoming Appointments</h3>
               </div>
               
-              <div className="space-y-4">
-                  <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-                      <div className="flex items-start gap-4">
-                          <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex flex-col items-center justify-center shrink-0">
-                              <span className="text-[10px] font-black uppercase leading-none mb-1">Oct</span>
-                              <span className="text-lg font-bold leading-none">24</span>
-                          </div>
-                          <div>
-                              <h4 className="font-bold text-slate-800">Advanced Biomechanical Review</h4>
-                              <p className="text-sm font-light text-slate-500 flex items-center gap-2 mt-1">
-                                  <Clock size={14} /> 14:00 with Dr. Sarah Jenkins
-                              </p>
-                          </div>
-                      </div>
-                      <div className="flex gap-2">
-                          <button className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold uppercase tracking-widest transition-colors flex-1 sm:flex-none">Reschedule</button>
-                      </div>
-                  </div>
-                  
-                  <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col sm:flex-row justify-between sm:items-center gap-4 opacity-75 font-sans">
-                      <div className="flex items-start gap-4">
-                          <div className="w-12 h-12 bg-slate-100 text-slate-500 rounded-xl flex flex-col items-center justify-center shrink-0">
-                              <span className="text-[10px] font-black uppercase leading-none mb-1 text-slate-600">Nov</span>
-                              <span className="text-lg font-bold leading-none">12</span>
-                          </div>
-                          <div>
-                              <h4 className="font-bold text-slate-800">Routine Maintenance Check</h4>
-                              <p className="text-sm font-light text-slate-500 flex items-center gap-2 mt-1">
-                                  <Clock size={14} /> 09:30 with Tom Barnes
-                              </p>
-                          </div>
-                      </div>
-                  </div>
+              {/*
+                * Two appointments used to sit here - "14:00 with Dr. Sarah
+                * Jenkins", "09:30 with Tom Barnes". Neither clinician works at
+                * this practice, and neither booking existed. This preview has
+                * no link to the booking system, so the only honest thing it
+                * can show is that it has nothing to show.
+                */}
+              <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm text-center space-y-4">
+                  <p className="text-sm text-slate-600 font-medium leading-relaxed">
+                      This preview doesn't connect to the booking diary, so your real
+                      appointments aren't shown here.
+                  </p>
+                  <a
+                      href={BOOKING_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-teal-700 hover:bg-teal-800 text-white rounded-xl text-xs font-bold uppercase tracking-widest transition-colors"
+                  >
+                      <CalendarCheck size={14} /> Check or book online
+                  </a>
               </div>
           </div>
           

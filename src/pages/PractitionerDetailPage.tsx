@@ -2,14 +2,12 @@ import { useParams, Link } from 'react-router-dom';
 import { PRACTITIONERS } from '../data';
 import { BOOKING_URL, CLINIC } from '../constants';
 import { reviewsForPractitioner } from '../data/reviews';
-import { Award, Stethoscope, Mail, CheckCircle2, ChevronRight, Home, Calendar, MapPin, Star, Shield, Briefcase } from 'lucide-react';
+import { Award, Stethoscope, Mail, Phone, CheckCircle2, ChevronRight, Home, Calendar, MapPin, Star, Shield, Briefcase } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useToast } from '../components/ToastSystem';
 import { useAnalytics } from '../context/AnalyticsContext';
 
 export default function PractitionerDetailPage() {
   const { id } = useParams();
-  const { showToast } = useToast();
   const { trackClick } = useAnalytics();
   const practitioner = PRACTITIONERS.find(p => p.id === id);
 
@@ -67,17 +65,24 @@ export default function PractitionerDetailPage() {
             transition={{ delay: 0.1 }}
             className="bg-white/40 backdrop-blur-3xl crystal-glass p-8 rounded-[2rem] border border-white/60 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] space-y-6 holographic-border"
           >
-            <div className="flex items-center gap-4 text-slate-700 relative z-10">
-              <div className="p-3 bg-teal-50 text-teal-600 rounded-xl">
-                <Award size={20} />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">Qualifications</span>
-                <span className="font-semibold">{practitioner.qualifications || 'Certified Professional'}</span>
-              </div>
-            </div>
-            
-            <div className="w-full h-px bg-slate-100" />
+            {/* Not every practitioner publishes their qualification letters.
+                Where none are on record, saying nothing is the only honest
+                option — a stand-in title would be a claim we can't back. */}
+            {practitioner.qualifications && (
+              <>
+                <div className="flex items-center gap-4 text-slate-700 relative z-10">
+                  <div className="p-3 bg-teal-50 text-teal-600 rounded-xl">
+                    <Award size={20} />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">Qualifications</span>
+                    <span className="font-semibold">{practitioner.qualifications}</span>
+                  </div>
+                </div>
+
+                <div className="w-full h-px bg-slate-100" />
+              </>
+            )}
             
             <div className="flex items-center gap-4 text-slate-700">
               <div className="p-3 bg-teal-50 text-teal-600 rounded-xl">
@@ -89,16 +94,27 @@ export default function PractitionerDetailPage() {
               </div>
             </div>
 
-            <button 
-              onClick={() => {
-                trackClick(`Contact Practitioner: ${practitioner.name}`);
-                showToast(`Opening secure message portal for ${practitioner.name}...`, 'info');
-              }}
-              className="w-full flex items-center justify-center gap-3 py-4 bg-teal-700 hover:bg-teal-700 text-white rounded-xl font-semibold transition-all shadow-lg shadow-teal-600/20 active:scale-[0.98] cursor-pointer"
-            >
-              <Mail size={18} />
-              <span>Contact {practitioner.name.split(' ')[0]}</span>
-            </button>
+            {/* There is no message portal — the practice is reached the way
+                any patient reaches it: the front desk phone and the clinic
+                inbox. Both routes below are real. */}
+            <div className="space-y-3">
+              <a
+                href={`tel:${CLINIC.telephoneLink}`}
+                onClick={() => trackClick(`Call About Practitioner: ${practitioner.name}`)}
+                className="w-full flex items-center justify-center gap-3 py-4 bg-teal-700 hover:bg-teal-800 text-white rounded-xl font-semibold transition-all shadow-lg shadow-teal-600/20 active:scale-[0.98] cursor-pointer"
+              >
+                <Phone size={18} />
+                <span>Call {CLINIC.telephone}</span>
+              </a>
+              <a
+                href={`mailto:${CLINIC.email}?subject=${encodeURIComponent(`Enquiry for ${practitioner.name}`)}`}
+                onClick={() => trackClick(`Email About Practitioner: ${practitioner.name}`)}
+                className="w-full flex items-center justify-center gap-3 py-4 bg-white border border-slate-200 text-slate-700 hover:border-teal-300 hover:text-teal-800 rounded-xl font-semibold transition-all shadow-sm active:scale-[0.98] cursor-pointer"
+              >
+                <Mail size={18} />
+                <span>Email about {practitioner.name.split(' ')[0]}</span>
+              </a>
+            </div>
           </motion.div>
         </div>
 

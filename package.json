@@ -12,7 +12,9 @@
     "start": "node dist/server.cjs",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "honesty": "node scripts/audit-honesty.mjs",
+    "verify": "tsc --noEmit && node scripts/audit-honesty.mjs"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",

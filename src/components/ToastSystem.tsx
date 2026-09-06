@@ -48,7 +48,9 @@ export const ToastProvider: React.FC<{children: React.ReactNode}> = ({ children 
   return (
     <ToastContext.Provider value={{ showToast, clearAll }}>
       {children}
-      <div className="fixed top-8 right-4 sm:right-12 flex flex-col items-end gap-4 pointer-events-none" style={{ zIndex: 'var(--z-toast, 9999)' }}>
+      {/* The stack is a polite live region so a screen reader hears each new
+          message without being cut off; errors escalate on the toast itself. */}
+      <div role="status" aria-live="polite" className="fixed top-8 right-4 sm:right-12 flex flex-col items-end gap-4 pointer-events-none" style={{ zIndex: 'var(--z-toast, 9999)' }}>
         <AnimatePresence mode="popLayout">
           {toasts.length > 0 && (
             <motion.div
@@ -93,6 +95,7 @@ export const ToastProvider: React.FC<{children: React.ReactNode}> = ({ children 
             <motion.div
               layout
               key={toast.id}
+              role={toast.type === 'error' ? 'alert' : undefined}
               initial={{ opacity: 0, x: 100, scale: 0.85, filter: 'blur(12px)' }}
               animate={{ 
                 opacity: 1, 
@@ -161,8 +164,9 @@ export const ToastProvider: React.FC<{children: React.ReactNode}> = ({ children 
                 </div>
               </div>
 
-              <button 
+              <button
                 onClick={() => setToasts(prev => prev.filter(t => t.id !== toast.id))}
+                aria-label="Dismiss notification"
                 className="shrink-0 p-2.5 rounded-2xl hover:bg-black/5 transition-all text-slate-400 hover:text-slate-950 active:scale-90 hover:rotate-90"
               >
                 <X size={20} strokeWidth={3} />

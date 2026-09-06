@@ -11,9 +11,25 @@
       content="Osteopathy, sports massage, acupuncture and rehabilitation in Herne Bay, Kent. Osteopaths registered with the General Osteopathic Council. Book an assessment today."
     />
     <meta name="author" content="Osteopathy &amp; Wellbeing @CT6" />
-    <meta name="robots" content="index, follow" />
+    <!--
+      STAGING GUARD - remove this line when the clinic's real domain goes live.
+      While this copy sits on a temporary hosting address it must never be
+      indexed, or it would compete with the clinic's real site in search
+      results. PageMeta.tsx recognises the data-staging-guard attribute and
+      leaves this tag alone.
+    -->
+    <meta name="robots" content="noindex" data-staging-guard />
     <meta name="keywords" content="osteopath, Herne Bay, Kent, massage, acupuncture, sports massage, physiotherapy, osteopathy treatment, GOsC registered" />
-    <link rel="canonical" href="https://salmon-gnat-721528.hostingersite.com/" />
+
+    <!--
+      THE SITE'S ONE ADDRESS: https://osteopathyandwellbeing.co.uk
+      Every absolute URL in this file - the canonical link, the og/twitter
+      tags, the structured data - is that exact string. It cannot live in a
+      script constant, because the crawlers that read these tags (Google,
+      Facebook, WhatsApp) do not execute JavaScript; if the domain ever
+      changes it is one find-and-replace of the address above.
+    -->
+    <link rel="canonical" href="https://osteopathyandwellbeing.co.uk/" />
 
     <!--
       Icons. These are the practice's own @6t emblem, lifted from the master
@@ -26,19 +42,24 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
     <!--
-      LAUNCH STEP: replace https://example.com below with the real domain once it is live.
-      Social previews (Facebook, LinkedIn, WhatsApp, X) need absolute URLs to work.
+      Social previews. The crawlers behind share cards (Facebook, WhatsApp,
+      LinkedIn, X) read this static file and do not run JavaScript, so
+      whichever page of the site is shared, the preview shows THESE values -
+      the per-page titles set in src/components/PageMeta.tsx reach browsers
+      and search engines only. Until the site is prerendered, this stays the
+      truest whole-clinic description rather than pretending to be any one
+      page.
     -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Osteopathy &amp; Wellbeing @CT6" />
     <meta property="og:title" content="Osteopathy &amp; Wellbeing @CT6 | Osteopath in Herne Bay, Kent" />
     <meta
       property="og:description"
-      content="Osteopathy, sports massage, acupuncture and rehabilitation in Kent. Expert practitioners and evidence-based treatment."
+      content="Osteopathy, sports massage, acupuncture and rehabilitation at 180 High Street, Herne Bay, Kent. Osteopaths registered with the General Osteopathic Council. Call 01227 366473 or book online."
     />
     <meta property="og:locale" content="en_GB" />
-    <meta property="og:url" content="https://salmon-gnat-721528.hostingersite.com/" />
-    <meta property="og:image" content="https://salmon-gnat-721528.hostingersite.com/og-image.png" />
+    <meta property="og:url" content="https://osteopathyandwellbeing.co.uk/" />
+    <meta property="og:image" content="https://osteopathyandwellbeing.co.uk/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Osteopathy &amp; Wellbeing @CT6 — Herne Bay, Kent." />
@@ -46,9 +67,9 @@
     <meta name="twitter:title" content="Osteopathy &amp; Wellbeing @CT6 | Osteopath in Herne Bay, Kent" />
     <meta
       name="twitter:description"
-      content="Osteopathy, sports massage, acupuncture and rehabilitation in Herne Bay, Kent."
+      content="Osteopathy, sports massage, acupuncture and rehabilitation in Herne Bay, Kent. Osteopaths registered with the General Osteopathic Council."
     />
-    <meta name="twitter:image" content="https://salmon-gnat-721528.hostingersite.com/og-image.png" />
+    <meta name="twitter:image" content="https://osteopathyandwellbeing.co.uk/og-image.png" />
 
     <link rel="preconnect" href="https://images.unsplash.com" />
 
@@ -75,9 +96,9 @@
         "legalName": "Osteopathy & Wellbeing @CT6 Limited",
         "description": "Osteopathy, acupuncture, sports massage, reflexology, Swedish massage, physiotherapy, hypnotherapy and foot care in Herne Bay, Kent. Osteopaths registered with the General Osteopathic Council.",
         "medicalSpecialty": "PhysicalTherapy",
-        "image": "https://salmon-gnat-721528.hostingersite.com/og-image.png",
-        "logo": "https://salmon-gnat-721528.hostingersite.com/pwa-512x512.png",
-        "url": "https://salmon-gnat-721528.hostingersite.com/",
+        "image": "https://osteopathyandwellbeing.co.uk/og-image.png",
+        "logo": "https://osteopathyandwellbeing.co.uk/pwa-512x512.png",
+        "url": "https://osteopathyandwellbeing.co.uk/",
         "sameAs": [
           "https://osteopathyandwellbeing.co.uk",
           "https://www.facebook.com/osteoCT6",

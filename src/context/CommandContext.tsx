@@ -94,17 +94,12 @@ export const CommandProvider = ({ children }: { children: ReactNode }) => {
         },
         voicePhrases: ['fullscreen', 'enter full screen', 'full screen mode']
       },
-      {
-        id: 'sys.diagnostics',
-        label: 'Run System Diagnostics',
-        description: 'Initiates a deeper health check on the core system.',
-        category: 'system',
-        handler: () => {
-            // Can sync with settings panel open or modal
-            showToast('Initializing Diagnostics mode across subsystems...', 'loading');
-        },
-        voicePhrases: ['run diagnostics', 'system check', 'check system health']
-      },
+      /*
+       * Every entry here must do what its label promises the moment the
+       * handler runs — the header search offers these as buttons. The
+       * diagnostics pass lives in the Settings panel, which owns the UI it
+       * needs to show its results; it is not repeated here as a toast.
+       */
       {
          id: 'wallpaper.fluid',
          label: 'Set Wallpaper: Fluid Dynamics',
@@ -178,7 +173,7 @@ export const CommandProvider = ({ children }: { children: ReactNode }) => {
     return () => {
       builtInCommands.forEach(c => unregisterCommand(c.id));
     };
-  }, [registerCommand, unregisterCommand, updateSetting, showToast, navigate]);
+  }, [registerCommand, unregisterCommand, updateSetting, navigate]);
 
   // Keyboard Shortcuts Listener
   useEffect(() => {

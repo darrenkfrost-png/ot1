@@ -1,7 +1,7 @@
 import { useSettings } from '../context/SettingsContext'; // clinical settings Hook
 import { Settings as SettingsIcon, X, SlidersHorizontal, Image as ImageIcon, Volume2, Eye, Brain, Moon, Sun, Smartphone, Zap, Bell, Target, Palette, Layout, Ghost, ZapOff, CheckCircle2, Activity, RefreshCw, Radio, Server, ShieldCheck, Terminal, HardDrive, Cpu } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { GALLERY_IMAGES } from '../data/images';
 import { VIDEO_WALLPAPERS } from '../data/videoWallpapers';
 import { motion, AnimatePresence } from 'motion/react';
@@ -131,6 +131,22 @@ export default function SettingsPanel() {
     showToast("Settings Applied Permanently", "success");
   };
 
+  /*
+   * The backdrop only helps a pointer user; a keyboard user needs Escape, and
+   * a screen reader needs focus to land inside the dialog when it opens or the
+   * page behind it is what gets read.
+   */
+  const panelRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!isOpen) return;
+    panelRef.current?.focus();
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsOpen(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isOpen]);
+
   return (
     <>
       {/* The cog goes with the rest of the floating furniture when the view is
@@ -157,11 +173,16 @@ export default function SettingsPanel() {
                className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
             />
             
-            <motion.div 
+            <motion.div
+               ref={panelRef}
+               role="dialog"
+               aria-modal="true"
+               aria-label="Settings"
+               tabIndex={-1}
                initial={{ opacity: 0, scale: 0.95, y: 20 }}
                animate={{ opacity: 1, scale: 1, y: 0 }}
                exit={{ opacity: 0, scale: 0.95, y: 20 }}
-               className="relative w-full max-w-5xl max-h-[90vh] glass-premium rounded-[2.5rem] shadow-2xl flex flex-col md:flex-row overflow-hidden border border-white/60 holographic-border"
+               className="relative w-full max-w-5xl max-h-[90vh] glass-premium rounded-[2.5rem] shadow-2xl flex flex-col md:flex-row overflow-hidden border border-white/60 holographic-border outline-none"
             >
                {/* Sidebar Tabs */}
                <div className="w-full md:w-72 bg-white/40 backdrop-blur-3xl border-b md:border-b-0 md:border-r border-white/40 p-8 flex flex-row md:flex-col gap-3 overflow-x-auto md:overflow-y-auto shrink-0 hide-scrollbar z-10">
@@ -181,8 +202,9 @@ export default function SettingsPanel() {
 
                {/* Content Area */}
                <div className="flex-1 p-8 md:p-12 overflow-y-auto bg-white/60 backdrop-blur-2xl custom-scrollbar relative z-10">
-                  <button 
+                  <button
                      onClick={() => setIsOpen(false)}
+                     aria-label="Close settings"
                      className="absolute top-8 right-8 p-3 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-900 transition-all active:scale-90"
                   >
                      <X size={24} />
@@ -610,8 +632,20 @@ function TabButton({ active, onClick, icon, label }: { active: boolean, onClick:
 }
 
 function ToggleOption({ label, description, enabled, onToggle }: { label: string, description: string, enabled: boolean, onToggle: () => void }) {
+   /*
+    * The whole row is one real button: a styled div takes a click but nothing
+    * else, while role="switch" + aria-checked is how assistive tech learns
+    * both what this is and which way it currently points, and Enter/Space
+    * come free with the element.
+    */
    return (
-      <label className="flex items-start gap-6 cursor-pointer group p-4 hover:bg-slate-50/50 rounded-3xl transition-all border border-transparent hover:border-slate-100">
+      <button
+         type="button"
+         role="switch"
+         aria-checked={enabled}
+         onClick={onToggle}
+         className="w-full text-left flex items-start gap-6 cursor-pointer group p-4 hover:bg-slate-50/50 rounded-3xl transition-all border border-transparent hover:border-slate-100 focus-visible:outline-teal-500"
+      >
          <div className="flex-1">
             <div className="font-bold text-slate-900 text-sm tracking-tight">{label}</div>
             <div className="text-slate-500 font-light text-xs leading-relaxed mt-0.5">{description}</div>
@@ -619,6 +653,6 @@ function ToggleOption({ label, description, enabled, onToggle }: { label: string
          <div className={cn("relative w-14 h-8 rounded-full shrink-0 transition-all duration-500 border-2 shadow-inner mt-1", enabled ? "bg-teal-500 border-teal-600 ring-4 ring-teal-500/10" : "bg-slate-200 border-slate-300 ring-4 ring-slate-200/5")}>
              <div className={cn("absolute top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-white shadow-xl transition-all duration-500", enabled ? "left-[calc(100%-24px)]" : "left-1.5")}></div>
          </div>
-      </label>
+      </button>
    )
 }

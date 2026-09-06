@@ -15,11 +15,6 @@ export default function MobileNavDock() {
     { label: 'Team', path: '/practitioners', icon: Users },
   ];
 
-  const handleBookTrigger = () => {
-    trackClick("Mobile Dock Book Now");
-    window.open(BOOKING_URL, '_blank');
-  };
-
   return (
     <div className="fixed bottom-4 left-4 right-4 z-[51] lg:hidden">
       <div className="bg-slate-950/80 backdrop-blur-3xl crystal-glass border border-white/10 rounded-[2rem] py-2.5 px-4 shadow-premium-lg flex items-center justify-between gap-2 max-w-lg mx-auto relative overflow-hidden holographic-border">
@@ -72,15 +67,20 @@ export default function MobileNavDock() {
             <span className="text-[9px] font-black uppercase tracking-wider mt-1 text-center scale-90 text-teal-400">Call</span>
           </a>
 
-          {/* Book Now persistent Call To Action */}
-          <button
-            onClick={handleBookTrigger}
-            aria-label="Book appointment now"
+          {/* Book Now persistent Call To Action. A real link, not a scripted
+              window.open: long-press, middle-click and open-in-new-tab all
+              behave, and pop-up blockers have nothing to object to. */}
+          <a
+            href={BOOKING_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => trackClick("Mobile Dock Book Now")}
+            aria-label="Book an appointment — opens our booking system in a new tab"
             className="bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-400 hover:to-teal-500 text-slate-950 px-4 py-3 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-lg shadow-teal-500/20 active:scale-95 transition-all text-center flex items-center justify-center gap-2 cursor-pointer border border-teal-400/20 flex-1 max-w-[130px] whitespace-nowrap"
           >
             <Calendar size={13} className="animate-pulse" />
             <span>Book Now</span>
-          </button>
+          </a>
         </div>
       </div>
     </div>

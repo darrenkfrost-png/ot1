@@ -53,12 +53,14 @@ export default function HomePage() {
            style={{ y: heroY, opacity: heroOpacity, scale: heroScale }}
            className="absolute inset-0 z-0 bg-slate-900 overflow-hidden"
         >
+          {/* A stock photograph. The alt may describe what the picture shows,
+              but it may not claim these are our rooms or our patients. */}
           <motion.img
             initial={{ scale: 1.15, opacity: 0 }}
             animate={{ scale: 1, opacity: 0.92 }}
             transition={{ duration: 2.5, ease: "easeOut" }}
             src="https://images.unsplash.com/photo-1706353399656-210cca727a33?auto=format&fit=crop&q=85&w=2400"
-            alt={`Osteopath treating a patient at ${CLINIC.name}`}
+            alt="Osteopath giving hands-on treatment in a clinic room"
             fetchPriority="high"
             decoding="async"
             width={2400}
@@ -74,8 +76,9 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/45 to-transparent"></div>
           <div className="absolute inset-0 bg-gradient-to-b from-slate-950/15 to-transparent"></div>
           
-          {/* Animated Noise Texture */}
-          <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
+          {/* Film grain. The tile is inlined (.noise-tile, below) because a
+              third-party demo host is not a dependency first paint may take. */}
+          <div className="absolute inset-0 opacity-[0.03] pointer-events-none noise-tile"></div>
         </motion.div>
         
         <div className="relative z-10 max-w-5xl space-y-12">
@@ -260,7 +263,9 @@ export default function HomePage() {
                 { 
                   step: "03", 
                   title: "Structural Mastery", 
-                  desc: "Final stage integration where we optimize your daily biomechanics to ensure the issue never returns.",
+                  // "ensure the issue never returns" is a promise no clinician can
+                  // keep, and one a regulator would take a dim view of.
+                  desc: "Final stage work on the movement habits behind the problem, so you leave with a plan for keeping it settled.",
                   icon: ShieldCheck
                 }
               ].map((m, i) => (
@@ -368,7 +373,7 @@ export default function HomePage() {
                  { icon: Award, label: "Regulated", val: "GOsC Registered", desc: "General Osteopathic Council." },
                  { icon: ShieldCheck, label: "Insurance", val: "Check your policy", desc: "Many insurers cover osteopathy." },
                  { icon: Clock, label: "Open", val: "Mon–Sat", desc: "Weekdays 8am–8pm." },
-                 { icon: MapPin, label: "Location", val: "Herne Bay", desc: "180 High Street, CT6 5AJ." }
+                 { icon: MapPin, label: "Location", val: CLINIC.address.town, desc: `${CLINIC.address.line1}, ${CLINIC.address.postcode}.` }
                ].map((item, i) => (
                  <div key={i} className="bg-white/95 backdrop-blur-sm border border-slate-100 p-8 rounded-[2.5rem] hover:bg-white hover:shadow-[0_20px_40px_rgba(0,0,0,0.05)] hover:border-teal-100 hover:-translate-y-1 transition-all duration-500 group relative overflow-hidden">
                     <div className="absolute -right-12 -top-12 w-32 h-32 bg-slate-50 rounded-full group-hover:scale-150 group-hover:bg-teal-50/50 transition-all duration-700 -z-10"></div>
@@ -476,7 +481,8 @@ export default function HomePage() {
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-300">Total Structural Resilience</span>.
             </h2>
             <p className="text-2xl text-slate-400 font-light leading-relaxed max-w-2xl border-l-4 border-teal-500/30 pl-6">
-              From acute spinal trauma to sports performance optimization, our specialized modules deliver highly specific reactive loaded protocols that get documented, permanent results.
+              From acute back pain to sports injuries, treatment is matched to what is
+              actually causing the problem — assessed on the day, adjusted as you improve.
             </p>
           </motion.div>
 
@@ -787,7 +793,7 @@ export default function HomePage() {
         className="relative rounded-[5rem] overflow-hidden p-12 sm:p-24 lg:p-32 text-center bg-slate-950 border border-slate-800 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)] group holographic-border"
       >
         <div className="absolute inset-0 z-0 bg-gradient-to-br from-slate-950 via-slate-900 to-teal-950">
-           <div className="absolute inset-0 opacity-[0.15] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay"></div>
+           <div className="absolute inset-0 opacity-[0.15] noise-tile mix-blend-overlay"></div>
            <div className="absolute inset-0 neural-grid opacity-[0.15] mix-blend-screen pointer-events-none"></div>
            
            {/* Animated glowing orbs */}
@@ -839,8 +845,8 @@ export default function HomePage() {
              </div>
              <div className="hidden sm:block w-px h-16 bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
              <div className="flex flex-col items-center gap-3">
-                <span className="text-white font-display font-medium text-3xl tracking-tight">CT6 5AJ</span>
-                <span className="text-teal-500/80 text-[10px] uppercase tracking-[0.3em] font-black">Herne Bay High Street</span>
+                <span className="text-white font-display font-medium text-3xl tracking-tight">{CLINIC.address.postcode}</span>
+                <span className="text-teal-500/80 text-[10px] uppercase tracking-[0.3em] font-black">{CLINIC.address.town} {CLINIC.address.line1.replace(/^d+s/, "")}</span>
              </div>
              <div className="hidden sm:block w-px h-16 bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
              <div className="flex flex-col items-center gap-3">
@@ -859,6 +865,12 @@ export default function HomePage() {
           100% { transform: translateX(400%); }
         }
         .bg-300\\% { background-size: 300% 100%; }
+        /* Film grain as a 120px SVG turbulence tile inlined as a data URI —
+           the old hotlink to grainy-gradients.vercel.app put a stranger's
+           demo site in the first-paint path. */
+        .noise-tile {
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
         .holographic-border {
           position: relative;
         }

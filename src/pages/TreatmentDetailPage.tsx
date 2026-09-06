@@ -1,23 +1,24 @@
 ﻿import { useParams, Link } from 'react-router-dom';
 import { TREATMENTS, PRACTITIONERS } from '../data';
 import { BOOKING_URL, CLINIC } from '../constants';
-import { 
-  ChevronRight, 
-  CheckCircle2, 
-  Home, 
-  Clock, 
-  Users, 
-  ShieldCheck, 
+import {
+  ChevronRight,
+  CheckCircle2,
+  Home,
+  Clock,
+  Users,
+  ShieldCheck,
   HelpCircle,
   Sparkles,
   ArrowRight,
   Stethoscope,
-  Heart,
+  Star,
   Zap,
   Waves,
   RefreshCcw,
   Activity
 } from 'lucide-react';
+import { REVIEWS } from '../data/reviews';
 import { motion, AnimatePresence } from 'motion/react';
 import { useState } from 'react';
 import { cn } from '../lib/utils';
@@ -237,9 +238,11 @@ export default function TreatmentDetailPage() {
               FAQ
             </h2>
             <div className="space-y-2">
-              <FAQItem 
-                question="How long does a session take?" 
-                answer="Standard initial consultations are 45-60 minutes, while follow-up sessions are typically 30-45 minutes depending on the treatment plan." 
+              {/* Durations vary by treatment and are the clinic's to quote, not
+                  this page's to guess — the fee box beside this says the same. */}
+              <FAQItem
+                question="How long does a session take?"
+                answer="It depends on the treatment. The length of your appointment is confirmed when you book, so you will know exactly how long to set aside before you arrive."
               />
               <FAQItem 
                 question="What should I wear for treatment?" 
@@ -283,31 +286,26 @@ export default function TreatmentDetailPage() {
           </section>
 
           <section className="bg-slate-900 p-12 rounded-[3.5rem] relative overflow-hidden group">
+            {/* Real reviews only. The "Robert Davidson" whose success story
+                lived here was never a patient — he was written. These two are
+                from the practice's Google listing, in the reviewers' own words,
+                and name no individual practitioner, so this block — which
+                renders on every treatment — misattributes nothing. */}
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-              <div className="space-y-6">
-                 <h2 className="text-3xl font-display font-medium text-white tracking-tight leading-tight">Patient Success Story</h2>
-                 <p className="text-slate-400 font-light italic leading-relaxed">
-                   "After months of struggling with recurring issues, the structured program here changed everything. Not just the treatment, but the education provided."
-                 </p>
-                 <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full border-2 border-teal-500/30 p-1">
-                       <div className="w-full h-full rounded-full bg-teal-500/20 flex items-center justify-center text-teal-400">
-                          <Heart size={20} fill="currentColor" />
-                       </div>
-                    </div>
-                    <div>
-                       <div className="text-white font-bold">Robert Davidson</div>
-                       <div className="text-xs text-slate-500 uppercase font-bold tracking-widest">Active Lifestyle Management</div>
-                    </div>
-                 </div>
+              <div className="space-y-8">
+                 <h2 className="text-3xl font-display font-medium text-white tracking-tight leading-tight">What patients said</h2>
+                 {[REVIEWS[6], REVIEWS[8]].map((review, i) => (
+                   <div key={i} className="space-y-3">
+                      <div className="flex items-center gap-1.5">
+                        {[...Array(5)].map((_, j) => <Star key={j} size={12} className="fill-amber-400 text-amber-400" />)}
+                      </div>
+                      <p className="text-slate-300 font-light italic leading-relaxed">"{review.quote}"</p>
+                      <div className="text-xs text-slate-300 uppercase font-bold tracking-widest">— {review.author}, Google review</div>
+                   </div>
+                 ))}
               </div>
               <div className="relative aspect-video rounded-[2rem] overflow-hidden border border-white/10 group-hover:border-teal-500/30 transition-colors">
                 <img src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&q=80&w=800" alt="Patient training during an active rehabilitation session" loading="lazy" decoding="async" className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-1000" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                   <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center">
-                      <ArrowRight className="text-white" />
-                   </div>
-                </div>
               </div>
             </div>
             <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500/10 rounded-full blur-[100px] -mr-32 -mt-32"></div>
@@ -342,14 +340,17 @@ export default function TreatmentDetailPage() {
               <div className="h-px bg-slate-50" />
 
               <div className="space-y-4">
-                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Everything Included</h3>
+                {/* Only what every first appointment truly involves. This block
+                    renders for every treatment, so anything listed here must
+                    hold for footcare and hypnotherapy as much as for osteopathy
+                    — the old "Biomechanical Analysis" and "Exercise Guidance
+                    Pack" did not. */}
+                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest">What's Included</h3>
                 <ul className="space-y-3">
                   {[
-                    'Full Physical Assessment',
-                    'Biomechanical Analysis',
-                    'Personalised Treatment Plan',
-                    'Initial Treatment Session',
-                    'Exercise Guidance Pack'
+                    'A full assessment of the problem',
+                    'Hands-on treatment in the same visit',
+                    'Self-care advice to take home'
                   ].map((item, i) => (
                     <li key={i} className="flex items-center gap-3 text-sm text-slate-600 font-medium">
                       <CheckCircle2 size={16} className="text-emerald-500" />
@@ -369,10 +370,8 @@ export default function TreatmentDetailPage() {
                 Book Assessment
                 <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
               </button>
-              
-              <p className="text-[10px] text-center text-slate-400 uppercase tracking-widest font-bold">
-                Cancellations require 24h notice
-              </p>
+              {/* A cancellation policy is a contract term. Until the clinic
+                  states one, this page must not invent one for it. */}
             </div>
           </section>
         </div>

@@ -41,21 +41,52 @@ export default function PractitionersPage() {
       answer: "Your initial session is 45-60 minutes. It includes an in-depth clinical case history, an orthopedic and neurological diagnostic assessment, and a hands-on treatment where appropriate. You will also receive a personalized digital rehabilitation plan."
     },
     {
+      // We haven't verified any insurer's current terms, so none are named —
+      // whether a policy covers osteopathy is between the patient and their
+      // insurer.
       question: "Is osteopathy covered by private health insurance?",
-      answer: "Yes, our clinical sessions are recognized and covered by major health insurance providers, including AXA, Bupa, and Vitality. We recommend contacting your provider before booking to obtain a pre-authorization code."
+      answer: "Many patients reclaim the cost of their treatment through private health insurance, and we're happy to provide receipts to support your claim. Cover varies between policies, so please check with your insurer before booking to see what yours includes."
     }
   ];
 
 
-  const specialties = ['All', 'Osteopathy', 'Physiotherapy', 'Sports Therapy', 'Massage Therapy'];
+  /*
+   * These tabs used to be a wish-list: 'Physiotherapy' and 'Sports Therapy'
+   * matched nobody on the roster, so those tabs always said "no specialists
+   * match"; 'Massage Therapy' missed Keri because her role reads "Massage
+   * Therapist" and Therapist is not Therapy; and 'Osteopathy' hid Leon, an
+   * osteopath, because only his colleague listed the word as a specialisation.
+   *
+   * Two changes make that class of fault impossible rather than fixed: match on
+   * a STEM, case-insensitively, across role and specialisations; and build the
+   * tab list from the practitioners who actually exist, so a tab can only be
+   * offered when somebody is behind it.
+   */
+  const SPECIALTY_STEMS: { label: string; stem: RegExp }[] = [
+    { label: 'Osteopathy', stem: /osteopath/i },
+    { label: 'Sports', stem: /sports/i },
+    { label: 'Massage', stem: /massage/i },
+    { label: 'Acupuncture', stem: /acupunctur/i },
+    { label: 'Foot Care', stem: /foot/i },
+    { label: 'Hypnotherapy', stem: /hypnother/i },
+  ];
+
+  const describes = (p: typeof PRACTITIONERS[number], stem: RegExp) =>
+    stem.test(p.role) || (p.specialisations ?? []).some(s => stem.test(s));
+
+  const specialties = useMemo(
+    () => ['All', ...SPECIALTY_STEMS.filter(s => PRACTITIONERS.some(p => describes(p, s.stem))).map(s => s.label)],
+    []
+  );
 
   const filteredPractitioners = useMemo(() => {
+    const stem = SPECIALTY_STEMS.find(s => s.label === activeSpecialty)?.stem;
     return PRACTITIONERS.filter(p => {
-      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           p.role.toLowerCase().includes(searchQuery.toLowerCase());
-      
-      if (activeSpecialty === 'All') return matchesSearch;
-      return matchesSearch && (p.role.includes(activeSpecialty) || p.specialisations?.some(s => s.includes(activeSpecialty)));
+
+      if (activeSpecialty === 'All' || !stem) return matchesSearch;
+      return matchesSearch && describes(p, stem);
     });
   }, [searchQuery, activeSpecialty]);
 
@@ -212,7 +243,7 @@ export default function PractitionersPage() {
               <div className="absolute bottom-10 left-10 right-10 flex items-center justify-between">
                 <div className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl flex items-center gap-3">
                    <div className="w-10 h-10 bg-teal-500 rounded-xl flex items-center justify-center text-white"><BookOpen size={20} /></div>
-                   <span className="text-white font-bold text-xs uppercase tracking-widest">Active Research Lab</span>
+                   <span className="text-white font-bold text-xs uppercase tracking-widest">Ongoing Professional Development</span>
                 </div>
               </div>
            </div>
@@ -222,15 +253,19 @@ export default function PractitionersPage() {
         <div className="order-1 lg:order-2 space-y-8">
            <div className="space-y-4">
              <span className="text-teal-600 font-bold text-xs uppercase tracking-[0.3em]">Continuous Development</span>
-             <h2 className="text-4xl md:text-5xl font-display font-medium text-slate-50 tracking-tighter leading-tight">Beyond the Clinic:<br/><span className="text-teal-600 underline decoration-teal-100 underline-offset-8">Academic Rigor</span>.</h2>
-             <p className="text-xl text-slate-300 font-light leading-relaxed">Our practitioners don't just treat; they contribute to the global clinical discourse. From publishing peer-reviewed papers to leading university seminars, we stay at the cutting edge of anatomical science.</p>
+             <h2 className="text-4xl md:text-5xl font-display font-medium text-slate-50 tracking-tighter leading-tight">Beyond the Clinic:<br/><span className="text-teal-600 underline decoration-teal-100 underline-offset-8">Professional Standards</span>.</h2>
+             <p className="text-xl text-slate-300 font-light leading-relaxed">Between them, our practitioners bring decades of clinical experience to one clinic — and each keeps their training current, from the mandatory professional development every registered osteopath completes to the qualifications each therapy requires.</p>
            </div>
            
            <div className="space-y-6 pt-4">
+              {/* The salons, training hub and research lab never existed.
+                  Each line below can be checked: the practising-since date,
+                  the university link the founder confirmed, and the GOsC's
+                  own CPD requirement. */}
               {[
-                { title: "Monthly Clinical Salons", desc: "Our team meets monthly to peer-review complex cases and share latest research findings." },
+                { title: "Decades of Combined Experience", desc: "Practising in Herne Bay since 2012, across osteopathy, acupuncture, massage, foot care and hypnotherapy." },
                 { title: "University Partnerships", desc: "Direct links with Canterbury Christ Church University for sports science research." },
-                { title: "Bespoke Training Hub", desc: "Internal education program ensuring every junior therapist meets our master-level standards." }
+                { title: "GOsC Registration & Development", desc: "Our osteopaths are registered with the General Osteopathic Council and complete its required continuing professional development every year." }
               ].map((item, i) => (
                 <div key={i} className="flex gap-6 group">
                    <div className="w-12 h-12 rounded-2xl bg-teal-50 flex items-center justify-center text-teal-600 shrink-0 group-hover:bg-teal-700 group-hover:text-white transition-all shadow-sm">

@@ -1,6 +1,6 @@
-import { useState, useEffect, Suspense, useMemo, useCallback } from 'react';
+import { useState, useEffect, useRef, Suspense, useMemo, useCallback } from 'react';
 import { BOOKING_URL, SOCIAL_LINKS, GOVERNANCE_DOCS, CLINIC } from './constants';
-import { BrowserRouter, Routes, Route, Outlet, Link, NavLink, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Outlet, Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Home, 
   ChevronLeft, 
@@ -148,8 +148,10 @@ const Sidebar = ({ isCollapsed, onToggle, isMobile, isOpenMobile, onCloseMobile 
         transitionTimingFunction: 'var(--layout-transition-ease)',
         transform: isMobile ? (isOpenMobile ? 'translateX(0)' : 'translateX(-100%)') : 'translateX(0)',
       }}
-      aria-expanded={isMobile ? isOpenMobile : !isCollapsed}
     >
+      {/* aria-expanded belongs on the buttons that control this panel (the
+          menu button and the collapse button both carry it) — on the
+          landmark itself it describes nothing a reader can use. */}
       <div className="h-[var(--layout-header-height)] flex items-center px-6 border-b border-[var(--panel-border)] flex-none justify-between relative group/header overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-teal-500/5 to-transparent -translate-x-full group-hover/header:translate-x-0 transition-transform duration-700"></div>
         <div className="flex items-center gap-4 relative z-10">
@@ -253,6 +255,22 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile, onEnterImme
   const { commands, executeCommand } = useCommand();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const navigate = useNavigate();
+  // The two ends of the thread the keyboard follows: the box you type in,
+  // and the list the arrow keys walk through.
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
+
+  /*
+   * Results travel through the router, the same road the nav pills take.
+   * A full page load here would replay the intro film and the entry door
+   * between a patient and the page they just chose.
+   */
+  const openResult = useCallback((path: string) => {
+    navigate(path);
+    setSearchQuery('');
+    setIsSearchFocused(false);
+  }, [navigate]);
 
   const toggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
@@ -311,11 +329,18 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile, onEnterImme
     return hits.slice(0, 6);
   }, [searchQuery]);
 
+  /*
+   * Commands match on their LABEL only, and only from two characters up.
+   * Matching descriptions too meant a patient typing "back" - as in back pain -
+   * hit "Changes the background engine" and had the wallpaper change under
+   * them; matching an empty string meant every command matched, so pressing
+   * Enter in an empty box ran the first one (fullscreen) with nothing on
+   * screen to explain it.
+   */
   const filteredCommands = useMemo(() => {
-    return commands.filter(cmd => 
-      cmd.label.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      cmd.description.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const q = searchQuery.trim().toLowerCase();
+    if (q.length < 2) return [];
+    return commands.filter(cmd => cmd.label.toLowerCase().includes(q));
   }, [commands, searchQuery]);
 
   return (
@@ -360,25 +385,47 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile, onEnterImme
           >
             <EyeOff size={20} />
           </button>
-          <div className="relative group w-full md:w-[320px] lg:w-[400px] flex-1 z-50">
+          {/*
+            Whether the results stay open is decided by where focus lands,
+            not by the input losing it — otherwise the Tab key closes the
+            list the moment it tries to reach the second result.
+          */}
+          <div
+            className="relative group w-full md:w-[320px] lg:w-[400px] flex-1 z-50"
+            onFocus={() => setIsSearchFocused(true)}
+            onBlur={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+                setIsSearchFocused(false);
+              }
+            }}
+          >
             <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors" size={18} />
             <input
+              ref={searchInputRef}
               type="text"
               aria-label="Search treatments or type a command"
-              placeholder="Search treatments or type a command..." 
+              placeholder="Search treatments or type a command..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              onFocus={() => setIsSearchFocused(true)}
-              onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
-                  if (filteredCommands.length > 0) {
+                  // Enter takes the first row the dropdown is SHOWING, and the
+                  // dropdown lists treatments and people before commands.
+                  // Reversing that made the key contradict the screen.
+                  if (contentMatches.length > 0) {
+                    openResult(contentMatches[0].path);
+                    (e.target as HTMLInputElement).blur();
+                  } else if (filteredCommands.length > 0) {
                     executeCommand(filteredCommands[0].id);
                     setSearchQuery('');
                     (e.target as HTMLInputElement).blur();
-                  } else if (contentMatches.length > 0) {
-                    window.location.assign(contentMatches[0].path);
-                    setSearchQuery('');
+                  }
+                } else if (e.key === 'ArrowDown') {
+                  // Down from the box steps into the list itself.
+                  const first = resultsRef.current?.querySelector<HTMLElement>('a, button');
+                  if (first) {
+                    e.preventDefault();
+                    first.focus();
                   }
                 }
               }}
@@ -386,18 +433,45 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile, onEnterImme
             />
             <AnimatePresence>
               {isSearchFocused && searchQuery && (
-                <motion.div 
+                <motion.div
+                  ref={resultsRef}
                   initial={{ opacity: 0, y: 10, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 5, scale: 0.98 }}
                   className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50 py-2 max-h-[300px] overflow-y-auto"
+                  onKeyDown={(e) => {
+                    // Arrow keys walk the list; Up from the first row hands
+                    // the keyboard back to the box.
+                    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+                    e.preventDefault();
+                    const items = Array.from(e.currentTarget.querySelectorAll<HTMLElement>('a, button'));
+                    const index = items.indexOf(document.activeElement as HTMLElement);
+                    if (e.key === 'ArrowDown') {
+                      (items[index + 1] ?? items[0])?.focus();
+                    } else if (index <= 0) {
+                      searchInputRef.current?.focus();
+                    } else {
+                      items[index - 1]?.focus();
+                    }
+                  }}
                 >
+                  {/*
+                    A real link, so middle-click and long-press still offer a
+                    new tab — but a plain click stays inside the app. The
+                    mousedown guard keeps focus in the search so the list is
+                    still mounted when the click arrives.
+                  */}
                   {contentMatches.map((m) => (
                     <a
                       key={m.path}
                       href={m.path}
-                      onMouseDown={() => setSearchQuery('')}
-                      className="block w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0"
+                      onMouseDown={(e) => { if (e.button === 0) e.preventDefault(); }}
+                      onClick={(e) => {
+                        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                        e.preventDefault();
+                        openResult(m.path);
+                      }}
+                      className="block w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0 focus:bg-slate-50 focus:outline-none"
                     >
                       <div className="flex items-center justify-between gap-3">
                         <span className="text-sm font-bold text-slate-800">{m.label}</span>
@@ -409,10 +483,13 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile, onEnterImme
                     filteredCommands.map((cmd) => (
                       <button
                         key={cmd.id}
-                        onMouseDown={(e) => {
-                          e.preventDefault();
+                        onMouseDown={(e) => { if (e.button === 0) e.preventDefault(); }}
+                        onClick={() => {
+                          // click, not mousedown: the Enter key on a focused
+                          // row fires click, and only click.
                           executeCommand(cmd.id);
                           setSearchQuery('');
+                          setIsSearchFocused(false);
                         }}
                         className="w-full text-left px-4 py-3 hover:bg-slate-50 flex flex-col gap-1 transition-colors focus:bg-slate-50 focus:outline-none"
                       >
@@ -531,6 +608,43 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [isImmersive]);
+
+  /*
+   * While the drawer covers the page it owns the keyboard: Escape puts it
+   * away and hands focus back to the button that opened it, and Tab is kept
+   * inside the drawer so the focus ring cannot wander into content the
+   * backdrop is visually hiding.
+   */
+  useEffect(() => {
+    if (!isMobile || !isOpenMobile) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsOpenMobile(false);
+        document.querySelector<HTMLElement>('button[aria-label="Open menu"]')?.focus();
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      const drawer = document.getElementById('main-sidebar');
+      if (!drawer) return;
+      const focusables = Array.from(drawer.querySelectorAll<HTMLElement>('a[href], button:not([disabled])'));
+      if (focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement;
+      if (!drawer.contains(active)) {
+        e.preventDefault();
+        first.focus();
+      } else if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isMobile, isOpenMobile]);
 
   return (
     <div className="min-h-screen bg-transparent flex flex-col relative w-full overflow-x-clip">

@@ -9,7 +9,7 @@ import { useAnalytics } from '../context/AnalyticsContext';
 import { CLINIC } from '../data/clinic';
 
 export default function GalleryPage() {
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const { showToast } = useToast();
   const { trackClick } = useAnalytics();
 
@@ -74,15 +74,20 @@ export default function GalleryPage() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      /* Escape must also reach the tour video, which opens without a
+         selected guide — the arrow keys stay lightbox-only. */
+      if (e.key === 'Escape' && (selectedIndex !== null || isTourOpen)) {
+        close();
+        return;
+      }
       if (selectedIndex === null) return;
-      if (e.key === 'Escape') close();
       if (e.key === 'ArrowRight') next();
       if (e.key === 'ArrowLeft') prev();
       if (e.key === 'r' || e.key === 'R') rotate();
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedIndex, close, next, prev, rotate]);
+  }, [selectedIndex, isTourOpen, close, next, prev, rotate]);
 
   return (
     <div className="max-w-7xl mx-auto p-4 md:p-8 space-y-16">
@@ -128,8 +133,20 @@ export default function GalleryPage() {
                * tile cropped away the top and bottom of every one - which is
                * where their headings and conclusions live.
                */
-              className="aspect-[788/1400] rounded-[2rem] overflow-hidden shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] hover:shadow-premium transition-all cursor-pointer relative group border border-white/60 crystal-glass holographic-border"
+              className="aspect-[788/1400] rounded-[2rem] overflow-hidden shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] hover:shadow-premium transition-all cursor-pointer relative group border border-white/60 crystal-glass holographic-border focus-visible:outline-teal-500"
               onClick={() => setSelectedIndex(GALLERY_IMAGES.indexOf(src))}
+              /* A tile that only answers the mouse shuts out everyone on a
+                 keyboard; role="button" + tabIndex puts it in the tab order,
+                 and Enter/Space have to be wired by hand on a div. */
+              role="button"
+              tabIndex={0}
+              aria-label={`Open patient guide ${index + 1} of ${GALLERY_IMAGES.length}`}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setSelectedIndex(GALLERY_IMAGES.indexOf(src));
+                }
+              }}
             >
               <img src={src} alt={`${CLINIC.name} patient guide ${index + 1} — open to read in full`} loading="lazy" decoding="async" width={788} height={1400} className="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-transform duration-700" />
               <div className="absolute inset-0 bg-slate-950/0 group-hover:bg-slate-950/30 transition-all duration-500 flex items-center justify-center">
@@ -241,10 +258,13 @@ export default function GalleryPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[var(--z-modal)] bg-slate-950/95 backdrop-blur-xl flex items-center justify-center p-4" 
+            className="fixed inset-0 z-[var(--z-modal)] bg-slate-950/95 backdrop-blur-xl flex items-center justify-center p-4"
             onClick={close}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Virtual clinic tour video"
           >
-            <button className="absolute top-8 right-8 text-white hover:text-teal-400 p-2 transition-all hover:rotate-90" onClick={close}><X size={32} /></button>
+            <button aria-label="Close tour video" className="absolute top-8 right-8 text-white hover:text-teal-400 p-2 transition-all hover:rotate-90" onClick={close}><X size={32} /></button>
             
             <motion.div 
               initial={{ scale: 0.9, y: 20 }}

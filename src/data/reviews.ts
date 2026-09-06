@@ -125,4 +125,10 @@ export const REVIEWS_SOURCE = {
   label: 'Google reviews',
   url: CLINIC.reviewsUrl,
   writeUrl: CLINIC.writeReviewUrl,
+  /* The rating snapshot, typed ONCE. Three pages used to hand-type
+   * "5.0" and "56 reviews" separately - a lie waiting to happen the
+   * moment one page is updated and the others are not. Update these two
+   * numbers here when the Google listing moves. */
+  rating: '5.0',
+  count: 56,
 };
