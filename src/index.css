@@ -672,3 +672,33 @@
 @media (prefers-reduced-motion: reduce) {
   .calm-cta { animation: none; box-shadow: 0 0 26px -8px rgba(20, 184, 166, 0.45); }
 }
+
+/*
+ * ------------------------------------------------------------------
+ * POLYMETRIC FIELD — the screensaver's drawn geometry
+ * ------------------------------------------------------------------
+ * Transform and opacity only. A waiting-room display may sit on this screen
+ * for an hour; anything that forces layout or paint on every frame would keep
+ * the machine working the whole time for a picture nobody is looking at.
+ */
+@keyframes poly-drift {
+  0%, 100% { transform: translateX(0); }
+  50%      { transform: translateX(9px); }
+}
+@keyframes poly-sway {
+  0%, 100% { transform: translateX(-7px); }
+  50%      { transform: translateX(7px); }
+}
+@keyframes poly-pulse {
+  0%, 100% { opacity: 0.28; }
+  50%      { opacity: 0.72; }
+}
+@keyframes poly-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+/* The screensaver's own stillness switch follows the app's. */
+.reduce-motion [class*="poly-"],
+.reduce-motion .screensaver-field * {
+  animation: none !important;
+}
