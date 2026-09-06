@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { useState, useEffect } from 'react';
 import { Sparkles, ArrowRight } from 'lucide-react';
 import { GALLERY_IMAGES } from '../data/images';
@@ -58,6 +58,11 @@ interface IntroPageProps {
 }
 
 const IntroPage = ({ onComplete }: IntroPageProps) => {
+  /* The full-screen cascade is atmosphere. For anyone who has asked for
+     stillness it simply does not loop — the entrance still works, it is
+     just calm. */
+  const calm = !!useReducedMotion();
+
   const [quoteIndex, setQuoteIndex] = useState(0);
   const [mode, setMode] = useState<BackdropMode>(() => {
     try {
@@ -129,7 +134,7 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
                 key={rowIndex}
                 className="flex gap-4 sm:gap-6 w-max"
                 animate={{ x: rowIndex % 2 === 0 ? [0, -2400] : [-2400, 0] }}
-                transition={{ repeat: Infinity, duration: 60 + rowIndex * 8, ease: 'linear' }}
+                transition={{ repeat: calm ? 0 : Infinity, duration: 60 + rowIndex * 8, ease: 'linear' }}
               >
                 {tiles.map((img, index) => (
                   <div
@@ -164,7 +169,7 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
                 }
                 animate={{ y: colIndex % 2 === 0 ? [0, -1500] : [-1500, 0] }}
                 transition={{
-                  repeat: Infinity,
+                  repeat: calm ? 0 : Infinity,
                   duration: (mode === 'wall' ? 70 : 40) + colIndex * 5,
                   ease: 'linear',
                 }}

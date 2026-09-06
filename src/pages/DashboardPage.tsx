@@ -42,6 +42,8 @@ import { useToast } from '../components/ToastSystem';
 import { CLINIC } from '../data/clinic';
 import { PRACTITIONERS } from '../data';
 import { BOOKING_URL } from '../constants';
+import { GALLERY_IMAGES } from '../data/images';
+import { VIDEOS } from '../data/resources';
 
 interface AuditData {
   overallHealth: number;
@@ -1196,26 +1198,37 @@ export default function DashboardPage() {
               <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center gap-3">
                     <Zap size={24} className="text-amber-700" />
-                    <h3 className="text-2xl font-bold text-slate-900 font-display">Recommended Actions</h3>
+                    <h3 className="text-2xl font-bold text-slate-900 font-display">Where to go next</h3>
                   </div>
               </div>
               
               <div className="space-y-4">
                   {[
-                      { title: "Watch: Phase 3 Core Stability", type: "Video", dur: "12 mins", color: "bg-teal-50 text-teal-800" },
-                      { title: "Complete: Daily Mobility Form", type: "Survey", dur: "2 mins", color: "bg-blue-50 text-blue-600" },
-                      { title: "Read: Return to Running Protocol", type: "Article", dur: "8 mins", color: "bg-purple-50 text-purple-600" }
+                      /*
+                       * These were "Watch: Phase 3 Core Stability", "Complete:
+                       * Daily Mobility Form" and "Read: Return to Running
+                       * Protocol" — a prescribed plan, on cards that looked
+                       * clickable and did nothing, for a patient nobody had
+                       * assessed. Every row below goes somewhere that exists.
+                       */
+                      { title: 'Watch the clinic films', type: 'Video', dur: `${VIDEOS.length} to choose from`, href: '/resources', color: 'bg-teal-50 text-teal-800' },
+                      { title: 'Read the patient guides', type: 'Guides', dur: `${GALLERY_IMAGES.length} illustrated`, href: '/gallery', color: 'bg-blue-50 text-blue-700' },
+                      { title: 'Questions before your visit', type: 'Answers', dur: 'Common ones', href: '/faq', color: 'bg-purple-50 text-purple-700' },
                   ].map((act, i) => (
-                      <div key={i} className="bg-white p-5 rounded-2xl border border-slate-100 flex items-center justify-between group cursor-pointer hover:border-teal-200 hover:shadow-md transition-all">
+                      <a
+                          key={i}
+                          href={act.href}
+                          className="bg-white p-5 rounded-2xl border border-slate-100 flex items-center justify-between gap-4 group cursor-pointer hover:border-teal-200 hover:shadow-sm transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-teal-600"
+                      >
                           <div className="flex items-center gap-4">
                              <div className={cn("px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest", act.color)}>{act.type}</div>
-                             <h4 className="font-bold text-slate-800 group-hover:text-teal-600 transition-colors">{act.title}</h4>
+                             <h4 className="font-bold text-slate-800 group-hover:text-teal-800 transition-colors">{act.title}</h4>
                           </div>
                           <div className="flex items-center gap-4">
                              <span className="text-xs text-slate-600 font-medium whitespace-nowrap">{act.dur}</span>
-                             <ChevronRight size={18} className="text-slate-300 group-hover:text-teal-500 group-hover:translate-x-1 transition-all" />
+                             <ChevronRight size={18} className="text-slate-400 group-hover:text-teal-700 group-hover:translate-x-1 transition-all" />
                           </div>
-                      </div>
+                      </a>
                   ))}
               </div>
           </div>

@@ -17,6 +17,18 @@ const IntroVideo: React.FC<IntroVideoProps> = ({ onComplete }) => {
   const [progress, setProgress] = useState(0);
   const finished = useRef(false);
 
+  /*
+   * ~4.5MB of film before a patient has read a word, often on a phone in a
+   * waiting room. Anyone who has asked their device for less motion, or
+   * switched on data saver, goes straight to the site: the component
+   * returns before the <video> is ever rendered, so nothing is fetched.
+   * The film is decoration, and decoration yields.
+   */
+  const skipFilm =
+    typeof window !== 'undefined' &&
+    (window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true);
+
   const finish = () => {
     if (finished.current) return;
     finished.current = true;
@@ -25,6 +37,9 @@ const IntroVideo: React.FC<IntroVideoProps> = ({ onComplete }) => {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      /* A focused control owns its own keys. Without this, pressing Space
+         on the sound button skipped the film rather than toggling sound. */
+      if ((e.target as HTMLElement | null)?.closest('button')) return;
       if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
         finish();
@@ -73,6 +88,13 @@ const IntroVideo: React.FC<IntroVideoProps> = ({ onComplete }) => {
     setMuted(next);
     if (!next) video.play().catch(() => { /* keep playing muted */ });
   };
+
+  useEffect(() => {
+    if (skipFilm) finish();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (skipFilm) return null;
 
   return (
     <motion.div
