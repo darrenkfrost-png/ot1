@@ -32,6 +32,9 @@ interface Settings {
   fontSizeMultiplier: number;
   highContrastMode: boolean;
   reduceMotion: boolean;
+  /** The listen chip: rest on a passage, press, hear it. Browser voice, free. */
+  readAloudEnabled: boolean;
+  readAloudRate: number;
   hapticFeedback: boolean;
   screenReaderOptimized: boolean;
   autoSaveDrafts: boolean;
@@ -95,6 +98,8 @@ const defaultSettings: Settings = {
   fontSizeMultiplier: 1,
   highContrastMode: false,
   reduceMotion: false,
+  readAloudEnabled: true,
+  readAloudRate: 1,
   hapticFeedback: true,
   screenReaderOptimized: false,
   autoSaveDrafts: true,

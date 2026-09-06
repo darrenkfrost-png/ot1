@@ -422,12 +422,35 @@ export default function SettingsPanel() {
                                </div>
 
                                <div className="space-y-6 pt-10 border-t border-slate-100">
-                                   <ToggleOption 
-                                      label="Reduce UI Fluidity" 
-                                      description="Minimalize animations and transitions for sensitive users." 
-                                      enabled={settings.reduceMotion} 
-                                      onToggle={() => updateSetting('reduceMotion', !settings.reduceMotion)} 
+                                   <ToggleOption
+                                      label="Reduce UI Fluidity"
+                                      description="Minimalize animations and transitions for sensitive users."
+                                      enabled={settings.reduceMotion}
+                                      onToggle={() => updateSetting('reduceMotion', !settings.reduceMotion)}
                                    />
+                               </div>
+
+                               <div className="space-y-6 pt-10 border-t border-slate-100">
+                                   <ToggleOption
+                                      label="Read Aloud"
+                                      description="Rest on any passage and a speaker button appears - press it to hear the text read out. Uses your device's own free voice."
+                                      enabled={settings.readAloudEnabled}
+                                      onToggle={() => updateSetting('readAloudEnabled', !settings.readAloudEnabled)}
+                                   />
+                                   {settings.readAloudEnabled && (
+                                      <div className="space-y-4">
+                                         <div className="flex justify-between items-center">
+                                            <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-800">Reading Speed</label>
+                                            <span className="text-xs font-black text-slate-600">{settings.readAloudRate.toFixed(2)}x</span>
+                                         </div>
+                                         <input
+                                            type="range" min="0.7" max="1.4" step="0.05"
+                                            value={settings.readAloudRate}
+                                            onChange={(e) => updateSetting('readAloudRate', parseFloat(e.target.value))}
+                                            className="w-full accent-teal-600 h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer"
+                                         />
+                                      </div>
+                                   )}
                                </div>
                            </div>
                         </div>
