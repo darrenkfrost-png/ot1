@@ -578,6 +578,18 @@ export default function SettingsPanel() {
                              <h2 className="text-3xl font-display font-medium text-slate-900 tracking-tight">System Health & Diagnostics</h2>
                              <p className="text-slate-500 font-light text-base leading-relaxed">Run core hardware checks, communication link latency scans, and verify local storage configurations.</p>
                            </div>
+                           {/* Which build is actually in front of you. The 30-second
+                               answer to "why can I not see the change I just made". */}
+                           <div className="flex flex-wrap items-center justify-between gap-3 p-5 rounded-2xl bg-slate-900 text-white">
+                              <div className="space-y-1">
+                                 <div className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-300">Running build</div>
+                                 <div className="text-xs text-slate-300 font-light">If this is not the newest build, the page is being served from a stale server or cache.</div>
+                              </div>
+                              <code className="font-mono text-sm font-bold text-white bg-white/10 px-4 py-2 rounded-xl">
+                                 {__BUILD_ID__} · {__BUILD_TIME__}
+                              </code>
+                           </div>
+
 
                            <div className="space-y-8">
                               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 p-6 rounded-3xl bg-slate-50 border border-slate-100">

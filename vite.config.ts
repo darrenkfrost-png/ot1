@@ -2,6 +2,22 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import {defineConfig, loadEnv} from 'vite';
+import { execSync } from 'node:child_process';
+
+/*
+ * THE BUILD STAMP.
+ *
+ * Every build carries the commit it came from and the minute it was made,
+ * and Settings > Diagnostics prints them back. This exists because a
+ * finished feature sat invisible for a whole conversation behind a server
+ * still serving an older build: the code was right, the browser had never
+ * seen it, and there was no way to tell by looking. Now there is.
+ */
+const buildId = (() => {
+  try { return execSync('git rev-parse --short HEAD').toString().trim(); }
+  catch { return 'nogit'; }
+})();
+const buildTime = new Date().toISOString().slice(0, 16).replace('T', ' ');
 
 import { VitePWA } from 'vite-plugin-pwa';
 
@@ -121,7 +137,18 @@ export default defineConfig(({mode}) => {
       })
     ],
     define: {
-      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+      __BUILD_ID__: JSON.stringify(buildId),
+      __BUILD_TIME__: JSON.stringify(buildTime),
+      /*
+       * GEMINI_API_KEY IS DELIBERATELY NOT DEFINED HERE.
+       *
+       * `define` performs a literal text substitution into the CLIENT bundle,
+       * so this line would publish the key to every visitor the moment a real
+       * one existed in .env — and .env.example invites exactly that. No code
+       * under src/ reads it (checked), so the line was pure risk for no gain.
+       * If the browser ever needs AI, it must go through a server route that
+       * holds the key, never through the bundle.
+       */
     },
     resolve: {
       alias: {

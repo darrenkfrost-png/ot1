@@ -17,7 +17,7 @@
  * still need a reader.
  */
 
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
 const ROOT = new URL('..', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1');
@@ -152,6 +152,41 @@ for (const rule of STRUCTURAL) {
     console.log(`\n✗ ${rule.id} — ${hits.length} occurrence(s)`);
     console.log(`  ${rule.why}`);
     for (const h of hits.slice(0, 8)) console.log(`    ${h.f}:${h.n}`);
+  }
+}
+
+/*
+ * A SECRET MUST NEVER REACH THE BUNDLE.
+ *
+ * Vite's `define` is a literal text substitution into the CLIENT build, so a
+ * key defined there is published to every visitor who loads the page. This
+ * config carried exactly such a line for a Gemini key, harmless only because
+ * no .env existed to fill it in — and .env.example invites someone to make
+ * one. The config is checked here, and the built assets are checked for a
+ * key-shaped string, because the config is the intent and the bundle is the
+ * fact.
+ */
+{
+  const cfg = readFileSync(join(ROOT, 'vite.config.ts'), 'utf8');
+  for (const line of cfg.split(/\r?\n/)) {
+    if (isComment(line)) continue;
+    const m = line.match(/['"]?([A-Za-z0-9_.]*(?:API_KEY|SECRET|TOKEN|PASSWORD)[A-Za-z0-9_.]*)['"]?\s*:/i);
+    if (!m) continue;
+    hard++;
+    console.log(`\n✗ secret-in-bundle — vite.config.ts defines "${m[1]}" into the client build`);
+    console.log('  define() substitutes literally into the browser bundle. Route it through the server.');
+  }
+
+  /* And the fact: an API-key-shaped literal sitting in a built asset. */
+  const distDir = join(ROOT, 'dist', 'assets');
+  if (existsSync(distDir)) {
+    for (const f of readdirSync(distDir).filter((n) => n.endsWith('.js'))) {
+      const hit = readFileSync(join(distDir, f), 'utf8').match(/AIza[A-Za-z0-9_-]{30,}|sk-[A-Za-z0-9]{32,}/);
+      if (hit) {
+        hard++;
+        console.log(`\n✗ key-in-built-asset — dist/assets/${f} contains a key-shaped literal`);
+      }
+    }
   }
 }
 
