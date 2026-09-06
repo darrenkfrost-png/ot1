@@ -14,8 +14,23 @@ import { fileURLToPath } from 'node:url';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
 
-const SITE_URL = (process.env.SITE_URL || 'https://salmon-gnat-721528.hostingersite.com')
-  .replace(/\/+$/, '');
+/*
+ * THE ADDRESS COMES FROM ONE PLACE.
+ *
+ * This defaulted to the temporary Hostinger host while index.html's canonical
+ * and og:url had already been moved to the clinic's own domain — so the
+ * sitemap and robots.txt were advertising one site and the page headers
+ * another. Both now read CLINIC.website, and SITE_URL still overrides for a
+ * one-off build:
+ *   SITE_URL=https://staging.example.com npm run build
+ */
+const clinicSrc = readFileSync(join(root, 'src', 'data', 'clinic.ts'), 'utf8');
+const websiteMatch = clinicSrc.match(/website:\s*'([^']+)'/);
+if (!websiteMatch) {
+  console.error('generate-seo: CLINIC.website not found in src/data/clinic.ts');
+  process.exit(1);
+}
+const SITE_URL = (process.env.SITE_URL || websiteMatch[1]).replace(/\/+$/, '');
 
 /** Pull the ids out of one exported array in the data file. */
 function idsBetween(source, startMarker, endMarker) {

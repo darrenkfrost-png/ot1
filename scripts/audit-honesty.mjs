@@ -191,6 +191,42 @@ for (const rule of STRUCTURAL) {
 }
 
 /*
+ * THE SITEMAP MUST NAME THE SAME SITE AS THE PAGE HEADERS.
+ *
+ * index.html's canonical was moved to the clinic's own domain while the
+ * sitemap and robots.txt still advertised the temporary host — two answers to
+ * "where does this site live", which is precisely the question a search
+ * engine is asking. Checked against the built output, because the generator
+ * is the intent and dist/ is what gets served.
+ */
+{
+  /* Read locally: this block runs before the shared `html` const below. */
+  const indexHtml = readFileSync(join(ROOT, 'index.html'), 'utf8');
+  const canonical = (indexHtml.match(/<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']+)/i) || [])[1];
+  const host = canonical && new URL(canonical).host;
+  for (const name of ['sitemap.xml', 'robots.txt']) {
+    const p = join(ROOT, 'dist', name);
+    if (!host || !existsSync(p)) continue;
+    const body = readFileSync(p, 'utf8');
+    /* Only the URLs that ADDRESS the site: <loc> entries and the Sitemap:
+       line. The xmlns is a schema identifier that must stay sitemaps.org —
+       the first version of this rule flagged it and was wrong. */
+    const addresses = [
+      ...[...body.matchAll(/<loc>\s*([^<\s]+)/g)].map((m) => m[1]),
+      ...[...body.matchAll(/^Sitemap:\s*(\S+)/gim)].map((m) => m[1]),
+    ];
+    const others = addresses
+      .map((u) => { try { return new URL(u).host; } catch { return null; } })
+      .filter((h) => h && h !== host);
+    if (others.length) {
+      hard++;
+      console.log(`\n✗ sitemap-host-drift — dist/${name} names ${[...new Set(others)].join(", ")}, but the canonical says ${host}`);
+      console.log('  A search engine reading both is told the site lives in two places.');
+    }
+  }
+}
+
+/*
  * index.html is the one honest exception to the single-source rule: search
  * engines and social cards read the STATIC html, which cannot import a
  * TypeScript constant, so the address and phone must appear there as literals.
