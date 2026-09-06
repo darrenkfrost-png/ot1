@@ -35,6 +35,8 @@ interface Settings {
   /** The listen chip: rest on a passage, press, hear it. Browser voice, free. */
   readAloudEnabled: boolean;
   readAloudRate: number;
+  /** Colour of the aura around the passage under the cursor or finger. */
+  readingAuraColor: string;
   hapticFeedback: boolean;
   screenReaderOptimized: boolean;
   autoSaveDrafts: boolean;
@@ -100,6 +102,7 @@ const defaultSettings: Settings = {
   reduceMotion: false,
   readAloudEnabled: true,
   readAloudRate: 1,
+  readingAuraColor: '#f5b301',
   hapticFeedback: true,
   screenReaderOptimized: false,
   autoSaveDrafts: true,
@@ -156,6 +159,10 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
       */
      document.documentElement.style.fontSize = `${Math.round((settings.fontSizeMultiplier || 1) * 100)}%`;
      document.documentElement.classList.toggle('reduce-motion', !!settings.reduceMotion);
+
+     /* The reading aura takes its colour from here, so the stylesheet needs to
+      * know only the name of the variable, never which colour anyone chose. */
+     document.documentElement.style.setProperty('--reading-aura', settings.readingAuraColor || '#f5b301');
   }, [settings]);
 
   const updateSetting = <K extends keyof Settings>(key: K, value: Settings[K]) => {

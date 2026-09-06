@@ -516,91 +516,114 @@
 
 
 /*
- * READING HIGHLIGHT
  * ------------------------------------------------------------------
- * Whatever passage the reader's cursor or finger is over lifts into a bright
- * gold highlight, so the line being read separates itself from the page.
+ * READING HIGHLIGHT — THE AURA
+ * ------------------------------------------------------------------
+ * Whatever passage the reader's cursor or finger is over is surrounded by a
+ * soft light that slowly orbits the block and breathes. It is a hint, not a
+ * marker: it says "this passage can be read aloud to you" and then gets out
+ * of the way.
  *
- * It is a highlighter pen, not gold lettering. Gold text on a white page is
- * pale and low-contrast - it would look striking and read worse, which is the
- * opposite of the point. Painting a gold band behind the words and forcing the
- * text itself to near-black gives a genuine jump in contrast, and because both
- * the background and the text colour are set explicitly it stays legible on
- * the dark hero panels as well as the white ones.
+ * WHY AN AURA AND NOT A HIGHLIGHTER BAND. The first version painted a solid
+ * gold band behind the words and forced the text to near-black. It was
+ * unmistakable and far too loud - it seized the page, and on a clinic site
+ * read as a warning rather than an invitation. The aura surrounds the text
+ * instead of covering it, so the passage keeps its own typography and colour
+ * and simply lifts off the page.
  *
- * The band is drawn with box-shadow rather than padding. Padding would resize
- * the element on hover and shove the rest of the page around as the reader
- * moves down it; a spread shadow paints outside the box without affecting
- * layout, so nothing moves.
+ * IT ALSO PROTECTS THE CONTRAST WORK. Repainting the background under text
+ * is what forces every colour underneath to be re-checked. Because the aura
+ * lives OUTSIDE the box, every measured colour on this site stays exactly as
+ * it was measured.
+ *
+ * COLOUR IS THE READER'S. --reading-aura is set from Settings, so anyone who
+ * prefers the original gold, or needs a stronger cue, can have it.
+ *
+ * DRAWN WITH BOX-SHADOW, NOT PADDING OR A PSEUDO-ELEMENT. Padding would
+ * resize the element on hover and shove the page around under the reader;
+ * a ::before would collide with the decorative pseudo-elements several of
+ * these components already use. A spread shadow paints outside the box
+ * without touching layout or anyone else's rules.
  *
  * NO :has() IN THESE SELECTORS. A selector list is all-or-nothing: if a
- * browser cannot parse one selector in it, it throws away the whole rule,
- * including the selectors it did understand. The first version excluded
- * gradient headings with :not(:has(.text-transparent)) and paired that with
- * the touch-class selector - the :has() took the touch highlight down with
- * it, so the class was being applied and nothing happened at all. Gradient
- * text is now protected by a plain :not(.text-transparent) on the descendant
- * rule instead.
- *
- * Writing these as separate rules is not a defence, incidentally: the
- * minifier merges them back into one comma-separated rule. The only real
- * protection is keeping every selector here to widely-parsed syntax.
+ * browser cannot parse one selector in it, it discards the whole rule,
+ * including the selectors it did understand. An earlier version paired
+ * :not(:has(...)) with the touch selector and silently took the touch
+ * highlight down with it - the class was applied and nothing happened.
+ * Keep every selector here to widely-parsed syntax.
  */
-#main-content :is(p, li, blockquote, dd, dt, figcaption, h1, h2, h3, h4, h5, h6):hover {
-  background-color: #fcd34d;
-  color: #1c1917;
-  border-radius: 0.4rem;
-  box-shadow:
-    0 0 0 0.4rem #fcd34d,
-    0 0 1.75rem rgba(251, 191, 36, 0.55);
-  transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
+:root {
+  /* Overridden from Settings; this is the original gold, softened. */
+  --reading-aura: #f5b301;
 }
 
+@keyframes reading-aura-orbit {
+  0% {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--reading-aura) 26%, transparent),
+      -10px -7px 30px -8px color-mix(in srgb, var(--reading-aura) 62%, transparent),
+      10px 7px 34px -10px color-mix(in srgb, var(--reading-aura) 34%, transparent);
+  }
+  25% {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--reading-aura) 34%, transparent),
+      10px -7px 34px -8px color-mix(in srgb, var(--reading-aura) 66%, transparent),
+      -10px 7px 30px -10px color-mix(in srgb, var(--reading-aura) 30%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--reading-aura) 26%, transparent),
+      10px 7px 30px -8px color-mix(in srgb, var(--reading-aura) 62%, transparent),
+      -10px -7px 34px -10px color-mix(in srgb, var(--reading-aura) 34%, transparent);
+  }
+  75% {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--reading-aura) 34%, transparent),
+      -10px 7px 34px -8px color-mix(in srgb, var(--reading-aura) 66%, transparent),
+      10px -7px 30px -10px color-mix(in srgb, var(--reading-aura) 30%, transparent);
+  }
+  100% {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--reading-aura) 26%, transparent),
+      -10px -7px 30px -8px color-mix(in srgb, var(--reading-aura) 62%, transparent),
+      10px 7px 34px -10px color-mix(in srgb, var(--reading-aura) 34%, transparent);
+  }
+}
+
+#main-content :is(p, li, blockquote, dd, dt, figcaption, h1, h2, h3, h4, h5, h6):hover,
 #main-content :is(p, li, blockquote, dd, dt, figcaption, h1, h2, h3, h4, h5, h6).reading-touch-active {
-  background-color: #fcd34d;
-  color: #1c1917;
-  border-radius: 0.4rem;
-  box-shadow:
-    0 0 0 0.4rem #fcd34d,
-    0 0 1.75rem rgba(251, 191, 36, 0.55);
-  transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
+  border-radius: 0.85rem;
+  /* A whisper of the colour under the words - enough to feel lit from within,
+     far too faint to move any measured contrast ratio. */
+  background-color: color-mix(in srgb, var(--reading-aura) 7%, transparent);
+  animation: reading-aura-orbit 7s ease-in-out infinite;
+  transition: background-color 220ms ease;
 }
 
 /*
- * Anything inside the highlighted passage comes along with it, or a muted
- * span keeps its pale grey and turns unreadable on the gold.
- *
- * Gradient headings are the exception. Their colour is a clipped background
- * image and the text itself is deliberately transparent, so recolouring them
- * would erase the gradient - they are left exactly as they are.
+ * Stillness for anyone who needs it: the aura still appears, so the cue is not
+ * lost, it simply stops moving. A reading aid that vanishes under
+ * prefers-reduced-motion would take the feature away from the people most
+ * likely to want it read to them.
  */
-#main-content :is(p, li, blockquote, dd, dt, figcaption, h1, h2, h3, h4, h5, h6):hover
-  :is(span, strong, em, b, i, small, time):not(.text-transparent) {
-  color: #1c1917;
-}
-
-#main-content :is(p, li, blockquote, dd, dt, figcaption, h1, h2, h3, h4, h5, h6).reading-touch-active
-  :is(span, strong, em, b, i, small, time):not(.text-transparent) {
-  color: #1c1917;
-}
-
-/* A link keeps its own identity - it just darkens enough to hold up on gold. */
-#main-content :is(p, li, blockquote, dd, dt, figcaption):hover a {
-  color: #134e4a;
-  text-decoration-color: #134e4a;
-}
-
-#main-content :is(p, li, blockquote, dd, dt, figcaption).reading-touch-active a {
-  color: #134e4a;
-  text-decoration-color: #134e4a;
-}
-
-/* The highlight is a reading aid, so it stays; only the easing is dropped. */
 @media (prefers-reduced-motion: reduce) {
   #main-content :is(p, li, blockquote, dd, dt, figcaption, h1, h2, h3, h4, h5, h6):hover,
   #main-content :is(p, li, blockquote, dd, dt, figcaption, h1, h2, h3, h4, h5, h6).reading-touch-active {
+    animation: none;
     transition: none;
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--reading-aura) 30%, transparent),
+      0 0 30px -8px color-mix(in srgb, var(--reading-aura) 55%, transparent);
   }
+}
+
+/* The app's own reduced-motion switch, which does not go through the media query. */
+.reduce-motion #main-content :is(p, li, blockquote, dd, dt, figcaption, h1, h2, h3, h4, h5, h6):hover,
+.reduce-motion #main-content :is(p, li, blockquote, dd, dt, figcaption, h1, h2, h3, h4, h5, h6).reading-touch-active {
+  animation: none;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--reading-aura) 30%, transparent),
+    0 0 30px -8px color-mix(in srgb, var(--reading-aura) 55%, transparent);
 }
 
 /* Soft meditational drift for the calm halo: teal -> sky -> lavender -> teal. */

@@ -8,6 +8,21 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useAnalytics } from '../context/AnalyticsContext';
 import { useToast } from './ToastSystem';
 
+/*
+ * Aura colours. The first is the original gold - toned from the highlighter
+ * it used to be, but the same colour, so anyone who liked it keeps it. The
+ * rest are calmer options; all of them sit behind text at 7% and glow
+ * outside the box, so none of them can affect legibility.
+ */
+const READING_AURA_COLOURS = [
+  { label: 'Gold', hex: '#f5b301' },
+  { label: 'Teal', hex: '#14b8a6' },
+  { label: 'Sky', hex: '#38bdf8' },
+  { label: 'Lavender', hex: '#a78bfa' },
+  { label: 'Rose', hex: '#fb7185' },
+  { label: 'Mint', hex: '#34d399' },
+];
+
 export default function SettingsPanel() {
   const { settings, updateSetting, resetSettings } = useSettings();
   const [isOpen, setIsOpen] = useState(false);
@@ -459,6 +474,51 @@ export default function SettingsPanel() {
                                       enabled={settings.readAloudEnabled}
                                       onToggle={() => updateSetting('readAloudEnabled', !settings.readAloudEnabled)}
                                    />
+                               <div className="space-y-6 pt-10 border-t border-slate-100">
+                                   <div className="space-y-2">
+                                      <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-800 block">Reading Aura</label>
+                                      <p className="text-sm text-slate-600 font-light leading-relaxed">
+                                         The light that surrounds a passage when you rest on it, showing it can be read aloud. Pick the colour that sits easiest with you.
+                                      </p>
+                                   </div>
+                                   <div className="flex flex-wrap gap-3">
+                                      {READING_AURA_COLOURS.map((c) => {
+                                         const active = settings.readingAuraColor === c.hex;
+                                         return (
+                                            <button
+                                               key={c.hex}
+                                               type="button"
+                                               onClick={() => updateSetting('readingAuraColor', c.hex)}
+                                               aria-pressed={active}
+                                               aria-label={`Reading aura colour: ${c.label}`}
+                                               title={c.label}
+                                               className={cn(
+                                                  'w-12 h-12 rounded-2xl border-2 transition-all focus-visible:outline-teal-500 active:scale-95',
+                                                  active ? 'border-slate-900 scale-110' : 'border-slate-200 hover:border-slate-400'
+                                               )}
+                                               style={{
+                                                  backgroundColor: `color-mix(in srgb, ${c.hex} 18%, white)`,
+                                                  boxShadow: `0 0 0 1px ${c.hex}55, 0 0 18px -4px ${c.hex}`,
+                                               }}
+                                            />
+                                         );
+                                      })}
+                                   </div>
+                                   {/* Shown with the real thing rather than described - the aura is
+                                       the sort of change you have to see to choose. */}
+                                   <div className="p-5 rounded-2xl bg-white border border-slate-100">
+                                      <p
+                                         className="text-sm text-slate-700 leading-relaxed rounded-xl p-3"
+                                         style={{
+                                            backgroundColor: `color-mix(in srgb, ${settings.readingAuraColor} 7%, transparent)`,
+                                            boxShadow: `0 0 0 1px color-mix(in srgb, ${settings.readingAuraColor} 30%, transparent), 0 0 30px -8px ${settings.readingAuraColor}`,
+                                         }}
+                                      >
+                                         This is how a passage will look when you rest on it.
+                                      </p>
+                                   </div>
+                               </div>
+
                                    {settings.readAloudEnabled && (
                                       <div className="space-y-4">
                                          <div className="flex justify-between items-center">
