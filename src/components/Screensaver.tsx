@@ -7,6 +7,10 @@ import { CLINIC } from '../data/clinic';
 import { Logo } from './Logo';
 import { PolymetricField, POLYMETRIC_LAYOUTS, type PolymetricLayout } from './PolymetricField';
 import { cn } from '../lib/utils';
+import { useSettings } from '../context/SettingsContext';
+
+/** Show the idle screen now, without waiting out the timer. */
+export const PREVIEW_SCREENSAVER_EVENT = 'ct6:preview-screensaver';
 
 /**
  * THE IDLE SCREEN.
@@ -32,7 +36,9 @@ import { cn } from '../lib/utils';
  * screen that is already up.
  */
 
-const IDLE_MS = 60000; // one minute
+/* The default, and the floor. The delay itself is a setting now: waiting out
+   the timer to check a change is exactly how a stale build went unnoticed. */
+const DEFAULT_IDLE_SECONDS = 60;
 const IMAGE_COUNT = 26;
 const LAYOUT_ROTATE_MS = 45000;
 
@@ -53,6 +59,13 @@ export default function Screensaver({ onDismiss }: { onDismiss: () => void }) {
   const [muted, setMuted] = useState(true);
   const prefersReducedMotion = useReducedMotion();
   const still = !!prefersReducedMotion;
+  const { settings } = useSettings();
+  const idleMs = Math.max(5, settings.screensaverDelaySeconds || DEFAULT_IDLE_SECONDS) * 1000;
+
+  /* The timer closes over the delay, so a ref keeps the live value without
+     making every listener re-bind when the slider moves. */
+  const idleMsRef = useRef(idleMs);
+  idleMsRef.current = idleMs;
 
   /*
    * The countdown is re-armed only while the screen is awake. `isIdle` is read
@@ -66,14 +79,14 @@ export default function Screensaver({ onDismiss }: { onDismiss: () => void }) {
   const resetTimer = useCallback(() => {
     if (idleRef.current) return;
     clearTimeout(idleTimer.current);
-    idleTimer.current = window.setTimeout(() => setIsIdle(true), IDLE_MS);
+    idleTimer.current = window.setTimeout(() => setIsIdle(true), idleMsRef.current);
   }, []);
 
   const wake = useCallback(() => {
     setIsIdle(false);
     setMuted(true); // never leave sound playing behind the app
     clearTimeout(idleTimer.current);
-    idleTimer.current = window.setTimeout(() => setIsIdle(true), IDLE_MS);
+    idleTimer.current = window.setTimeout(() => setIsIdle(true), idleMsRef.current);
     onDismiss?.();
   }, [onDismiss]);
 
@@ -88,6 +101,13 @@ export default function Screensaver({ onDismiss }: { onDismiss: () => void }) {
       clearTimeout(idleTimer.current);
     };
   }, [resetTimer]);
+
+  // Settings can raise the screen on demand, so a change can be seen at once.
+  useEffect(() => {
+    const show = () => setIsIdle(true);
+    window.addEventListener(PREVIEW_SCREENSAVER_EVENT, show);
+    return () => window.removeEventListener(PREVIEW_SCREENSAVER_EVENT, show);
+  }, []);
 
   // Escape is the keyboard's door, bound only while the screen is up.
   useEffect(() => {

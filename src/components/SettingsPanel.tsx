@@ -7,6 +7,7 @@ import { VIDEO_WALLPAPERS } from '../data/videoWallpapers';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAnalytics } from '../context/AnalyticsContext';
 import { useToast } from './ToastSystem';
+import { PREVIEW_SCREENSAVER_EVENT } from './Screensaver';
 
 /*
  * Aura colours. The first is the original gold - toned from the highlighter
@@ -372,6 +373,39 @@ export default function SettingsPanel() {
                            </div>
 
                            <div className="space-y-10">
+                               <div className="space-y-6 pb-10 border-b border-slate-100">
+                                  <div className="space-y-2">
+                                     <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-800 block">Idle Screen</label>
+                                     <p className="text-sm text-slate-600 font-light leading-relaxed">
+                                        How long the screen sits untouched before the emblem, the guides and the films take over. Press the emblem to come back.
+                                     </p>
+                                  </div>
+                                  <div className="flex justify-between items-center">
+                                     <span className="text-xs font-bold text-slate-700">Appears after</span>
+                                     <span className="text-xs font-black text-slate-700">
+                                        {settings.screensaverDelaySeconds < 60
+                                           ? `${settings.screensaverDelaySeconds} seconds`
+                                           : `${Math.round(settings.screensaverDelaySeconds / 60)} minute${settings.screensaverDelaySeconds >= 120 ? 's' : ''}`}
+                                     </span>
+                                  </div>
+                                  <input
+                                     type="range" min="15" max="900" step="15"
+                                     value={settings.screensaverDelaySeconds}
+                                     onChange={(e) => updateSetting('screensaverDelaySeconds', parseInt(e.target.value, 10))}
+                                     aria-label="Seconds of inactivity before the idle screen appears"
+                                     className="w-full accent-teal-600 h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer"
+                                  />
+                                  {/* Waiting out the timer to check a change is how a stale build
+                                      went unnoticed for a whole conversation. */}
+                                  <button
+                                     type="button"
+                                     onClick={() => { setIsOpen(false); window.dispatchEvent(new Event(PREVIEW_SCREENSAVER_EVENT)); }}
+                                     className="w-full sm:w-auto px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-widest text-white bg-teal-700 hover:bg-teal-800 transition-colors active:scale-95 focus-visible:outline-teal-500 flex items-center justify-center gap-3"
+                                  >
+                                     <Eye size={14} /> Preview it now
+                                  </button>
+                               </div>
+
                                <div className="space-y-6">
                                   <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-600 block">System Accent Color</label>
                                   <div className="flex flex-wrap gap-4">

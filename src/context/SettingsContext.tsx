@@ -37,6 +37,8 @@ interface Settings {
   readAloudRate: number;
   /** Colour of the aura around the passage under the cursor or finger. */
   readingAuraColor: string;
+  /** Quiet seconds before the idle screen appears. */
+  screensaverDelaySeconds: number;
   hapticFeedback: boolean;
   screenReaderOptimized: boolean;
   autoSaveDrafts: boolean;
@@ -103,6 +105,7 @@ const defaultSettings: Settings = {
   readAloudEnabled: true,
   readAloudRate: 1,
   readingAuraColor: '#f5b301',
+  screensaverDelaySeconds: 60,
   hapticFeedback: true,
   screenReaderOptimized: false,
   autoSaveDrafts: true,
