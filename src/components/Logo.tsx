@@ -37,7 +37,13 @@ export const Logo: React.FC<LogoProps> = ({
   const prefersReducedMotion = useReducedMotion();
   const [inView, setInView] = useState(true);
 
-  const showStill = still || prefersReducedMotion;
+  /* Data saver yields here too, exactly as the wallpaper and the opening film
+     do. The mark still appears — it is the still frame rather than the film,
+     which is the whole point of a still frame existing. */
+  const saveData =
+    typeof navigator !== 'undefined' &&
+    (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true;
+  const showStill = still || prefersReducedMotion || saveData;
 
   useEffect(() => {
     const el = wrapperRef.current;

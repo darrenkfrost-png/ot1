@@ -5,9 +5,14 @@ import { getVideoWallpaper } from '../data/videoWallpapers';
 const VideoBackground: React.FC = () => {
     const { settings } = useSettings();
     const videoRef = useRef<HTMLVideoElement>(null);
+    const hasSwapped = useRef(false);
     const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
     useEffect(() => {
+        /* Data saver counts as a request for stillness too: it means the
+           visitor is paying for these bytes. The poster is shown instead. */
+        const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true;
+        if (saveData) { setPrefersReducedMotion(true); return; }
         const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
         setPrefersReducedMotion(mq.matches);
         const onChange = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
@@ -20,6 +25,10 @@ const VideoBackground: React.FC = () => {
     // start it explicitly whenever the selection changes.
     const activeId = settings.videoWallpaper;
     useEffect(() => {
+        /* Not on first mount: the element has already started fetching from
+           its own <source>, and load() here discarded that and fetched the
+           whole clip a second time — 1MB, measured, on every first visit. */
+        if (!hasSwapped.current) { hasSwapped.current = true; return; }
         const video = videoRef.current;
         if (!video) return;
         video.load();
