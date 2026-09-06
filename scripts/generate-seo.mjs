@@ -7,7 +7,7 @@
  * The address is read from SITE_URL so it moves with the domain:
  *   SITE_URL=https://www.yourdomain.co.uk npm run build
  */
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -92,6 +92,42 @@ Sitemap: ${SITE_URL}/sitemap.xml
 
 writeFileSync(join(dist, 'sitemap.xml'), sitemap, 'utf8');
 writeFileSync(join(dist, 'robots.txt'), robots, 'utf8');
+
+/*
+ * GOING LIVE IS A COMMAND, NOT A THING TO REMEMBER.
+ *
+ * index.html carries <meta name="robots" content="noindex"> so that the
+ * temporary host can never be indexed and compete with the clinic in search.
+ * That guard used to be a line someone had to remember to delete on the day
+ * the real domain went live — and forgetting it means the new site is never
+ * found at all, silently, with nothing on the page to show for it.
+ *
+ * So the build owns the decision instead:
+ *   npm run build        — not indexable (safe, the default)
+ *   npm run build:live   — indexable, for the real domain
+ *
+ * The source file always keeps the guard; only the BUILT copy has it
+ * removed, so nobody can leave the repository in an unsafe state.
+ */
+const LIVE = process.env.LIVE === '1';
+const indexPath = join(dist, 'index.html');
+if (existsSync(indexPath)) {
+  const html = readFileSync(indexPath, 'utf8');
+  const guard = /\s*<meta[^>]+data-staging-guard[^>]*>/i;
+  const hasGuard = guard.test(html);
+  if (LIVE && hasGuard) {
+    writeFileSync(indexPath, html.replace(guard, ''), 'utf8');
+    console.log(`SEO: LIVE build — the noindex guard has been REMOVED. ${SITE_URL} is indexable.`);
+  } else if (LIVE) {
+    console.log(`SEO: LIVE build — no guard present. ${SITE_URL} is indexable.`);
+  } else if (hasGuard) {
+    console.log('SEO: not indexable (noindex guard in place). Use `npm run build:live` for the real domain.');
+  } else {
+    console.error('SEO: REFUSING — this is not a LIVE build, but index.html carries no noindex guard.');
+    console.error('     Restore <meta name="robots" content="noindex" data-staging-guard /> or build with LIVE=1.');
+    process.exit(1);
+  }
+}
 
 console.log(
   `SEO: sitemap.xml (${urls.length} urls: ${staticRoutes.length} pages, ` +

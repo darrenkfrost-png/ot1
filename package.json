@@ -15,7 +15,8 @@
     "lint": "tsc --noEmit",
     "honesty": "node scripts/audit-honesty.mjs",
     "verify": "tsc --noEmit && node scripts/audit-honesty.mjs",
-    "journey": "node scripts/audit-journey.mjs"
+    "journey": "node scripts/audit-journey.mjs",
+    "build:live": "node scripts/build-live.mjs"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",

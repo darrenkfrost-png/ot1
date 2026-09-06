@@ -207,6 +207,19 @@ export default function PageMeta() {
 
     // Keep private views out of search results.
     const robots = document.head.querySelector('meta[name="robots"]');
+
+    /*
+     * THE STAGING GUARD IS NOT OURS TO TOUCH.
+     *
+     * index.html carries <meta name="robots" content="noindex"
+     * data-staging-guard> so a temporary host cannot be indexed and compete
+     * with the clinic in search. The else-branch below used to flip ANY
+     * existing robots tag to "index, follow" on every ordinary page — which
+     * undid that guard the moment a crawler ran the page's JavaScript, and
+     * Google runs it. The comment in index.html already promised this check
+     * existed; now it does.
+     */
+    if (robots?.hasAttribute('data-staging-guard')) return;
     if (meta.noindex) {
       setTag('meta[name="robots"]', () => {
         const el = document.createElement('meta');
