@@ -11,7 +11,7 @@ import { cn } from '../lib/utils';
 /**
  * THE IDLE SCREEN.
  *
- * After five quiet minutes the clinic's screen becomes something worth looking
+ * After a quiet minute the clinic's screen becomes something worth looking
  * at: the patient guides drifting down, a drawn field of chiropractic geometry
  * behind them, or one of the clinic's own films — with the emblem holding the
  * centre.
@@ -32,7 +32,7 @@ import { cn } from '../lib/utils';
  * screen that is already up.
  */
 
-const IDLE_MS = 300000; // five minutes
+const IDLE_MS = 60000; // one minute
 const IMAGE_COUNT = 26;
 const LAYOUT_ROTATE_MS = 45000;
 
