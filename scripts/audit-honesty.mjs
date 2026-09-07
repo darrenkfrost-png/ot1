@@ -191,6 +191,40 @@ for (const rule of STRUCTURAL) {
 }
 
 /*
+ * STRUCTURED DATA THAT DOES NOT PARSE IS STRUCTURED DATA THAT DOES NOT EXIST.
+ *
+ * The MedicalBusiness block in index.html is what puts the clinic on a map
+ * and into local results. A search engine that cannot parse it simply moves
+ * on — no error, no warning, nothing on the page to show for it. It is hand-
+ * edited JSON inside HTML, which is exactly the kind of thing a stray comma
+ * breaks, so it is parsed here on every run.
+ */
+{
+  const idx = readFileSync(join(ROOT, 'index.html'), 'utf8');
+  const blocks = [...idx.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)];
+  if (!blocks.length) {
+    hard++;
+    console.log('\n✗ no-structured-data — index.html carries no application/ld+json block');
+    console.log('  Local search uses it to place the clinic; without it the clinic is just text.');
+  }
+  blocks.forEach((b, i) => {
+    try {
+      const parsed = JSON.parse(b[1]);
+      for (const required of ['@type', 'name', 'address']) {
+        if (!parsed[required]) {
+          hard++;
+          console.log(`\n✗ structured-data-incomplete — block ${i + 1} has no "${required}"`);
+        }
+      }
+    } catch (e) {
+      hard++;
+      console.log(`\n✗ structured-data-invalid — block ${i + 1} is not valid JSON: ${String(e.message).slice(0, 70)}`);
+      console.log('  A search engine will skip it silently. Nothing on the page will look wrong.');
+    }
+  });
+}
+
+/*
  * THE SITEMAP MUST NAME THE SAME SITE AS THE PAGE HEADERS.
  *
  * index.html's canonical was moved to the clinic's own domain while the

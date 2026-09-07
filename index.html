@@ -87,6 +87,16 @@
       business — address, phone, opening hours — rather than just a web page.
       Every value here is the practice's own published detail.
     -->
+    <!--
+      The geo block is the published centroid of the clinic postcode CT6 5AJ,
+      from the Office for National Statistics data served by postcodes.io —
+      real coordinates, not an estimate typed by hand. It is what local search
+      uses to place the clinic on a map.
+
+      A postcode centroid is accurate to the postcode, not to the doorway. If
+      you want the exact pin, copy the latitude and longitude from the clinic's
+      own Google Business Profile, which is the authoritative source for it.
+    -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -113,6 +123,11 @@
           "addressRegion": "Kent",
           "postalCode": "CT6 5AJ",
           "addressCountry": "GB"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 51.371269,
+          "longitude": 1.129892
         },
         "areaServed": { "@type": "AdministrativeArea", "name": "Kent, United Kingdom" },
         "openingHoursSpecification": [
