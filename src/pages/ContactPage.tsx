@@ -84,6 +84,32 @@ export default function ContactPage() {
     }
   };
 
+  /*
+   * THE RESCUE ROUTE.
+   *
+   * When the send fails there is no server to retry against, so the next
+   * best thing is to hand the message to the patient's own email client
+   * with every word they typed already in it. Nothing is lost and nothing
+   * has to be retyped — and unlike the form, this genuinely arrives.
+   *
+   * mailto: has no formal length limit but clients impose their own, so a
+   * very long message can be cut short by the email app. The words stay in
+   * the form either way, which is the safety net.
+   */
+  const rescueMailto = () => {
+    const body = [
+      formData.message,
+      '',
+      '---',
+      `From: ${formData.name || '(no name given)'}`,
+      `Email: ${formData.email || '(none given)'}`,
+      formData.phone ? `Phone: ${formData.phone}` : null,
+      `Subject: ${formData.subject}`,
+    ].filter((l) => l !== null).join('\n');
+    return `mailto:${CLINIC.email}?subject=${encodeURIComponent(formData.subject || 'Website enquiry')}` +
+      `&body=${encodeURIComponent(body)}`;
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -262,6 +288,18 @@ export default function ContactPage() {
                         <p className="text-sm text-amber-900/80 leading-relaxed font-light">
                           Nothing has reached us, so please do not wait for a reply to this. Booking
                           online works and reaches the clinic directly — or call us if it is urgent.
+                        </p>
+                        {/* First, because it carries their words with it. */}
+                        <a
+                          href={rescueMailto()}
+                          onClick={() => trackClick('Contact Failure: Rescued By Email')}
+                          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-sm font-bold transition-colors focus-visible:outline-teal-500"
+                        >
+                          <Mail size={16} aria-hidden="true" /> Send this by email instead
+                        </a>
+                        <p className="text-sm text-amber-900/80 leading-relaxed font-light">
+                          That opens your email app with everything you have written already in it,
+                          addressed to the clinic — nothing to retype.
                         </p>
                         <a
                           href={BOOKING_URL}
