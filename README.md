@@ -37,6 +37,21 @@ running somewhere. It then runs five checks against that build:
 
 An exit code of 1 means **do not push**.
 
+## Keyboard focus — `npm run focus`
+
+Kept out of the gates because it takes a few minutes. It Tabs through every
+page and photographs each focus stop, checking that someone using a keyboard can
+see where they are against what is really behind the control. Run it after
+changing any button, link or card, and especially any container set to hide its
+overflow: that is what clipped the indicator away last time, on the FAQ
+questions, the breadcrumb, and six buttons sat against a card's edge.
+
+The indicator itself is a dark outline between two white bands (the FOCUS
+INDICATOR section of `src/index.css`). The two are far enough apart that one
+always stands out, whatever it sits on. A control inside a card that hides its
+overflow takes the class `focus-inset`, which draws the same bands just inside
+its edge.
+
 ## Launch day
 
 The site is **not indexable by default**: `index.html` carries a

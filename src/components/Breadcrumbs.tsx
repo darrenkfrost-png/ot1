@@ -50,7 +50,11 @@ export default function Breadcrumbs() {
 
   return (
     <nav aria-label="Breadcrumb" className="mb-8 w-full">
-      <ol className="flex items-center space-x-2 text-sm text-slate-300 overflow-x-auto whitespace-nowrap custom-scrollbar pb-2">
+      {/* A list that scrolls sideways clips anything drawn outside it, and the
+          focus indicator is drawn 7px outside each link - so the first crumb
+          showed no focus at all. 8px of inner room, cancelled by an equal
+          negative margin, lets it fit without moving anything. */}
+      <ol className="flex items-center space-x-2 text-sm text-slate-300 overflow-x-auto whitespace-nowrap custom-scrollbar px-2 pt-2 pb-2 -mx-2 -mt-2">
         <li className="flex items-center">
           <Link 
             to="/" 

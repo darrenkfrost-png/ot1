@@ -51,7 +51,7 @@ function FAQItem({ question, answer }: { question: string, answer: string }) {
     <div className="border border-slate-100 rounded-[1.5rem] bg-white shadow-sm overflow-hidden mb-4 transition-all duration-300 hover:border-teal-100">
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full text-left px-6 py-5 flex items-center justify-between focus-visible:outline-teal-500 rounded-[1.5rem]"
+        className="focus-inset w-full text-left px-6 py-5 flex items-center justify-between focus-visible:outline-teal-500 rounded-[1.5rem]"
         aria-expanded={isOpen}
       >
         <span className="font-semibold text-slate-900 pr-8">{question}</span>

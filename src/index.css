@@ -509,9 +509,7 @@
     @apply bg-transparent text-slate-900 font-sans selection:bg-teal-100 selection:text-teal-900 leading-relaxed overflow-x-hidden;
   }
   
-  *:focus-visible {
-    @apply outline-none ring-2 ring-teal-500/50 ring-offset-1;
-  }
+  /* focus-visible lives outside the layers - see FOCUS INDICATOR below. */
 }
 
 
@@ -701,4 +699,56 @@
 .reduce-motion [class*="poly-"],
 .reduce-motion .screensaver-field * {
   animation: none !important;
+}
+
+/*
+ * ------------------------------------------------------------------
+ * FOCUS INDICATOR - where a keyboard user is, drawn so they can see it
+ * ------------------------------------------------------------------
+ * Measured before: every one of 444 focus rings sat below the 3:1 a focus
+ * indicator needs (median 1.32:1) - teal at 50% opacity - and 53 focus stops
+ * showed nothing at all.
+ *
+ * TWO BANDS, BECAUSE NO SINGLE COLOUR WORKS HERE. A first fix drew one solid
+ * dark-teal outline. Reading the RENDERED pixels showed why that could not
+ * be enough: most controls sit on translucent glass over the wallpaper film,
+ * so the real backdrop is a grey that changes from card to card, and a colour
+ * that shows on white vanishes on those (1.5-1.9:1 measured). So the indicator
+ * is a dark band with a white band either side (WCAG technique C40). The two
+ * are 14:1 apart in brightness - C40 asks for 9:1 - which guarantees one of
+ * them stands out against ANY backdrop: white card, dark glass, teal button.
+ *
+ * THE DARK BAND IS THE OUTLINE. box-shadow is what the rest of the site
+ * animates (the breathing glow on booking buttons and cards), and an animated
+ * value beats a declared one. Nothing else here touches outline, so the band
+ * that must never disappear is the outline; the white halo is the box-shadow,
+ * and the glow animations stand down while an element has keyboard focus.
+ *
+ * UNLAYERED on purpose: 64 focus-visible:outline-teal-500 and 19 outline-none
+ * utilities would beat it from inside @layer. Unlayered CSS wins regardless
+ * of specificity.
+ *
+ * :focus-visible, not :focus - a mouse click does not draw it, a keyboard does.
+ */
+:focus-visible {
+  outline: 3px solid #042f2e;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 7px #ffffff;
+  animation: none;
+}
+
+/*
+ * The same two bands, drawn INSIDE, for a control that fills a rounded card
+ * with overflow hidden. An outline and its halo paint outside the element,
+ * and a card that hides its overflow cuts them off completely - the FAQ and
+ * Resources questions had 1px of room on every side and showed no focus at
+ * all. Pulled 5px inward, the dark band sits between two white ones inside
+ * the edge; both questions have 20px+ of padding, so it never meets the text.
+ * The same class serves buttons that sit hard against the edge of a card that
+ * hides overflow: six on the site lost the side of their indicator nearest it.
+ * (0,2,0) and unlayered, so it wins over :focus-visible above.
+ */
+.focus-inset:focus-visible {
+  outline-offset: -5px;
+  box-shadow: inset 0 0 0 7px #ffffff;
 }

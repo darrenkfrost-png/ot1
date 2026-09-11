@@ -119,7 +119,7 @@ export default function HomePage() {
                 href={BOOKING_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="calm-cta w-full sm:w-auto px-12 py-6 rounded-2xl bg-teal-700 hover:bg-teal-800 text-white font-bold text-xl transition-all shadow-[0_0_40px_rgba(20,184,166,0.3)] hover:shadow-[0_0_60px_rgba(20,184,166,0.5)] hover:-translate-y-1.5 active:scale-[0.98] flex items-center justify-center gap-4 group cinematic-glow"
+                className="focus-inset calm-cta w-full sm:w-auto px-12 py-6 rounded-2xl bg-teal-700 hover:bg-teal-800 text-white font-bold text-xl transition-all shadow-[0_0_40px_rgba(20,184,166,0.3)] hover:shadow-[0_0_60px_rgba(20,184,166,0.5)] hover:-translate-y-1.5 active:scale-[0.98] flex items-center justify-center gap-4 group cinematic-glow"
                 aria-label="Book an assessment — opens our booking system in a new tab"
               >
                 <Calendar size={22} className="group-hover:rotate-12 transition-transform" />
@@ -240,7 +240,7 @@ export default function HomePage() {
                 We do not mask symptoms. We mathematically isolate the mechanical root cause and engineer recovery pathways that prioritize long-term physiological resilience.
               </p>
               <div className="pt-6">
-                 <Link to="/resources" className="inline-flex items-center gap-3 px-8 py-4 bg-slate-950 text-white rounded-2xl text-xs font-bold uppercase tracking-widest group shadow-xl shadow-slate-900/20 hover:-translate-y-1 transition-all">
+                 <Link to="/resources" className="focus-inset inline-flex items-center gap-3 px-8 py-4 bg-slate-950 text-white rounded-2xl text-xs font-bold uppercase tracking-widest group shadow-xl shadow-slate-900/20 hover:-translate-y-1 transition-all">
                     View Methodology Whitepaper <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                  </Link>
               </div>
@@ -351,7 +351,7 @@ export default function HomePage() {
                     ))}
                 </div>
 
-                <Link to="/practitioners" className="inline-flex items-center gap-4 bg-slate-950 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-teal-700 hover:-translate-y-1 transition-all shadow-[0_10px_30px_rgba(15,23,42,0.2)] group">
+                <Link to="/practitioners" className="focus-inset inline-flex items-center gap-4 bg-slate-950 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-teal-700 hover:-translate-y-1 transition-all shadow-[0_10px_30px_rgba(15,23,42,0.2)] group">
                     Meet the Practitioners <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
                 </Link>
             </motion.div>
@@ -758,7 +758,7 @@ export default function HomePage() {
                   We deploy secure digital clinical consultations for initial triage and rehabilitation monitoring. Speak with a structural engineer from your own environment.
                 </p>
                 <div className="flex flex-wrap gap-6 pt-4">
-                    <Link to="/contact" className="bg-white text-slate-950 px-10 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest border border-transparent hover:bg-teal-50 transition-all flex items-center gap-3 shadow-xl hover:-translate-y-1">
+                    <Link to="/contact" className="focus-inset bg-white text-slate-950 px-10 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest border border-transparent hover:bg-teal-50 transition-all flex items-center gap-3 shadow-xl hover:-translate-y-1">
                        Ask us a question <MessageSquare size={18} className="text-teal-600" />
                     </Link>
                     <a

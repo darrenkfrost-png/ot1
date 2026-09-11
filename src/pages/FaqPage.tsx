@@ -84,7 +84,7 @@ export default function FaqPage() {
                     if ((e.currentTarget as HTMLDetailsElement).open) trackClick(`FAQ: ${item.q}`);
                   }}
                 >
-                  <summary className="cursor-pointer list-none px-7 py-6 flex items-start justify-between gap-6 font-bold text-slate-900 focus-visible:outline-teal-500 rounded-[1.75rem]">
+                  <summary className="focus-inset cursor-pointer list-none px-7 py-6 flex items-start justify-between gap-6 font-bold text-slate-900 focus-visible:outline-teal-500 rounded-[1.75rem]">
                     <h3 className="text-base md:text-lg leading-snug">{item.q}</h3>
                     <ChevronRight
                       size={20}

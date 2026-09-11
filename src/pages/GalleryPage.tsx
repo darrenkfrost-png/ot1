@@ -175,7 +175,7 @@ export default function GalleryPage() {
                 setIsTourOpen(true);
                 trackClick("Virtual Tour Video Started");
              }}
-             className="px-10 py-5 bg-teal-700 hover:bg-teal-800 text-white rounded-2xl font-bold flex items-center gap-3 transition-all shadow-xl shadow-teal-500/10 group active:scale-95"
+             className="focus-inset px-10 py-5 bg-teal-700 hover:bg-teal-800 text-white rounded-2xl font-bold flex items-center gap-3 transition-all shadow-xl shadow-teal-500/10 group active:scale-95"
            >
              Watch Tour Video <Play size={20} className="group-hover:translate-x-1 transition-transform" />
            </button>

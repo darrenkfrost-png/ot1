@@ -1030,7 +1030,7 @@ export default function DashboardPage() {
                 type="button"
                 onClick={handleGenerateSoapNote}
                 disabled={isGeneratingSoap}
-                className="w-full h-12 bg-white/5 hover:bg-white/10 text-white rounded-xl text-[9px] font-black uppercase tracking-widest transition-all cursor-pointer border border-white/10 hover:border-white/20 active:scale-95 flex items-center justify-center gap-2"
+                className="focus-inset w-full h-12 bg-white/5 hover:bg-white/10 text-white rounded-xl text-[9px] font-black uppercase tracking-widest transition-all cursor-pointer border border-white/10 hover:border-white/20 active:scale-95 flex items-center justify-center gap-2"
               >
                 {isGeneratingSoap ? <RefreshCw size={13} className="animate-spin text-teal-400" /> : <Sparkles size={13} />}
                 {isGeneratingSoap ? "Compiling Medical Form..." : "Draft Structured SOAP Note"}

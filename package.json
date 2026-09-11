@@ -17,7 +17,8 @@
     "verify": "tsc --noEmit && node scripts/audit-honesty.mjs",
     "journey": "node scripts/audit-journey.mjs",
     "build:live": "node scripts/build-live.mjs",
-    "gates": "node scripts/gates.mjs"
+    "gates": "node scripts/gates.mjs",
+    "focus": "node scripts/audit-focus.mjs"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",
