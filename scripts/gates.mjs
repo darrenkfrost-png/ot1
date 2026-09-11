@@ -50,6 +50,9 @@ let ok = run('typecheck', 'npx', ['tsc', '--noEmit'])
   && run('honesty audit', 'node', ['scripts/audit-honesty.mjs']);
 
 if (ok) {
+  // Runs its own servers against a stand-in email service; never the real inbox.
+  run('contact delivery', 'node', ['scripts/audit-contact.mjs']);
+
   const server = join(root, 'dist', 'server.cjs');
   if (!existsSync(server)) {
     console.error('\n✗ dist/server.cjs missing after build');

@@ -25,11 +25,12 @@ npm run gates
 
 This typechecks, builds, and then serves **the build it just made** on a port of
 its own, so the result always describes this code and never an older copy left
-running somewhere. It then runs four checks against that build:
+running somewhere. It then runs five checks against that build:
 
 | Check | What it protects |
 |---|---|
 | **Honesty audit** (`npm run honesty`) | Invented people, fake credentials and offers, impossible guarantees, colour classes that don't exist, contact details copied out of their one home, secrets in the browser bundle, a sitemap that names a different site from the pages, and structured data that doesn't parse. Every rule is a real defect that once shipped here. |
+| **Contact delivery** | The real server against a stand-in email service on this machine: an enquiry is delivered once with the patient's exact words, and refused, unreachable, not-configured and bad-input cases all fail honestly, never with a false "sent". It never touches the real inbox. |
 | **Contrast audit** | That every piece of text can be read against what's really behind it. Currently 0 failing of 958. |
 | **Patient journey, desktop** | Someone can find a treatment, find a practitioner, reach the phone and reach the booking system, and a mistyped address doesn't strand them. |
 | **Patient journey, phone** | The same journey on a 375px screen, where the navigation sits behind a drawer. |

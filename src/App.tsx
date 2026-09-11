@@ -894,8 +894,9 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
 function AppContent() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   // The brand film opens the app, then hands over to the entry door.
-  // Shown once per browser session so returning visitors aren't made to sit
-  // through it again — change to useState(true) to play it on every load.
+  // Shown once per TAB (sessionStorage is per tab, not per browser session),
+  // so a refresh or a link followed in the same tab does not replay it; a new
+  // tab still does. Change to useState(true) to play it on every load.
   const [showIntroVideo, setShowIntroVideo] = useState(() => {
     try {
       return sessionStorage.getItem('ct6-intro-film-seen') !== 'true';
@@ -903,7 +904,27 @@ function AppContent() {
       return true;
     }
   });
-  const [showIntro, setShowIntro] = useState(true);
+  /*
+   * The door follows the film's rule. It used to live only in memory, so
+   * after the film had been remembered, EVERY full load - a refresh, or a
+   * patient following a link to a treatment - put "Enter to begin" back in
+   * front of the page they asked for. Measured: refresh -> door, deep link
+   * in the same tab -> door. The comment above gave the reason this must not
+   * happen; the door simply never obeyed it.
+   */
+  const [showIntro, setShowIntro] = useState(() => {
+    try {
+      return sessionStorage.getItem('ct6-entrance-seen') !== 'true';
+    } catch {
+      return true;
+    }
+  });
+  const completeEntrance = () => {
+    try {
+      sessionStorage.setItem('ct6-entrance-seen', 'true');
+    } catch { /* private mode - just carry on */ }
+    setShowIntro(false);
+  };
   const location = useLocation();
 
   const completeIntroVideo = () => {
@@ -931,7 +952,7 @@ function AppContent() {
               {showIntroVideo && <IntroVideo key="intro-film" onComplete={completeIntroVideo} />}
             </AnimatePresence>
             <AnimatePresence>
-              {!showIntroVideo && showIntro && <IntroPage onComplete={() => setShowIntro(false)} />}
+              {!showIntroVideo && showIntro && <IntroPage onComplete={completeEntrance} />}
             </AnimatePresence>
             <PageMeta />
             <StaticBackground />
