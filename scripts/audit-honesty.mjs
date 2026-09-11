@@ -68,6 +68,11 @@ const RULES = [
     re: /free (?:15|fifteen)[- ]minute consultation/gi,
   },
   {
+    id: 'overclaim-copy',
+    why: 'Promises a service, feature or result the clinic does not offer, or the health hype UK ad rules act on. Each of these shipped.',
+    re: /\b(Live Telemetry|interconnected ecosystem|structural engineer|Book Secure Video|Telehealth Access|Available Today|Available This Week|Methodology Whitepaper|Elite Roster|Infinite Potential|Priority Scheduling|Ready for Admittance|exponentially faster|Always On)\b/gi,
+  },
+  {
     id: 'staging-domain',
     why: 'The temporary host must never be a canonical/OG target — it would compete with the real site.',
     re: /salmon-gnat-721528\.hostingersite\.com/g,

@@ -109,13 +109,18 @@ async function audit(pages) {
     for (const path of pages) {
       await page.goto(base + path, { waitUntil: 'domcontentloaded' });
       await page.waitForTimeout(2300);
-      for (let r = 0; r < 6; r++) {
+      /* The door mounts only after the film's exit animation, so one empty
+         round is not proof the entrance has gone. Under load, a run of this
+         audit checked too early and measured 47 "focus stops" on the door
+         itself. The entrance is gone only after two quiet rounds in a row. */
+      for (let r = 0, quiet = 0; r < 12 && quiet < 2; r++) {
         let clicked = false;
         for (const g of GATES) {
           const b = page.locator(`button:has-text("${g}")`).first();
           if (await b.count().catch(() => 0)) { await b.click({ force: true }).catch(() => {}); await page.waitForTimeout(800); clicked = true; }
         }
-        if (!clicked) break;
+        quiet = clicked ? 0 : quiet + 1;
+        if (!clicked) await page.waitForTimeout(700);
       }
       await page.evaluate(async () => {
         const s = Math.round(innerHeight * 0.8);

@@ -89,7 +89,7 @@ export default function HomePage() {
           >
             <motion.div variants={fadeInUp} className="flex flex-wrap items-center gap-4 mb-10">
                <span className="px-6 py-2.5 rounded-full bg-teal-500/15 backdrop-blur-xl border border-teal-400/25 text-teal-100 text-[11px] font-black tracking-[0.4em] inline-flex items-center gap-3 shadow-[0_0_20px_rgba(20,184,166,0.2)] uppercase">
-                 <Sparkles size={14} className="text-teal-300 animate-pulse" /> The Gold Standard
+                 <Sparkles size={14} className="text-teal-300 animate-pulse" /> Herne Bay · since {CLINIC.establishedYear}
                </span>
             </motion.div>
             
@@ -170,10 +170,10 @@ export default function HomePage() {
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
       >
         {[
-          { label: "Clinical Booking", icon: Calendar, path: "/treatments", color: "bg-teal-700 border-teal-500 text-white shadow-[0_0_40px_rgba(20,184,166,0.2)]", sub: "Priority Scheduling", desc: "Book online at the Herne Bay clinic.", hoverColor: "group-hover:bg-teal-800" },
+          { label: "Choose a Treatment", icon: Calendar, path: "/treatments", color: "bg-teal-700 border-teal-500 text-white shadow-[0_0_40px_rgba(20,184,166,0.2)]", sub: "Then Book Online", desc: "See what we treat, then book at the Herne Bay clinic.", hoverColor: "group-hover:bg-teal-800" },
           { label: "Our Treatments", icon: Stethoscope, path: "/treatments", color: "bg-slate-900 border-slate-700 text-white shadow-xl", sub: "What We Offer", desc: "Osteopathy, acupuncture, massage, foot care.", hoverColor: "group-hover:bg-slate-800" },
           { label: "Meet the Team", icon: Users, path: "/practitioners", color: "bg-white/95 backdrop-blur-3xl border-white/40 text-slate-900 shadow-premium", sub: "Expert Practitioners", desc: "View clinical backgrounds.", hoverColor: "group-hover:bg-white" },
-          { label: "Patient Dashboard", icon: Activity, path: "/dashboard", color: "bg-white/95 backdrop-blur-3xl border-white/40 text-slate-900 shadow-premium", sub: "Recovery Hub", desc: "Track your health progress.", hoverColor: "group-hover:bg-white" }
+          { label: "Progress Board", icon: Activity, path: "/dashboard", color: "bg-white/95 backdrop-blur-3xl border-white/40 text-slate-900 shadow-premium", sub: "A Preview", desc: "A look at the tools we are building.", hoverColor: "group-hover:bg-white" }
         ].map((action, i) => (
           <motion.div key={i} variants={fadeInUp}>
             <Link 
@@ -235,13 +235,13 @@ export default function HomePage() {
                  <MousePointerClick size={14} />
                  <span className="text-[10px] font-black uppercase tracking-[0.3em]">The CT6 Standard</span>
               </div>
-              <h2 className="text-5xl font-display font-medium tracking-tight text-slate-50 leading-[1.1]">A Multi-Tiered Approach to <span className="underline decoration-teal-300 underline-offset-8">Longevity</span>.</h2>
+              <h2 className="text-5xl font-display font-medium tracking-tight text-slate-50 leading-[1.1]">How <span className="underline decoration-teal-300 underline-offset-8">treatment</span> works.</h2>
               <p className="text-xl text-slate-400 font-light leading-relaxed">
-                We do not mask symptoms. We mathematically isolate the mechanical root cause and engineer recovery pathways that prioritize long-term physiological resilience.
+                We look for what is actually causing the problem, treat that, and show you how to keep it settled — rather than easing the symptoms for a day.
               </p>
               <div className="pt-6">
                  <Link to="/resources" className="focus-inset inline-flex items-center gap-3 px-8 py-4 bg-slate-950 text-white rounded-2xl text-xs font-bold uppercase tracking-widest group shadow-xl shadow-slate-900/20 hover:-translate-y-1 transition-all">
-                    View Methodology Whitepaper <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                    Patient Guides &amp; Films <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                  </Link>
               </div>
            </motion.div>
@@ -250,19 +250,19 @@ export default function HomePage() {
               {[
                 { 
                   step: "01", 
-                  title: "Biological Mapping", 
-                  desc: "We utilize advanced anatomical diagnostics to map your current physiological baseline, identifying the mechanical root cause.",
+                  title: "Assessment", 
+                  desc: "A full case history and a hands-on examination, to find what is actually behind the pain.",
                   icon: ScanFace
                 },
                 { 
                   step: "02", 
-                  title: "Precision Rehab", 
-                  desc: "Implementation of data-backed protocols, combining clinical manual therapy with specific, reactive loading strategies.",
+                  title: "Treatment", 
+                  desc: "Hands-on treatment matched to what the assessment found, with exercises that suit you.",
                   icon: Zap
                 },
                 { 
                   step: "03", 
-                  title: "Structural Mastery", 
+                  title: "Keeping It Settled", 
                   // "ensure the issue never returns" is a promise no clinician can
                   // keep, and one a regulator would take a dim view of.
                   desc: "Final stage work on the movement habits behind the problem, so you leave with a plan for keeping it settled.",
@@ -308,13 +308,13 @@ export default function HomePage() {
             >
                 <div className="space-y-6">
                   <span className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-teal-50 text-teal-800 font-bold text-[10px] uppercase tracking-[0.3em] border border-teal-100 shadow-sm">
-                    <TrendingUp size={16} /> Live Telemetry
+                    <TrendingUp size={16} /> At a Glance
                   </span>
                   <h2 className="text-5xl md:text-6xl font-display font-medium text-slate-900 tracking-tight leading-[1.1]">
-                    Real-time Data for <br/> <span className="relative inline-block"><span className="relative z-10 text-slate-950">Peak Performance</span><div className="absolute bottom-2 left-0 right-0 h-4 bg-teal-300/40 -z-0 -rotate-2"></div></span>.
+                    The clinic, <br/> <span className="relative inline-block"><span className="relative z-10 text-slate-950">at a glance.</span><div className="absolute bottom-2 left-0 right-0 h-4 bg-teal-300/40 -z-0 -rotate-2"></div></span>
                   </h2>
                   <p className="text-xl text-slate-600 font-light leading-relaxed max-w-md drop-shadow-sm">
-                    Our interconnected ecosystem monitors local clinic activity, success rates, and availability to give you the most accurate triage and recovery pathway.
+                    Registered practitioners, genuine reviews, opening hours and where to find us — the essentials, before you book.
                   </p>
                 </div>
 
@@ -404,10 +404,10 @@ export default function HomePage() {
                className="space-y-6"
             >
               <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-slate-950 text-white rounded-full text-[10px] font-black uppercase tracking-[0.3em] shadow-lg shadow-slate-900/20">
-                <Users size={16} className="text-teal-400" /> Clinical Faculty
+                <Users size={16} className="text-teal-400" /> The Team
               </div>
-              <h2 className="text-6xl font-display font-medium text-slate-50 tracking-tight leading-[1.05]">The Elite Roster.</h2>
-              <p className="text-2xl text-slate-400 font-light max-w-2xl leading-relaxed">Our practitioners are relentlessly vetted for their deep anatomical mastery and commitment to evidence-based protocol.</p>
+              <h2 className="text-6xl font-display font-medium text-slate-50 tracking-tight leading-[1.05]">Meet the team.</h2>
+              <p className="text-2xl text-slate-400 font-light max-w-2xl leading-relaxed">Registered practitioners, each with their own specialism — from osteopathy to foot care.</p>
             </motion.div>
             <Link to="/practitioners" className="shrink-0 px-10 py-5 bg-white border border-slate-200 text-slate-900 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-slate-950 hover:border-slate-950 hover:text-white transition-all shadow-premium flex items-center gap-3 group">
               View All Experts <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
@@ -439,8 +439,7 @@ export default function HomePage() {
                   </div>
                   <div className="px-4 flex items-center justify-between opacity-70 group-hover:opacity-100 transition-opacity">
                      <div className="flex gap-2 items-center">
-                        <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-pulse"></div>
-                        <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Available Today</span>
+                        <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">View Profile</span>
                      </div>
                      <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 opacity-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500 -rotate-45 group-hover:rotate-0">
                         <ArrowRight size={16} />
@@ -568,16 +567,16 @@ export default function HomePage() {
                   </span>.
                 </h2>
                 <p className="text-2xl text-slate-400 font-light leading-relaxed max-w-xl">
-                  We believe a well-informed patient recovers exponentially faster. Access our technical hub to maintain your physical resilience at home.
+                  Understanding what is going on helps. Watch, read and look things up at home — free, and at your own pace.
                 </p>
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 w-full max-w-2xl">
                {[
-                 { icon: Video, title: "Video Masterclasses", count: `${VIDEOS.length} films`, desc: "Step-by-step guidance on postural correction and biomechanics." },
-                 { icon: FileText, title: 'Illustrated Guides', count: `${GALLERY_IMAGES.length} illustrated guides`, desc: "Detailed breakdowns of spinal health and joint longevity." },
-                 { icon: Stethoscope, title: "Exercise Plans", count: "Per Patient", desc: "The home exercises your practitioner sets for you." },
-                 { icon: Smartphone, title: "Mobile Ready", count: "Always On", desc: "Access your clinical data and advice from any device." }
+                 { icon: Video, title: "Short Films", count: `${VIDEOS.length} films`, desc: "What osteopaths do, and the treatments on offer." },
+                 { icon: FileText, title: 'Illustrated Guides', count: `${GALLERY_IMAGES.length} illustrated guides`, desc: "Illustrated guides to common problems, like sciatica." },
+                 { icon: Stethoscope, title: "Self-Care Advice", count: "From your practitioner", desc: "What to do between appointments, shown to you in clinic." },
+                 { icon: Smartphone, title: "Works on Your Phone", count: "Any device", desc: "The guides, films and answers above, wherever you are." }
                ].map((item, i) => (
                  <motion.div 
                    key={i}
@@ -695,7 +694,7 @@ export default function HomePage() {
                       <div className="w-20 h-20 rounded-[2rem] bg-slate-900 text-white flex items-center justify-center group-hover:bg-teal-500 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-xl border-4 border-white">
                           <MapPin size={32} />
                       </div>
-                      <span className="px-5 py-2.5 bg-white border border-slate-100 text-slate-500 text-[9px] font-black uppercase tracking-[0.2em] rounded-full shadow-sm">Ready for Admittance</span>
+                      <span className="px-5 py-2.5 bg-white border border-slate-100 text-slate-500 text-[9px] font-black uppercase tracking-[0.2em] rounded-full shadow-sm">Our Clinic</span>
                   </div>
                   <h3 className="text-3xl font-display font-medium text-slate-900 mb-3 tracking-tight">{clinic.location}</h3>
                   <p className="text-slate-600 font-medium text-lg mb-8">{clinic.address}</p>
@@ -725,7 +724,7 @@ export default function HomePage() {
                       to="/contact"
                       className="flex-1 py-5 bg-teal-700 hover:bg-teal-800 text-white rounded-2xl font-bold uppercase tracking-widest text-[#10px] transition-all shadow-[0_10px_20px_rgba(20,184,166,0.2)] hover:-translate-y-1 flex items-center justify-center gap-3 group/btn"
                     >
-                      Contact Intake <Phone size={16} className="group-hover/btn:rotate-12 transition-transform" />
+                      Contact Us <Phone size={16} className="group-hover/btn:rotate-12 transition-transform" />
                     </Link>
                     <Link 
                       to="/locations"
@@ -751,11 +750,11 @@ export default function HomePage() {
             
             <div className="relative z-10 space-y-10 max-w-2xl">
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-teal-500/10 border border-teal-500/20 rounded-full text-teal-400 font-black text-[10px] uppercase tracking-[0.3em] shadow-[0_0_15px_rgba(20,184,166,0.1)]">
-                   <Video size={14} /> Telehealth Access
+                   <MessageSquare size={14} /> Not Sure Yet?
                 </div>
-                <h3 className="text-5xl md:text-6xl font-display font-medium text-white leading-[1.05] tracking-tight">Cannot visit in person?</h3>
+                <h3 className="text-5xl md:text-6xl font-display font-medium text-white leading-[1.05] tracking-tight">Talk to us first.</h3>
                 <p className="text-xl text-slate-400 font-light leading-relaxed">
-                  We deploy secure digital clinical consultations for initial triage and rehabilitation monitoring. Speak with a structural engineer from your own environment.
+                  Not sure which treatment you need, or whether we can help? Ask us before you book — a quick question is always welcome.
                 </p>
                 <div className="flex flex-wrap gap-6 pt-4">
                     <Link to="/contact" className="focus-inset bg-white text-slate-950 px-10 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest border border-transparent hover:bg-teal-50 transition-all flex items-center gap-3 shadow-xl hover:-translate-y-1">
@@ -766,20 +765,15 @@ export default function HomePage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="bg-white/10 backdrop-blur-md text-white border border-white/20 px-10 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-white hover:text-slate-950 hover:border-white transition-all shadow-lg flex items-center gap-3 hover:-translate-y-1"
-                      aria-label="Book a video consultation — opens our booking system in a new tab"
+                      aria-label="Book an appointment — opens our booking system in a new tab"
                     >
-                       Book Secure Video <Video size={18} />
+                       Book an Appointment <Calendar size={18} />
                     </a>
                 </div>
             </div>
-            <div className="relative lg:w-1/3 aspect-[4/5] rounded-[3rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 group cursor-pointer z-10">
-                <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=800" alt="Video Consult" loading="lazy" decoding="async" className="w-full h-full object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000 ease-out" />
+            <div className="relative lg:w-1/3 aspect-[4/5] rounded-[3rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 group z-10">
+                <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=800" alt="" loading="lazy" decoding="async" className="w-full h-full object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000 ease-out" />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-teal-900/40 to-transparent mix-blend-overlay group-hover:opacity-50 transition-opacity"></div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                   <div className="w-20 h-20 bg-white/20 backdrop-blur-md border border-white/40 rounded-full flex items-center justify-center text-white group-hover:bg-teal-500 group-hover:border-teal-400 transition-all shadow-[0_0_30px_rgba(0,0,0,0.3)]">
-                      <div className="w-0 h-0 border-t-8 border-t-transparent border-l-[14px] border-l-white border-b-8 border-b-transparent ml-1"></div>
-                   </div>
-                </div>
             </div>
         </motion.div>
       </section>
@@ -812,11 +806,11 @@ export default function HomePage() {
         <div className="relative z-10 max-w-5xl mx-auto space-y-16">
           <div className="space-y-10">
               <span className="inline-flex items-center gap-3 px-8 py-3 bg-white/5 backdrop-blur-2xl rounded-full border border-white/10 text-teal-400 text-[11px] font-black uppercase tracking-[0.4em] shadow-[0_0_30px_rgba(20,184,166,0.15)]">
-                 <div className="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></div> Secure Your Assessment Today
+                 <div className="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></div> Book When You Are Ready
               </span>
               <h2 className="text-6xl md:text-8xl lg:text-[7rem] font-display font-medium text-white tracking-tighter leading-[0.85] drop-shadow-2xl">
-                Unlock Your Body's <br/>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-emerald-300 to-teal-500 bg-300% animate-gradient-x drop-shadow-sm">True Infinite Potential.</span>
+                Ready when <br/>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-emerald-300 to-teal-500 bg-300% animate-gradient-x drop-shadow-sm">you are.</span>
               </h2>
               <p className="text-2xl lg:text-3xl text-slate-400 mx-auto font-light leading-relaxed max-w-3xl opacity-90 drop-shadow-md">
                 Book an assessment at the clinic on Herne Bay High Street, and find out what is actually going on.

@@ -59,7 +59,11 @@ const GATES = ['SKIP INTRO', 'ENTER TO BEGIN', 'EXPLORE AS GUEST', 'CONTINUE'];
 async function enter(path = '/') {
   await page.goto(BASE + path, { waitUntil: 'domcontentloaded' });
   await page.waitForTimeout(2200);
-  for (let round = 0; round < 6; round++) {
+  /* The door mounts only after the film's exit animation, so one empty round
+     is not proof the entrance has gone — the entrance is gone only after two
+     quiet rounds in a row. (A focus audit that checked once measured 47 stops
+     on the door itself.) */
+  for (let round = 0, quiet = 0; round < 12 && quiet < 2; round++) {
     let clicked = false;
     for (const label of GATES) {
       const b = page.locator(`button:has-text("${label}")`).first();
@@ -69,7 +73,8 @@ async function enter(path = '/') {
         clicked = true;
       }
     }
-    if (!clicked) break;
+    quiet = clicked ? 0 : quiet + 1;
+    if (!clicked) await page.waitForTimeout(700);
   }
   await page.waitForTimeout(1000);
 }

@@ -161,7 +161,10 @@ async function dismissIntro() {
   // the second one is just as bad as missing the first - the audit measures the
   // welcome screen's colours and reports them as the page's.
   const GATES = ['SKIP INTRO', 'ENTER TO BEGIN', 'EXPLORE AS GUEST', 'CONTINUE'];
-  for (let round = 0; round < 6; round++) {
+  // The door mounts only after the film's exit animation, so one empty round is
+  // not proof the entrance has gone: require two quiet rounds in a row. (A
+  // focus audit that checked once measured 47 stops on the door itself.)
+  for (let round = 0, quiet = 0; round < 12 && quiet < 2; round++) {
     let clicked = false;
     for (const label of GATES) {
       const b = page.locator(`button:has-text("${label}"), a:has-text("${label}")`).first();
@@ -171,7 +174,8 @@ async function dismissIntro() {
         clicked = true;
       }
     }
-    if (!clicked) break;
+    quiet = clicked ? 0 : quiet + 1;
+    if (!clicked) await page.waitForTimeout(700);
   }
   // Confirm nothing is left covering the page.
   for (const label of GATES) {

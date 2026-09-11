@@ -136,7 +136,7 @@ export default function PractitionerDetailPage() {
               </div>
               <h2 className="text-sm font-black text-teal-600 uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></div>
-                Executive Summary
+                About
               </h2>
               <div className="text-slate-600 leading-relaxed space-y-5 text-xl font-light relative z-10">
                 <p>{practitioner.bio}</p>
@@ -167,7 +167,7 @@ export default function PractitionerDetailPage() {
                     >
                     <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.3em] mb-6 flex items-center gap-3">
                         <div className="w-8 h-8 flex items-center justify-center bg-teal-50 text-teal-600 rounded-xl font-display font-black">A</div>
-                        Strategic Approach
+                        Approach
                     </h3>
                     <p className="text-slate-600 leading-relaxed font-light text-lg">{practitioner.approach}</p>
                     </motion.section>

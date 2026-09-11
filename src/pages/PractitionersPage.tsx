@@ -103,7 +103,7 @@ export default function PractitionersPage() {
           <span className="inline-flex items-center gap-3 px-5 py-2 bg-teal-500/10 backdrop-blur-md rounded-full border border-teal-400/20 text-teal-400 font-bold text-xs uppercase tracking-[0.4em] mb-4">
             <Users size={18} className="animate-pulse" /> Clinical Governance
           </span>
-          <h1 className="text-6xl md:text-8xl font-display font-medium text-white mb-6 tracking-tighter leading-[0.85]">Registered <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-300">Clinical Domain</span></h1>
+          <h1 className="text-6xl md:text-8xl font-display font-medium text-white mb-6 tracking-tighter leading-[0.85]">Meet the <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-300">practitioners</span></h1>
           <p className="text-2xl text-slate-400 font-light leading-relaxed max-w-2xl border-l-4 border-teal-500 pl-8">Meet the practitioners at the Herne Bay clinic — their training, their registrations, and what each of them treats.</p>
           
           <div className="flex flex-wrap gap-6 pt-4">
@@ -182,10 +182,6 @@ export default function PractitionersPage() {
                    <div className="aspect-[4/5] rounded-[2rem] overflow-hidden mb-8 relative">
                     <img src={p.image} alt={p.name} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 grayscale group-hover:grayscale-0" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent flex flex-col justify-end p-8">
-                       <div className="flex items-center gap-2 mb-2">
-                          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
-                          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-teal-400">Available Today</span>
-                       </div>
                        <span className="text-white/60 text-xs font-bold uppercase tracking-widest mb-1">{p.role}</span>
                        <h3 className="text-3xl font-display font-medium text-white tracking-tight">{p.name}</h3>
                     </div>

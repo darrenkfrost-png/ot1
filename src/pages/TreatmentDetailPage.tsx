@@ -275,10 +275,7 @@ export default function TreatmentDetailPage() {
                    <div>
                       <h4 className="font-bold text-slate-900 group-hover:text-teal-600 transition-colors uppercase tracking-tight">{p.name}</h4>
                       <p className="text-xs text-slate-500 font-medium uppercase tracking-widest mt-1">{p.role}</p>
-                      <div className="flex items-center gap-1.5 mt-3 text-emerald-500">
-                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                         <span className="text-[10px] font-bold uppercase tracking-widest">Available This Week</span>
-                      </div>
+                      <span className="inline-block mt-3 text-[10px] font-bold uppercase tracking-widest text-teal-700">View profile</span>
                    </div>
                 </Link>
               ))}
