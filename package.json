@@ -16,7 +16,8 @@
     "honesty": "node scripts/audit-honesty.mjs",
     "verify": "tsc --noEmit && node scripts/audit-honesty.mjs",
     "journey": "node scripts/audit-journey.mjs",
-    "build:live": "node scripts/build-live.mjs"
+    "build:live": "node scripts/build-live.mjs",
+    "gates": "node scripts/gates.mjs"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",
