@@ -130,7 +130,7 @@ export default function ContactPage() {
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-emerald-500">recovery.</span>
             </h1>
             <p className="text-xl text-slate-300 font-light leading-relaxed max-w-sm">
-              Professional osteopathic care and holistic wellbeing support is just a message away.
+              Questions about a treatment, times or prices? Send a message, or ring the clinic.
             </p>
           </div>
 

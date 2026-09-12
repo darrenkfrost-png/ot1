@@ -4,7 +4,7 @@ export const treatments = [
     title: 'Osteopathy', 
     desc: 'Holistic manual therapy focusing on the body\'s natural ability to heal itself. Effective for back pain, joint problems, and headaches.', 
     image: 'https://osteopathyandwellbeing.co.uk/wp-content/uploads/2018/02/4590922.jpg',
-    longDesc: 'Osteopathy in Herne Bay is a great way to address musculoskeletal issues. With its holistic approach, osteopathy focuses on the body\'s natural ability to heal itself. Whether you\'re dealing with back pain, joint problems, or headaches, an osteopath in Herne Bay can provide personalized treatment to help you feel better. Book an appointment today and experience the benefits of osteopathy firsthand! While osteopaths are best known for their treatment of back pain, osteopathy can also help with a wide range of other musculoskeletal conditions.'
+    longDesc: 'Osteopathy in Herne Bay is a great way to address musculoskeletal issues. With its holistic approach, osteopathy focuses on the body\'s natural ability to heal itself. Whether you\'re dealing with back pain, joint problems, or headaches, an osteopath in Herne Bay can provide personalised treatment to help you feel better. Book an appointment today and experience the benefits of osteopathy firsthand! While osteopaths are best known for their treatment of back pain, osteopathy can also help with a wide range of other musculoskeletal conditions.'
   },
   { 
     id: 'swedish-massage', 

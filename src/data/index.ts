@@ -31,7 +31,7 @@ export const TREATMENTS: Treatment[] = [
     title: 'Osteopathy',
     desc: 'Holistic manual therapy focusing on the body\'s natural ability to heal itself. Effective for back pain, joint problems, and headaches.',
     image: 'https://osteopathyandwellbeing.co.uk/wp-content/uploads/2018/02/4590922.jpg',
-    content: `Osteopathy in Herne Bay is a great way to address musculoskeletal issues. With its holistic approach, osteopathy focuses on the body's natural ability to heal itself. Whether you're dealing with back pain, joint problems, or headaches, an osteopath in Herne Bay can provide personalized treatment to help you feel better. Book an appointment today and experience the benefits of osteopathy firsthand! 
+    content: `Osteopathy in Herne Bay is a great way to address musculoskeletal issues. With its holistic approach, osteopathy focuses on the body's natural ability to heal itself. Whether you're dealing with back pain, joint problems, or headaches, an osteopath in Herne Bay can provide personalised treatment to help you feel better. Book an appointment today and experience the benefits of osteopathy firsthand! 
 
 While osteopaths are best known for their treatment of back pain, osteopathy can also help with a wide range of other musculoskeletal conditions. When you visit our clinic for the first time, not only is our aim to recognise your symptoms and relieve your pain as quickly as possible, but to also understand what has caused your pain in the first place so we can help prevent it from recurring. We understand that coming to see an osteopath for the first time can be a bit daunting, so we will do our best to make you feel relaxed and at ease by explaining what we are doing and why.`,
     conditions: [
@@ -331,7 +331,7 @@ export const PRACTITIONERS: Practitioner[] = [
 
 Following his qualification, Adrian worked at several different clinics before purchasing the business in 2008 and establishing Osteopathy & Wellbeing @CT6. He remains deeply passionate about sports science and rehabilitation. Adrian is known for his ability to translate complex physiological concepts into plain, actionable language, ensuring clients are fully equipped to manage their own long-term health. His commitment is to not just resolve immediate pain, but to identify the biomechanical root causes that lead to recurring issues.`,
     philosophy: 'Adrian believes the human body possesses an innate, intelligent ability to heal when biomechanical restrictions are removed. His treatment philosophy centers on empowerment: providing clients with the understanding of their own mechanics to ensure durable, long-term health rather than temporary relief.',
-    approach: 'Adrian utilizes a highly structural approach. During an initial consultation, he employs localized orthopedic testing to pinpoint the primary site of restriction, followed by tailored myofascial release, joint articulation, and tailored resistance exercises to restore optimal mechanical function.',
+    approach: 'Adrian takes a highly structural approach. During an initial consultation, he uses localised orthopaedic testing to pinpoint the primary site of restriction, followed by tailored myofascial release, joint articulation, and tailored resistance exercises to restore optimal mechanical function.',
     specialisations: ['Osteopathy', 'Sports Massage', 'Acupuncture', 'Chronic Spinal Patients'],
     services: ['Spinal Adjustment', 'Sports Injury Rehabilitation', 'Dry Needling', 'Posture Correction']
   },
@@ -370,7 +370,7 @@ She holds advanced certifications in Deep Tissue Massage, Sports Massage, and Re
     image: 'https://osteopathyandwellbeing.co.uk/wp-content/uploads/2022/06/Clare-Rogers.webp',
     bio: `Clare trained at the renowned SMAE Institute in Maidenhead and has been providing expert foot care at Osteopathy & Wellbeing @CT6 since 2012. She centers her practice on a preventative, maintenance-based philosophy, helping clients keep their feet healthy, pain-free, and functional over the long term.
 
-Understanding that daily movement is fundamentally predicated on foot health, Clare provides compassionate, meticulous clinical care coupled with practical, personalized advice to help clients manage their foot health effectively at home.`,
+Understanding that daily movement is fundamentally predicated on foot health, Clare provides compassionate, meticulous clinical care coupled with practical, personalised advice to help clients manage their foot health effectively at home.`,
     philosophy: 'Clare champions proactive foot health as the indispensable foundation for maintaining autonomy, activity, and independence throughout the aging process.',
     approach: 'Clare combines meticulous clinical precision with highly practical, lifestyle-matched advice, respecting that effective foot care must be inherently sustainable for the client.',
     specialisations: ['Diabetic Foot Care', 'Corn Removal', 'Elderly Foot Care'],
@@ -386,7 +386,7 @@ Understanding that daily movement is fundamentally predicated on foot health, Cl
 
 She frequently works with clients seeking natural, holistic interventions for chronic, hard-to-manage issues including skin conditions, anxiety disorders, functional digestive impediments, and debilitating migraine syndromes.`,
     philosophy: 'Magdalena views health as a delicate, dynamic equilibrium of internal energy. She utilizes a synthesize approach, harmonizing the body’s internal systems through acupuncture and herbal medicine to facilitate true healing processes.',
-    approach: 'Her diagnostic methodology is deeply rooted in traditional TCM diagnostics, which she then adapts to the unique energetic constitution and lifestyle constraints of each individual patient, ensuring the treatment is deeply personalized.',
+    approach: 'Her diagnostic methodology is deeply rooted in traditional TCM diagnostics, which she then adapts to the unique energetic constitution and lifestyle constraints of each individual patient, ensuring the treatment is deeply personalised.',
     specialisations: ['Acupuncture', 'Chinese Herbal Medicine'],
     services: ['Traditional Acupuncture', 'Chinese Herbal Medicine Consultation', 'Migraine Management']
   },
@@ -396,7 +396,7 @@ She frequently works with clients seeking natural, holistic interventions for ch
     role: 'Clinical Hypnotherapist',
     qualifications: 'HPD DSFH MNCH(Reg)',
     image: 'https://osteopathyandwellbeing.co.uk/wp-content/uploads/2022/06/hypnotherapy-anxiety-insomnia-768x1024.jpg',
-    bio: `Alexandra is a modern psychotherapeutic practitioner focusing on helping clients achieve tangible goals using structured, practical interventions. Her toolkit is extensive, incorporating elements from Solution-Focused Brief Therapy (SFBT), Neuro-Linguistic Programming (NLP), and Cognitive Behavioral Therapy (CBT).
+    bio: `Alexandra is a modern psychotherapeutic practitioner focusing on helping clients achieve tangible goals using structured, practical interventions. Her toolkit is extensive, incorporating elements from Solution-Focused Brief Therapy (SFBT), Neuro-Linguistic Programming (NLP), and Cognitive Behavioural Therapy (CBT).
 
 Her methodology is grounded in contemporary neuroscience, assisting clients in identifying and neutralizing subconscious roadblocks in a supportive, non-judgmental environment. Her work empowers clients to leverage their own inner resources to overcome persistent challenges.`,
     philosophy: 'Alexandra fundamentally believes in the brain’s inherent neuroplasticity. Her philosophy centers on empowering clients to rewrite their own internal narratives, moving them from a state of being "problem-focused" to consciously "solution-focused".',

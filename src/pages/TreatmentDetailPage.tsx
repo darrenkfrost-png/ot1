@@ -185,7 +185,7 @@ export default function TreatmentDetailPage() {
                   ))}
                 </div>
                 <div className="mt-10 pt-8 border-t border-white/10 flex items-center gap-4 text-xs font-black uppercase tracking-widest text-teal-500/60">
-                   <ShieldCheck size={14} /> Clinical Recovery Protocol
+                   <ShieldCheck size={14} /> Agreed with you at each visit
                 </div>
               </div>
               <div className="absolute bottom-0 right-0 w-96 h-96 bg-teal-500/5 rounded-full blur-[120px] -mr-48 -mb-48"></div>

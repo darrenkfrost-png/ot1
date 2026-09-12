@@ -475,7 +475,7 @@ export default function SettingsPanel() {
                         <div className="space-y-12 pb-10 animate-in fade-in slide-in-from-right-4 duration-500">
                            <div className="space-y-3">
                              <h2 className="text-3xl font-display font-medium text-slate-900 tracking-tight">Accessibility & Inclusivity</h2>
-                             <p className="text-slate-500 font-light text-base leading-relaxed">Optimize the interface for your specific physiological or sensory requirements.</p>
+                             <p className="text-slate-500 font-light text-base leading-relaxed">Adjust text, colour and motion to suit how you see and read.</p>
                            </div>
 
                            <div className="space-y-10">

@@ -473,7 +473,7 @@ export default function HomePage() {
              className="max-w-4xl mb-24 space-y-8"
           >
             <div className="inline-flex items-center gap-3 px-6 py-2.5 bg-teal-500/10 backdrop-blur-md rounded-full border border-teal-500/20 text-teal-400 text-[10px] font-black uppercase tracking-[0.4em] shadow-[0_0_20px_rgba(20,184,166,0.15)]">
-              <Activity size={16} className="animate-pulse" /> Clinical Specializations
+              <Activity size={16} className="animate-pulse" /> What we treat
             </div>
             <h2 className="text-6xl md:text-8xl font-display font-medium leading-[0.9] tracking-tighter drop-shadow-lg">
               Engineered for Your <br/>
@@ -557,7 +557,7 @@ export default function HomePage() {
         >
             <div className="space-y-8">
                 <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-slate-100 border border-slate-200 text-slate-600 font-bold text-[10px] uppercase tracking-[0.3em] shadow-sm">
-                  <BookOpen size={16} className="text-teal-600" /> Knowledge Center
+                  <BookOpen size={16} className="text-teal-600" /> Guides & films
                 </div>
                 <h2 className="text-5xl md:text-7xl font-display font-medium text-slate-50 leading-[1.05] tracking-tight">
                   Your Health, <br/>

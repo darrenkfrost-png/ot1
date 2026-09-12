@@ -1,4 +1,5 @@
 import { PRACTITIONERS } from '../data';
+import { CLINIC } from '../data/clinic';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -279,7 +280,7 @@ export default function PractitionersPage() {
 
       <section className="bg-slate-900 rounded-[4rem] p-12 md:p-20 text-white relative overflow-hidden text-center space-y-12">
         <div className="relative z-10 max-w-2xl mx-auto space-y-6">
-          <h2 className="text-4xl md:text-5xl font-display font-medium tracking-tight">Committed to Clinical Excellence</h2>
+          <h2 className="text-4xl md:text-5xl font-display font-medium tracking-tight">Registered, and kept up to date</h2>
           <p className="text-xl text-slate-400 font-light leading-relaxed">
             Every member of our team is fully registered with their respective clinical bodies and maintains ongoing professional development.
           </p>
@@ -291,7 +292,7 @@ export default function PractitionersPage() {
                <div className="text-xs font-bold uppercase tracking-widest text-slate-400">Practitioners</div>
             </div>
             <div className="space-y-2">
-               <div className="text-4xl font-display font-bold text-teal-400">2012</div>
+               <div className="text-4xl font-display font-bold text-teal-400">{CLINIC.establishedYear}</div>
                <div className="text-xs font-bold uppercase tracking-widest text-slate-400">Practising Since</div>
             </div>
             <div className="space-y-2">
@@ -309,7 +310,7 @@ export default function PractitionersPage() {
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 pb-6 border-b border-slate-100">
           <div className="space-y-3">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-teal-50 border border-teal-100 rounded-full text-[10px] font-black uppercase text-teal-800 tracking-wider">
-               <HelpCircle size={12} /> Patient Support Center
+               <HelpCircle size={12} /> Your questions
             </span>
             <h2 className="text-4xl md:text-5xl font-display font-medium text-slate-50 tracking-tight">
                Frequently Asked <span className="text-teal-600">Questions</span>
@@ -382,8 +383,8 @@ export default function PractitionersPage() {
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {[
           { icon: ShieldCheck, title: "Regulated Care", desc: "Our osteopaths are registered with the General Osteopathic Council." },
-          { icon: Zap, title: "Modern Science", desc: "We use evidence-based methods and state-of-the-art tech." },
-          { icon: Heart, title: "Patient First", desc: "We prioritize your comfort and long-term joint health." },
+          { icon: Zap, title: "Plain Explanations", desc: "We tell you what we find and what we suggest, in plain words." },
+          { icon: Heart, title: "Your Comfort First", desc: "Treatment goes at your pace, and you can stop or ask at any time." },
           { icon: Sparkles, title: "One clinic", desc: "180 High Street, Herne Bay — the same team every visit." }
         ].map((item, i) => (
           <div key={i} className="p-8 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-premium transition-all space-y-4">
