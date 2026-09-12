@@ -33,12 +33,12 @@ export default function PractitionersPage() {
       answer: "Our osteopaths have each completed a four-year degree in osteopathy and are registered with the General Osteopathic Council, the profession's regulator. Our acupuncturist, massage therapists, foot care specialist and hypnotherapist hold their own qualifications and registrations in their fields — each practitioner's page sets out their training."
     },
     {
-      question: "How do I secure and book an appointment?",
-      answer: "Booking a session takes less than 60 seconds. Click the 'Book Appointment' button at the top of any page or select any specialist's profile card to access the secure booking engine, select your required treatment, and choose a time that fits your schedule."
+      question: "How do I book an appointment?",
+      answer: "Use the Book Online button at the top of any page to choose a treatment, a practitioner and a time that suits you — or call the clinic and we will book you in."
     },
     {
       question: "What should I expect during my first osteopathic session?",
-      answer: "Your initial session is 45-60 minutes. It includes an in-depth clinical case history, an orthopedic and neurological diagnostic assessment, and a hands-on treatment where appropriate. You will also receive a personalized digital rehabilitation plan."
+      answer: "Your first appointment starts with a full case history and a hands-on examination, then treatment where it is appropriate, and you leave with advice on what to do between visits. How long it takes depends on the treatment — we confirm the length when you book."
     },
     {
       // We haven't verified any insurer's current terms, so none are named —
@@ -131,7 +131,7 @@ export default function PractitionersPage() {
                   "px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.25em] transition-all",
                   activeSpecialty === spec 
                     ? "bg-teal-700 text-white shadow-2xl shadow-teal-500/30 ring-4 ring-teal-500/10" 
-                    : "bg-white text-slate-600 border border-slate-100 hover:border-teal-200 hover:text-teal-600 shadow-sm"
+                    : "bg-white text-slate-600 border border-slate-100 hover:border-teal-200 hover:text-teal-700 shadow-sm"
                 )}
               >
                 {spec}

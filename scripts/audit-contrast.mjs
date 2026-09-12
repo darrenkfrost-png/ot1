@@ -38,6 +38,9 @@ const BASE = process.argv[2] || 'http://localhost:4601';
 const PAGES = [
   '/', '/treatments', '/practitioners', '/gallery',
   '/resources', '/locations', '/faq', '/contact', '/dashboard',
+  // One page from each detail template. They were never measured, and a
+  // practitioner's name at near-invisible contrast shipped on exactly one.
+  '/treatments/osteopathy', '/practitioners/adrian-hatcher',
 ];
 
 /* playwright-core is not a dependency of this project. Use it if it is
@@ -59,7 +62,7 @@ async function loadChromium() {
 }
 
 /** Runs inside the page. Returns the failing text elements, grouped. */
-const AUDIT = () => {
+const AUDIT = (ground) => {
   const ctx = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
   const toRGBA = (c) => {
     ctx.clearRect(0, 0, 1, 1); ctx.fillStyle = '#ff00ff'; ctx.fillStyle = c;
@@ -82,7 +85,9 @@ const AUDIT = () => {
       if (c[3] > 0.001) { stack.push(c); if (c[3] >= 0.999) break; }
       n = n.parentElement;
     }
-    let base = [255, 255, 255];
+    // The real ground, measured by photographing the page with its content
+    // hidden. It used to be white, which this site never is behind its glass.
+    let base = ground || [255, 255, 255];
     for (let i = stack.length - 1; i >= 0; i--) {
       const c = stack[i];
       base = [0, 1, 2].map((k) => c[k] * c[3] + base[k] * (1 - c[3]));
@@ -184,6 +189,38 @@ async function dismissIntro() {
   return true;
 }
 
+/*
+ * WHAT THE PAGE ACTUALLY SITS ON.
+ *
+ * Text on see-through glass is seen against the wallpaper film behind it,
+ * not against white. Hide the content, photograph what is left in the
+ * content area, and take the median colour: that is the ground a
+ * translucent card really composites over. The screenshot is decoded by
+ * the page's own canvas, so no image library is needed.
+ */
+async function measureGround(page) {
+  await page.evaluate(() => { const m = document.getElementById('main-content'); if (m) m.style.visibility = 'hidden'; });
+  await page.waitForTimeout(300);
+  const vp = page.viewportSize();
+  const clip = { x: Math.round(vp.width * 0.3), y: 120, width: Math.round(vp.width * 0.65), height: vp.height - 200 };
+  const b64 = (await page.screenshot({ clip })).toString('base64');
+  const rgb = await page.evaluate(async (b64) => {
+    const img = new Image(); img.src = 'data:image/png;base64,' + b64; await img.decode();
+    const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
+    const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(img, 0, 0);
+    const px = [];
+    for (let i = 1; i < 20; i++) for (let j = 1; j < 20; j++) {
+      const d = x.getImageData(Math.floor(img.width * i / 20), Math.floor(img.height * j / 20), 1, 1).data;
+      px.push([d[0], d[1], d[2]]);
+    }
+    const med = (k) => px.map((q) => q[k]).sort((a, b) => a - b)[Math.floor(px.length / 2)];
+    return [med(0), med(1), med(2)];
+  }, b64);
+  await page.evaluate(() => { const m = document.getElementById('main-content'); if (m) m.style.visibility = ''; });
+  await page.waitForTimeout(300);
+  return rgb;
+}
+
 for (const path of PAGES) {
   await page.goto(BASE + path, { waitUntil: 'domcontentloaded' });
   await page.waitForTimeout(2500);
@@ -202,12 +239,13 @@ for (const path of PAGES) {
   });
   await page.waitForTimeout(800);
 
-  const { checked, onMediaCount, groups } = await page.evaluate(AUDIT);
+  const ground = await measureGround(page);
+  const { checked, onMediaCount, groups } = await page.evaluate(AUDIT, ground);
   const rows = Object.entries(groups).sort((a, b) => b[1].n - a[1].n);
   const failing = rows.reduce((s, [, v]) => s + v.n, 0);
   totalFail += failing; totalChecked += checked;
 
-  console.log(`\n${path}  —  ${checked} measured, ${failing} failing, ${onMediaCount} over photos (not judged)`);
+  console.log(`\n${path}  —  ${checked} measured, ${failing} failing, ${onMediaCount} over photos (not judged)   ground rgb(${ground.join(',')})`);
   for (const [k, v] of rows.slice(0, 8)) {
     console.log(`   ${String(v.n).padStart(3)}x  ${String(v.cr).padStart(5)}:1 (need ${v.need})  ${k}`);
     console.log(`         "${v.sample}"`);

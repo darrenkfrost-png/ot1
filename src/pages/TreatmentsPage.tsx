@@ -57,7 +57,7 @@ export default function TreatmentsPage() {
            {/* A stock photograph, not our building — it sits behind a gradient
                as atmosphere, so screen readers skip it rather than being told
                it is the clinic. */}
-           <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=2000" fetchPriority="high" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[20s]" alt="" />
+           <img src="https://osteopathyandwellbeing.co.uk/wp-content/uploads/2018/02/4590922.jpg" fetchPriority="high" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[20s]" alt="" />
            <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent"></div>
         </div>
         <div className="relative z-10 max-w-3xl space-y-8">
@@ -65,7 +65,7 @@ export default function TreatmentsPage() {
             <Sparkles size={16} className="animate-pulse" /> Clinical Services
           </span>
           <h1 className="text-6xl md:text-8xl font-display font-medium text-white mb-6 tracking-tighter leading-[0.85]">Science-Led <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-300">Total Body Care</span></h1>
-          <p className="text-2xl text-slate-400 font-light leading-relaxed max-w-2xl border-l-4 border-teal-500 pl-8">Our multidisciplinary approach combines the best of clinical expertise and patient-centered research to help you achieve lasting anatomical results.</p>
+          <p className="text-2xl text-slate-400 font-light leading-relaxed max-w-2xl border-l-4 border-teal-500 pl-8">Osteopathy, massage, acupuncture, foot care and hypnotherapy, under one roof on Herne Bay High Street.</p>
           
           <div className="flex flex-wrap gap-6 pt-4">
             <div className="flex items-center gap-3 px-6 py-3 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-xl">
@@ -74,7 +74,7 @@ export default function TreatmentsPage() {
             </div>
             <div className="flex items-center gap-3 px-6 py-3 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-xl">
               <Zap size={20} className="text-amber-400" />
-              <span className="text-sm font-bold uppercase tracking-widest text-slate-200">Express Rehab Paths</span>
+              <span className="text-sm font-bold uppercase tracking-widest text-slate-200">Book Online Any Time</span>
             </div>
           </div>
         </div>
@@ -119,7 +119,7 @@ export default function TreatmentsPage() {
                   "px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.25em] transition-all",
                   activeCategory === cat 
                     ? "bg-teal-700 text-white shadow-2xl shadow-teal-500/30 ring-4 ring-teal-500/10" 
-                    : "bg-white text-slate-600 border border-slate-100 hover:border-teal-200 hover:text-teal-600 shadow-sm"
+                    : "bg-white text-slate-600 border border-slate-100 hover:border-teal-200 hover:text-teal-700 shadow-sm"
                 )}
               >
                 {cat}
@@ -189,7 +189,7 @@ export default function TreatmentsPage() {
                     <p className="text-slate-500 leading-relaxed font-light text-base line-clamp-3">{t.desc}</p>
                   </div>
                   <div className="pt-8 mt-8 border-t border-slate-50 flex items-center justify-between text-teal-700 px-2 transition-transform group-hover:translate-x-1 duration-500">
-                    <span className="text-[10px] uppercase tracking-[0.2em] font-bold">Comprehensive Assessment Included</span>
+                    <span className="text-[10px] uppercase tracking-[0.2em] font-bold">Read about this treatment</span>
                   </div>
                 </div>
               </Link>

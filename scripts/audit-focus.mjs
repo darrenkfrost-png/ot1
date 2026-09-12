@@ -49,6 +49,8 @@ const GROUPS = [
   ['/', '/treatments', '/practitioners'],
   ['/gallery', '/resources', '/locations'],
   ['/faq', '/contact', '/dashboard'],
+  // one page from each detail template - never checked before
+  ['/treatments/osteopathy', '/practitioners/adrian-hatcher'],
 ];
 const TABS = 150;
 const SETTLE = 850;

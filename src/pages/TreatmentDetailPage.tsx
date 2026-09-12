@@ -106,7 +106,7 @@ export default function TreatmentDetailPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         <div className="lg:col-span-8 space-y-12">
-           <section className="bg-white/60 backdrop-blur-3xl crystal-glass p-10 rounded-[3rem] border border-white/40 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] overflow-hidden relative">
+           <section className="bg-white/95 backdrop-blur-3xl crystal-glass p-10 rounded-[3rem] border border-white/40 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] overflow-hidden relative">
             {/* The part of the body this treatment is about, sitting quietly
                 behind the text: a spine for osteopathy, a leg for sports
                 massage, a foot for footcare. */}
@@ -193,17 +193,17 @@ export default function TreatmentDetailPage() {
           )}
 
           <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-slate-50/50 p-8 rounded-[2.5rem] border border-slate-100 space-y-6">
+            <div className="bg-white/95 p-8 rounded-[2.5rem] border border-slate-100 space-y-6">
               <h3 className="text-xl font-display font-bold text-slate-900 flex items-center gap-2">
                 <Users size={20} className="text-teal-600" />
                 Who is this for?
               </h3>
               <p className="text-slate-600 font-light leading-relaxed">
-                Ideal for individuals experiencing musculoskeletal discomfort, postural issues, or those looking to maintain peak physical health through structured clinical care.
+                For anyone with aches, stiffness or pain in their muscles and joints, or who simply wants to keep moving comfortably.
               </p>
               <ul className="space-y-3">
                 {['Chronic back & neck pain', 'Sports related injuries', 'Postural tension', 'Mobility restrictions'].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-sm text-slate-500 font-medium">
+                  <li key={i} className="flex items-center gap-3 text-sm text-slate-600 font-medium">
                     <div className="w-1.5 h-1.5 rounded-full bg-teal-500"></div>
                     {item}
                   </li>
@@ -215,15 +215,15 @@ export default function TreatmentDetailPage() {
                 <ShieldCheck size={20} className="text-teal-200" />
                 Clinical Approach
               </h3>
-              <p className="text-teal-50/80 font-light leading-relaxed">
-                Our evidence-based methods ensure that every session is tailored to your specific biomechanics, focusing on long-term resolution rather than just short-term relief.
+              <p className="text-white font-light leading-relaxed">
+                Each session is shaped around what your assessment finds, aiming for lasting improvement rather than a quick fix.
               </p>
               <div className="pt-4 flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
                   <Stethoscope size={24} />
                 </div>
                 <div>
-                  <div className="text-xs font-bold uppercase tracking-widest text-teal-200">Standard Care</div>
+                  <div className="text-xs font-bold uppercase tracking-widest text-teal-50">Standard Care</div>
                   <div className="text-lg font-semibold">Regulated Practice</div>
                 </div>
               </div>
@@ -261,7 +261,7 @@ export default function TreatmentDetailPage() {
 
           <section className="space-y-8">
             <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-display font-semibold text-slate-900 tracking-tight">Meet the Specialists</h2>
+              <h2 className="text-2xl font-display font-semibold text-slate-50 tracking-tight">Meet the Specialists</h2>
               <Link to="/practitioners" className="text-teal-600 font-bold text-xs uppercase tracking-widest flex items-center gap-2 hover:translate-x-1 transition-transform">
                 View All <ChevronRight size={16} />
               </Link>
@@ -321,7 +321,7 @@ export default function TreatmentDetailPage() {
                   <span className="text-slate-500 font-light">Fee</span>
                   <a
                     href={`tel:${CLINIC.telephoneLink}`}
-                    className="text-base font-bold text-teal-600 hover:underline focus-visible:outline-teal-500"
+                    className="text-base font-bold text-teal-700 hover:underline focus-visible:outline-teal-500"
                   >
                     Ask when you book
                   </a>
@@ -342,7 +342,7 @@ export default function TreatmentDetailPage() {
                     hold for footcare and hypnotherapy as much as for osteopathy
                     — the old "Biomechanical Analysis" and "Exercise Guidance
                     Pack" did not. */}
-                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest">What's Included</h3>
+                <h3 className="text-sm font-bold text-slate-600 uppercase tracking-widest">What's Included</h3>
                 <ul className="space-y-3">
                   {[
                     'A full assessment of the problem',

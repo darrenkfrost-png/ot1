@@ -324,7 +324,7 @@ export const PRACTITIONERS: Practitioner[] = [
   {
     id: 'adrian-hatcher',
     name: 'Adrian Hatcher',
-    role: 'Principle Osteopath',
+    role: 'Principal Osteopath',
     qualifications: 'BSc (Hons) Ost',
     image: 'https://osteopathyandwellbeing.co.uk/wp-content/uploads/2022/03/gm-adrian600-topaz-enhance-6x-faceai-2.webp',
     bio: `As a young man and prior to pursuing a career as an osteopath, Adrian played football at a semi-professional level. In 2001, Adrian was involved in a water sports accident and suffered a serious neck injury, which led him to discover osteopathy as the key to his recovery. 

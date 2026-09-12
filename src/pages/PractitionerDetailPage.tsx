@@ -63,7 +63,7 @@ export default function PractitionerDetailPage() {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.1 }}
-            className="bg-white/40 backdrop-blur-3xl crystal-glass p-8 rounded-[2rem] border border-white/60 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] space-y-6 holographic-border"
+            className="bg-white/95 backdrop-blur-3xl crystal-glass p-8 rounded-[2rem] border border-white/60 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] space-y-6 holographic-border"
           >
             {/* Not every practitioner publishes their qualification letters.
                 Where none are on record, saying nothing is the only honest
@@ -75,7 +75,7 @@ export default function PractitionerDetailPage() {
                     <Award size={20} />
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">Qualifications</span>
+                    <span className="text-[10px] text-slate-600 font-bold uppercase tracking-[0.2em]">Qualifications</span>
                     <span className="font-semibold">{practitioner.qualifications}</span>
                   </div>
                 </div>
@@ -89,7 +89,7 @@ export default function PractitionerDetailPage() {
                 <Stethoscope size={20} />
               </div>
               <div className="flex flex-col">
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">Role</span>
+                <span className="text-[10px] text-slate-600 font-bold uppercase tracking-[0.2em]">Role</span>
                 <span className="font-semibold">{practitioner.role}</span>
               </div>
             </div>
@@ -120,8 +120,8 @@ export default function PractitionerDetailPage() {
 
         <div className="md:col-span-8 space-y-12">
           <div>
-            <h1 className="text-5xl md:text-6xl font-display font-medium text-slate-900 mb-4 tracking-tight">{practitioner.name}</h1>
-            <p className="text-2xl text-teal-600 font-light tracking-tight">{practitioner.role}</p>
+            <h1 className="text-5xl md:text-6xl font-display font-medium text-slate-50 mb-4 tracking-tight">{practitioner.name}</h1>
+            <p className="text-2xl text-teal-300 font-light tracking-tight">{practitioner.role}</p>
           </div>
 
           <div className="space-y-4">
@@ -129,12 +129,12 @@ export default function PractitionerDetailPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-white/40 backdrop-blur-3xl crystal-glass p-10 rounded-[2.5rem] border border-white/60 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] group relative overflow-hidden holographic-border"
+              className="bg-white/95 backdrop-blur-3xl crystal-glass p-10 rounded-[2.5rem] border border-white/60 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] group relative overflow-hidden holographic-border"
             >
               <div className="absolute top-0 right-0 p-8 opacity-[0.03] scale-150 text-teal-600 pointer-events-none group-hover:scale-125 transition-transform duration-[2000ms]">
                 <Stethoscope size={120} />
               </div>
-              <h2 className="text-sm font-black text-teal-600 uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
+              <h2 className="text-sm font-black text-teal-700 uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></div>
                 About
               </h2>
@@ -151,7 +151,7 @@ export default function PractitionerDetailPage() {
                       transition={{ delay: 0.3 }}
                       className="bg-white p-10 rounded-[2.5rem] border border-slate-100 shadow-premium hover:shadow-xl transition-all"
                     >
-                    <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.3em] mb-6 flex items-center gap-3">
+                    <h3 className="text-xs font-black text-slate-600 uppercase tracking-[0.3em] mb-6 flex items-center gap-3">
                         <div className="w-8 h-8 flex items-center justify-center bg-teal-50 text-teal-600 rounded-xl font-display font-black">P</div>
                         Core Philosophy
                     </h3>
@@ -165,7 +165,7 @@ export default function PractitionerDetailPage() {
                       transition={{ delay: 0.35 }}
                       className="bg-white p-10 rounded-[2.5rem] border border-slate-100 shadow-premium hover:shadow-xl transition-all"
                     >
-                    <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.3em] mb-6 flex items-center gap-3">
+                    <h3 className="text-xs font-black text-slate-600 uppercase tracking-[0.3em] mb-6 flex items-center gap-3">
                         <div className="w-8 h-8 flex items-center justify-center bg-teal-50 text-teal-600 rounded-xl font-display font-black">A</div>
                         Approach
                     </h3>
@@ -198,7 +198,7 @@ export default function PractitionerDetailPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {practitioner.specialisations && practitioner.specialisations.length > 0 && (
                 <section className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm">
-                  <h2 className="text-lg font-bold text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                  <h2 className="text-lg font-bold text-slate-600 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
                     <Shield size={16} /> Core Specialisations
                   </h2>
                   <div className="flex flex-wrap gap-3">
@@ -213,7 +213,7 @@ export default function PractitionerDetailPage() {
 
               {practitioner.services && practitioner.services.length > 0 && (
                 <section className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm">
-                  <h2 className="text-lg font-bold text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                  <h2 className="text-lg font-bold text-slate-600 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
                     <CheckCircle2 size={16} /> Clinical Services
                   </h2>
                   <div className="flex flex-col gap-3">
@@ -250,18 +250,18 @@ export default function PractitionerDetailPage() {
               </h2>
               <dl className="space-y-8">
                 <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-8">
-                  <dt className="text-[10px] font-bold text-teal-600 uppercase tracking-widest sm:w-40 shrink-0">Role</dt>
+                  <dt className="text-[10px] font-bold text-teal-700 uppercase tracking-widest sm:w-40 shrink-0">Role</dt>
                   <dd className="text-lg font-bold text-slate-800">{practitioner.role}</dd>
                 </div>
                 {practitioner.qualifications && (
                   <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-8">
-                    <dt className="text-[10px] font-bold text-teal-600 uppercase tracking-widest sm:w-40 shrink-0">Qualifications</dt>
+                    <dt className="text-[10px] font-bold text-teal-700 uppercase tracking-widest sm:w-40 shrink-0">Qualifications</dt>
                     <dd className="text-lg font-bold text-slate-800">{practitioner.qualifications}</dd>
                   </div>
                 )}
                 {isOsteopath && (
                   <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-8">
-                    <dt className="text-[10px] font-bold text-teal-600 uppercase tracking-widest sm:w-40 shrink-0">Regulated by</dt>
+                    <dt className="text-[10px] font-bold text-teal-700 uppercase tracking-widest sm:w-40 shrink-0">Regulated by</dt>
                     <dd className="text-base text-slate-600 font-light leading-relaxed">
                       <a
                         href={CLINIC.regulator.url}

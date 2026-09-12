@@ -405,7 +405,17 @@
    * rim of light that lifts on hover, which is what the effect was reaching for.
    */
   .holographic-border {
-    @apply relative rounded-2xl p-[1px] overflow-hidden;
+    /*
+     * NO PADDING AND NO RADIUS HERE. This used to apply p-[1px] and
+     * rounded-2xl - leftovers from when the lit edge was a 1px gradient
+     * border showing through. Defined after Tailwind's own utilities in the
+     * same layer, they beat every p-* and rounded-* on the same element: all
+     * 23 panels using this class rendered with 1px of padding whatever they
+     * declared, the home hero's headline sat 1px from its card's edge and a
+     * practitioner's "About" text 2px from its. The rim is now a full-size
+     * ::before overlay, so the element keeps the padding and corners it asks for.
+     */
+    @apply relative overflow-hidden;
     &::before {
       content: '';
       @apply absolute inset-0 opacity-60 transition-opacity duration-500 pointer-events-none;
