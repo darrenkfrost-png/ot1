@@ -327,13 +327,13 @@ export const PRACTITIONERS: Practitioner[] = [
     role: 'Principal Osteopath',
     qualifications: 'BSc (Hons) Ost',
     image: 'https://osteopathyandwellbeing.co.uk/wp-content/uploads/2022/03/gm-adrian600-topaz-enhance-6x-faceai-2.webp',
-    bio: `As a young man and prior to pursuing a career as an osteopath, Adrian played football at a semi-professional level. In 2001, Adrian was involved in a water sports accident and suffered a serious neck injury, which led him to discover osteopathy as the key to his recovery. 
+    bio: `Adrian played semi-professional football for Tonbridge Angels and then Tunbridge Wells before a water sports accident in 2001 left him with a serious neck injury. Osteopathy helped him recover, and he began studying it the following year.
 
-Following his qualification, Adrian worked at several different clinics before purchasing the business in 2008 and establishing Osteopathy & Wellbeing @CT6. He remains deeply passionate about sports science and rehabilitation. Adrian is known for his ability to translate complex physiological concepts into plain, actionable language, ensuring clients are fully equipped to manage their own long-term health. His commitment is to not just resolve immediate pain, but to identify the biomechanical root causes that lead to recurring issues.`,
-    philosophy: 'Adrian believes the human body possesses an innate, intelligent ability to heal when biomechanical restrictions are removed. His treatment philosophy centers on empowerment: providing clients with the understanding of their own mechanics to ensure durable, long-term health rather than temporary relief.',
-    approach: 'Adrian takes a highly structural approach. During an initial consultation, he uses localised orthopaedic testing to pinpoint the primary site of restriction, followed by tailored myofascial release, joint articulation, and tailored resistance exercises to restore optimal mechanical function.',
+He graduated from the European School of Osteopathy in 2007 and worked at clinics in Kent and Sussex before joining the Herne Bay practice as an associate. He bought the business in 2008 and now runs Osteopathy & Wellbeing @CT6, a practice of several disciplines under one roof. Outside the clinic he plays veterans' football and competitive squash.`,
+    philosophy: `Adrian has a particular interest in patients with long-standing back and neck problems, and puts together maintenance plans to reduce their symptoms and help them get on with life.`,
+    approach: `Treatment starts with a case history and examination. Adrian then combines osteopathy with sports massage or acupuncture where it helps, and agrees a plan with you for the visits that follow.`,
     specialisations: ['Osteopathy', 'Sports Massage', 'Acupuncture', 'Chronic Spinal Patients'],
-    services: ['Spinal Adjustment', 'Sports Injury Rehabilitation', 'Dry Needling', 'Posture Correction']
+    services: ['Maintenance Plans', 'Sports Injury Rehabilitation', 'Dry Needling', 'Posture Advice']
   },
   {
     id: 'leon-benning',
@@ -341,11 +341,11 @@ Following his qualification, Adrian worked at several different clinics before p
     role: 'Osteopath & Sports Specialist',
     qualifications: 'M.Ost & Pg Dip Sports & Ex Med',
     image: 'https://osteopathyandwellbeing.co.uk/wp-content/uploads/2023/04/Leon-Picture.jpg',
-    bio: `Leon graduated from the London School of Osteopathy and furthered his professional development with a postgraduate diploma in Sports and Exercise Medicine. Beyond his clinical work, he provides active pitchside trauma support for the Canterbury Rugby Club, exposing him to high-intensity injury management in real-time.
+    bio: `Leon qualified from the London School of Osteopathy in 2016 and completed a postgraduate diploma in Sports and Exercise Medicine at the University of South Wales in 2017. He joined the clinic shortly after graduating. He is also a qualified sports massage therapist and practises dry needling.
 
-He is a firm believer that incremental, sustainable physical activity is the cornerstone of lifelong wellness. His expertise lies in bridging the gap between acute clinical diagnosis and professional-level sports rehabilitation, ensuring clients—whether athletes or office-based professionals—receive the same level of precise care.`,
-    philosophy: 'Leon adheres to an evidence-based approach, combining functional movement assessment with sports-specific therapeutic modalities to maximize both health outcomes and human performance.',
-    approach: 'His approach integrates acute sports trauma management with long-term rehabilitative strength programming, focusing on restoring stability and capacity to injured structures.',
+He provides pitchside medical support to Canterbury Rugby Club and has worked with teams including Middlesex County Rugby Union, Medway Dragons Rugby League, London Rugby League and Herne Bay Football Club.`,
+    philosophy: `Leon believes sport and exercise medicine is relevant to everyone, not only competitive athletes: it helps people recover from illness and injury and get back to what they enjoy.`,
+    approach: `He combines osteopathy with sports massage, dry needling and exercise advice, and works with you towards getting back to your sport, your work or your everyday routine.`,
     specialisations: ['Sports Medicine', 'Dry Needling', 'Sports Massage'],
     services: ['Sports Injury Assessment', 'Pitchside First Aid', 'Dry Needling Therapy', 'Exercise Prescription']
   },
@@ -354,13 +354,13 @@ He is a firm believer that incremental, sustainable physical activity is the cor
     name: 'Keri Browne',
     role: 'Massage Therapist',
     image: 'https://osteopathyandwellbeing.co.uk/wp-content/uploads/2025/04/Keri-Picture-1-scaled.jpg',
-    bio: `Following an extensive, physically demanding career as a professional vocalist and dancer, Keri deeply understands the impact of repetitive strain on the body. She transitioned to massage therapy in 2017, bringing an intuitive understanding of the physical stresses performers endure. 
+    bio: `After a long career as a professional vocalist and dancer, Keri retrained as a massage therapist in 2017, starting with Swedish full-body massage. She has since qualified in deep tissue massage, sports massage and remedial back therapy.
 
-She holds advanced certifications in Deep Tissue Massage, Sports Massage, and Remedial Back Therapy. Keri thrives on a holistic therapeutic approach, crafting individual sessions that directly address the specific stressors her clients face in their daily lives, helping them restore both physical comfort and well-being.`,
-    philosophy: 'Keri views massage as an essential tool to reconnect the mind and body, utilizing therapeutic touch to alleviate physical holdings and encourage a state of deep nervous system regulation.',
-    approach: 'Keri uses an intuitive, empathetic style. She carefully listens to the client’s physical history and responses during treatment, blending gentle tissue release with targeted, deeper work to resolve tension patterns.',
+Outside work she still sings with local bands and as a solo artist, and does Pilates.`,
+    philosophy: `Keri likes to work with the whole person, giving each client an individual treatment that makes a real difference to how they feel.`,
+    approach: `Each session is shaped around you: relaxing Swedish massage, deeper tissue work, or sports and remedial massage for a particular problem.`,
     specialisations: ['Swedish Massage', 'Deep Tissue', 'Sports Massage', 'Remedial Back Therapy'],
-    services: ['Swedish Relaxation', 'Deep Tissue Remedial Therapy', 'Sports Injury Recovery']
+    services: ['Swedish Massage', 'Deep Tissue Massage', 'Sports Massage', 'Remedial Back Therapy']
   },
   {
     id: 'clare-rogers',
@@ -368,13 +368,13 @@ She holds advanced certifications in Deep Tissue Massage, Sports Massage, and Re
     role: 'Foot Care Manager',
     qualifications: 'SMAE Institute',
     image: 'https://osteopathyandwellbeing.co.uk/wp-content/uploads/2022/06/Clare-Rogers.webp',
-    bio: `Clare trained at the renowned SMAE Institute in Maidenhead and has been providing expert foot care at Osteopathy & Wellbeing @CT6 since 2012. She centers her practice on a preventative, maintenance-based philosophy, helping clients keep their feet healthy, pain-free, and functional over the long term.
+    bio: `Clare trained at the SMAE Institute in Maidenhead and has offered foot care at the clinic since June 2012.
 
-Understanding that daily movement is fundamentally predicated on foot health, Clare provides compassionate, meticulous clinical care coupled with practical, personalised advice to help clients manage their foot health effectively at home.`,
-    philosophy: 'Clare champions proactive foot health as the indispensable foundation for maintaining autonomy, activity, and independence throughout the aging process.',
-    approach: 'Clare combines meticulous clinical precision with highly practical, lifestyle-matched advice, respecting that effective foot care must be inherently sustainable for the client.',
+She treats corns and hard skin, cracked heels, ingrown toenails, verrucae and fungal conditions, cuts toenails, and provides elderly and diabetic foot care. Home visits are available for people who cannot get to the clinic.`,
+    philosophy: `Many people reach a point where looking after their own feet becomes difficult, because of mobility or eyesight. Clare believes regular professional care helps people stay mobile and active.`,
+    approach: `Clare combines treatment with practical advice, so you can look after your feet between appointments.`,
     specialisations: ['Diabetic Foot Care', 'Corn Removal', 'Elderly Foot Care'],
-    services: ['Corn & Callus Removal', 'Diabetic Foot Screening', 'Routine Nail Care', 'Verruca Treatment']
+    services: ['Corn & Hard Skin Removal', 'Diabetic Foot Care', 'Toenail Cutting', 'Home Visits']
   },
   {
     id: 'magdalena-lius-youard',
@@ -382,11 +382,11 @@ Understanding that daily movement is fundamentally predicated on foot health, Cl
     role: 'Acupuncturist',
     qualifications: 'MSc Chinese Herbal Medicine',
     image: 'https://osteopathyandwellbeing.co.uk/wp-content/uploads/2025/04/Magdalena-Pic-1.jpg',
-    bio: `Magdalena graduated with a degree in acupuncture from the University of Westminster in 2002. She further expanded her skills with an MSc in Chinese Herbal Medicine. Across two decades of dedicated clinical practice, she has successfully addressed a diverse range of complex health conditions, blending ancient wisdom with empirical clinical observation.
+    bio: `Magdalena graduated as an acupuncturist from the University of Westminster in 2002 and has been in full-time practice ever since. As well as her degree in acupuncture, she holds an MSc in Chinese Herbal Medicine.
 
-She frequently works with clients seeking natural, holistic interventions for chronic, hard-to-manage issues including skin conditions, anxiety disorders, functional digestive impediments, and debilitating migraine syndromes.`,
-    philosophy: 'Magdalena views health as a delicate, dynamic equilibrium of internal energy. She utilizes a synthesize approach, harmonizing the body’s internal systems through acupuncture and herbal medicine to facilitate true healing processes.',
-    approach: 'Her diagnostic methodology is deeply rooted in traditional TCM diagnostics, which she then adapts to the unique energetic constitution and lifestyle constraints of each individual patient, ensuring the treatment is deeply personalised.',
+Originally from Sweden, she moved to London in the late 1990s and to the Kent coast in 2012.`,
+    philosophy: `Magdalena practises traditional acupuncture and Chinese herbal medicine, looking at your health as a whole rather than at one symptom in isolation.`,
+    approach: `People come to her with a wide range of concerns, including skin conditions, anxiety and low mood, digestive and hormonal problems, fertility and pregnancy, migraines, and muscle and joint pain. She will talk through with you whether acupuncture is suitable.`,
     specialisations: ['Acupuncture', 'Chinese Herbal Medicine'],
     services: ['Traditional Acupuncture', 'Chinese Herbal Medicine Consultation', 'Migraine Management']
   },
@@ -394,14 +394,14 @@ She frequently works with clients seeking natural, holistic interventions for ch
     id: 'alexandra-gibson',
     name: 'Alexandra Gibson',
     role: 'Clinical Hypnotherapist',
-    qualifications: 'HPD DSFH MNCH(Reg)',
+    qualifications: 'HPD DSFH MNCH(Reg) AFSH CNHC',
     image: 'https://osteopathyandwellbeing.co.uk/wp-content/uploads/2022/06/hypnotherapy-anxiety-insomnia-768x1024.jpg',
-    bio: `Alexandra is a modern psychotherapeutic practitioner focusing on helping clients achieve tangible goals using structured, practical interventions. Her toolkit is extensive, incorporating elements from Solution-Focused Brief Therapy (SFBT), Neuro-Linguistic Programming (NLP), and Cognitive Behavioural Therapy (CBT).
+    bio: `Alexandra is an NCH-registered clinical hypnotherapist. She holds the Hypnotherapy Practitioner Diploma (HPD) and the Diploma in Solution Focused Hypnotherapy (DSFH), and is a member of the Complementary & Natural Healthcare Council (CNHC) and the Association for Solution Focused Hypnotherapy.
 
-Her methodology is grounded in contemporary neuroscience, assisting clients in identifying and neutralizing subconscious roadblocks in a supportive, non-judgmental environment. Her work empowers clients to leverage their own inner resources to overcome persistent challenges.`,
-    philosophy: 'Alexandra fundamentally believes in the brain’s inherent neuroplasticity. Her philosophy centers on empowering clients to rewrite their own internal narratives, moving them from a state of being "problem-focused" to consciously "solution-focused".',
-    approach: 'Alexandra provides a neutral, deeply safe space for collaborative exploration, Utilizing neuroscience-informed techniques to help clients systematically identify and move towards their desired state.',
-    specialisations: ['Hypnotherapy', 'Sleep Therapy', 'Gut Directed Hypnotherapy'],
-    services: ['Solution-Focused Hypnotherapy', 'Anxiety & Stress Management', 'Sleep Therapy']
+She works with people on reducing anxiety, stress and self-limiting beliefs, and has experience helping with insomnia, low mood, fears and phobias, IBS, work-related stress, exam stress and building confidence.`,
+    philosophy: `Alexandra puts her clients at the heart of the process. She is non-judgemental, caring and compassionate.`,
+    approach: `She works with you to find solutions that are right for you, helping you make the changes you want to make.`,
+    specialisations: ['Solution Focused Hypnotherapy', 'Anxiety & Stress', 'Insomnia', 'IBS'],
+    services: ['Solution Focused Hypnotherapy', 'Anxiety & Stress', 'Sleep Problems', 'Confidence']
   }
 ];
