@@ -29,9 +29,9 @@ export const TREATMENTS: Treatment[] = [
   {
     id: 'osteopathy',
     title: 'Osteopathy',
-    desc: 'Holistic manual therapy focusing on the body\'s natural ability to heal itself. Effective for back pain, joint problems, and headaches.',
+    desc: 'Holistic manual therapy focusing on the body\'s natural ability to heal itself. Commonly used for back pain, joint problems and headaches.',
     image: 'https://osteopathyandwellbeing.co.uk/wp-content/uploads/2018/02/4590922.jpg',
-    content: `Osteopathy in Herne Bay is a great way to address musculoskeletal issues. With its holistic approach, osteopathy focuses on the body's natural ability to heal itself. Whether you're dealing with back pain, joint problems, or headaches, an osteopath in Herne Bay can provide personalised treatment to help you feel better. Book an appointment today and experience the benefits of osteopathy firsthand! 
+    content: `Osteopathy in Herne Bay is a great way to address musculoskeletal issues. With its holistic approach, osteopathy focuses on the body's natural ability to heal itself. Whether you're dealing with back pain, joint problems, or headaches, an osteopath in Herne Bay can provide personalised treatment to help you feel better. 
 
 While osteopaths are best known for their treatment of back pain, osteopathy can also help with a wide range of other musculoskeletal conditions. When you visit our clinic for the first time, not only is our aim to recognise your symptoms and relieve your pain as quickly as possible, but to also understand what has caused your pain in the first place so we can help prevent it from recurring. We understand that coming to see an osteopath for the first time can be a bit daunting, so we will do our best to make you feel relaxed and at ease by explaining what we are doing and why.`,
     conditions: [
@@ -48,9 +48,9 @@ While osteopaths are best known for their treatment of back pain, osteopathy can
     image: 'https://osteopathyandwellbeing.co.uk/wp-content/uploads/2018/02/4590924.jpg',
     content: `Swedish massage is the foundation of many Western massage practices. Developed in the nineteenth century by Swedish physiologist Per Henrik Ling, it combines long, flowing strokes, kneading, friction, rhythmic tapping and vibration to loosen tight muscles and improve circulation. 
 
-Unlike deep tissue or sports massage, Swedish massage uses moderate pressure and oils or creams to reduce friction and encourage relaxation. The primary goals are to promote blood flow toward the heart, flush metabolic waste products such as lactic acid, relieve stress and support the body’s natural healing processes. Research suggests that Swedish massage can stimulate the immune system by increasing the production of white blood cells and reducing cortisol levels.`,
+Unlike deep tissue or sports massage, Swedish massage uses moderate pressure and oils or creams to reduce friction and encourage relaxation. The primary goals are to promote blood flow toward the heart, flush metabolic waste products such as lactic acid, relieve stress and support the body’s natural healing processes.`,
     benefits: [
-      'Improves blood flow', 'Eases stress and pain', 'Boosts immunity', 
+      'Improves blood flow', 'Eases stress and pain', 'Leaves you refreshed', 
       'Reduces anxiety', 'Improves sleep quality', 'Relieves muscle adhesions'
     ],
     techniques: [
@@ -139,7 +139,7 @@ The massage follows the large intestine\'s path in a specific clockwise motion t
 Sessions are performed in safe, comfortable side-lying positions with pillows or bolsters to support the abdomen, hips, and knees. This avoids placing pressure on the vena cava and ensures maximum comfort for both mother and baby.`,
     benefits: [
       'Reduces swelling', 'Relieves back and hip pain', 'Lower stress and anxiety', 
-      'Regulates hormone levels', 'Nurtures emotional wellbeing'
+      'Helps you feel at ease', 'Nurtures emotional wellbeing'
     ],
     techniques: [
       'Light Swedish techniques', 'Side-lying positioning', 'Gentle belly strokes (optional)', 
@@ -154,14 +154,14 @@ Sessions are performed in safe, comfortable side-lying positions with pillows or
   {
     id: 'natural-face-lift',
     title: 'Natural Face Lift Massage',
-    desc: 'Rejuvenating blend of acupressure and lymphatic drainage to enhance skin health and release jaw tension.',
+    desc: 'A relaxing blend of acupressure, facial reflexology and lymphatic drainage that leaves skin feeling refreshed.',
     image: 'https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=800',
-    content: `Natural face lift massage combines acupressure, lymphatic drainage, and facial reflexology to enhance skin health and promote relaxation. Unlike invasive procedures, it stimulates the skin’s natural regenerative processes by improving circulation and balancing energy flow. 
+    content: `Natural face lift massage is a blend of Ayurvedic massage, acupressure, facial reflexology and lymphatic drainage. It is gentle, non-invasive and deeply relaxing. 
 
-The treatment targets meridians associated with internal organs to balance the whole body while specifically addressing fine lines, puffiness, and tension in the jaw, neck, and shoulders.`,
+It helps soften the appearance of wrinkles and puffiness, eases tension in the jaw, neck and shoulders, and leaves skin looking and feeling refreshed.`,
     benefits: [
-      'Tones skin', 'Reduces wrinkles & puffiness', 'Relieves jaw tension', 
-      'Improves skin tone', 'Stimulates collagen production'
+      'Softens the look of wrinkles', 'Reduces puffiness', 'Relieves jaw tension', 
+      'Improves muscle tone', 'Skin feels refreshed'
     ],
     techniques: [
       'Acupressure', 'Lymphatic drainage', 'Facial reflexology', 
@@ -171,7 +171,7 @@ The treatment targets meridians associated with internal organs to balance the w
       'Hydration', 'Gentle facial self-massage', 'Minimise caffeine', 
       'Maintain balanced antioxidant diet'
     ],
-    sessionFocus: 'Facial rejuvenation and energy balance.'
+    sessionFocus: 'Facial relaxation and refreshed-looking skin.'
   },
   {
     id: 'indian-head-massage',
@@ -180,10 +180,10 @@ The treatment targets meridians associated with internal organs to balance the w
     image: 'https://osteopathyandwellbeing.co.uk/wp-content/uploads/2023/04/Indian-Head-Mass-pic.webp',
     content: `Indian head massage, traditionally known as Champissage, is a holistic therapy that originated in India thousands of years ago as part of Ayurveda. It focuses on the upper body, where we often hold the most tension. 
 
-The treatment involves rhythmic movements and pressure point work on the scalp, face, neck, and shoulders. It is highly effective for relieving stress-related headaches, Improving focus, and promoting hair health by stimulating circulation to the follicles.`,
+The treatment involves rhythmic movements and pressure point work on the scalp, face, neck, and shoulders. It relieves head, neck and shoulder tension, improves circulation, and may help some people with sinus and headache problems.`,
     benefits: [
-      'Reduces headaches', 'Improves circulation', 'Encourages hair growth', 
-      'Relieves eye strain', 'Promotes clarity and concentration'
+      'Relieves neck & shoulder tension', 'Improves circulation', 'May ease sinus problems', 
+      'May ease headaches', 'Deeply relaxing'
     ],
     techniques: [
       'Gliding scalp strokes', 'Acupressure points (TCM/Ayurveda)', 'Neck & shoulder kneading', 
@@ -204,15 +204,15 @@ The treatment involves rhythmic movements and pressure point work on the scalp, 
 
 Using hands, fingers, and a traditional wooden stick, the therapist applies pressure to specific points and stretches the foot and lower leg. The treatment is both grounding and refreshing, leaving you with a sense of all-over vitality.`,
     benefits: [
-      'Stimulates lymphatic drainage', 'Reduces stiffness', 'Enhances sleep quality', 
-      'Grounding and refreshing', 'Detoxifies the body'
+      'Stimulates reflex points', 'Reduces stiffness', 'Enhances sleep quality', 
+      'Grounding and refreshing', 'Invigorating and deeply relaxing'
     ],
     techniques: [
       'Hand & thumb pressure', 'Wooden stick reflex work', 'Lower leg stretching', 
       'Calf & Achilles gliding'
     ],
     aftercare: [
-      'Drink water to flush toxins', 'Gentle walking', 'Simple foot exercises at home', 
+      'Drink plenty of water', 'Gentle walking', 'Simple foot exercises at home', 
       'Avoid alcohol immediately after'
     ],
     sessionFocus: 'Balance energy flow in feet and legs.'
@@ -224,7 +224,7 @@ Using hands, fingers, and a traditional wooden stick, the therapist applies pres
     image: 'https://osteopathyandwellbeing.co.uk/wp-content/uploads/2018/02/4590924.jpg',
     content: `Hot stone massage uses smooth, heated basalt stones placed on key points of the body to permeate deep into the muscles. The heat dilates blood vessels, increasing circulation and allowing the therapist to work deeply without needing intense pressure. 
 
-Stones are also used as extensions of the therapist’s hands to perform long, gliding strokes. The combination of heat and massage provides a sense of profound relaxation and can be particularly beneficial for chronic conditions like fibromyalgia or multiple sclerosis.`,
+Stones are also used as extensions of the therapist’s hands to perform long, gliding strokes. The combination of heat and massage is deeply relaxing.`,
     benefits: [
       'Alleviates pain', 'Improves flexibility', 'Deep stress reduction', 
       'Vasodilation (increased circulation)', 'Reduces muscle spasms'
@@ -244,7 +244,7 @@ Stones are also used as extensions of the therapist’s hands to perform long, g
     title: 'Sports Massage',
     desc: 'Vigorous deep tissue work designed for injury prevention, performance optimisation, and recovery.',
     image: 'https://osteopathyandwellbeing.co.uk/wp-content/uploads/2019/03/57134432-sports-massage-image.jpg',
-    content: `Sports massage is a specialised form of deep tissue therapy targeting the muscles, tendons, and ligaments involved in athletic performance. It is essential for anyone from professional athletes to weekend warriors. 
+    content: `Sports massage is a specialised form of deep tissue therapy targeting the muscles, tendons, and ligaments involved in athletic performance. It suits anyone from professional athletes to weekend players. 
 
 Unlike relaxation massage, sports massage is more vigorous and can be tailored for pre-event (invigorating), post-event (recovery), or maintenance care. It addresses trigger points, breaks down scar tissue, and ensures muscles remain pliable for optimal function.`,
     benefits: [
@@ -294,9 +294,9 @@ Acupuncture can be used as a treatment for a wide range of health problems, incl
     title: 'Hypnotherapy',
     desc: 'Solution-focused therapy mixing psychotherapy and hypnosis to help achieve goals.',
     image: 'https://osteopathyandwellbeing.co.uk/wp-content/uploads/2022/06/combined-hypno.webp',
-    content: `Solution-focused hypnotherapy is a forward-looking, talking therapy which mixes psychotherapy and hypnosis to help you make progress towards your goals. This is a very effective and powerful combination and means that most people need a lot fewer sessions than traditional psychotherapy.
+    content: `Solution-focused hypnotherapy is a forward-looking, talking therapy which mixes psychotherapy and hypnosis to help you make progress towards your goals.
 
-I work with clients from all walks of life on reducing anxiety, stress and self-limiting beliefs. I am a specialist experienced in working with depression, fears and phobias, problem-solving, PTSD, sleep issues, work-related stress, performance at work, exam stress and building confidence.`,
+Alexandra works with clients from all walks of life on reducing anxiety, stress and self-limiting beliefs, and has experience with depression, fears and phobias, problem-solving, PTSD, sleep issues, work-related stress, performance at work, exam stress and building confidence.`,
     benefits: [
       'Sleep Issues and Insomnia', 'Anxiety', 'IBS – Gut Directed Hypnotherapy',
       'Dental Phobia & Bruxism', 'Weight Management', 'Alcohol Issues',
