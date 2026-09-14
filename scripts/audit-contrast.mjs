@@ -153,6 +153,20 @@ const AUDIT = (ground) => {
 const chromium = await loadChromium();
 const browser = await chromium.launch({ channel: 'msedge', args: ['--use-gl=angle', '--use-angle=swiftshader'] });
 const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+/* Tell the fresh browser the opening film and the door have been seen, using
+   the site's own per-tab flags (App.tsx), so neither can mount late and be
+   measured as the page. The gate helper below stays as a fallback; the
+   entrance itself is exercised by the journey audit. */
+await page.addInitScript(() => {
+  try {
+    sessionStorage.setItem('ct6-intro-film-seen', 'true');
+    sessionStorage.setItem('ct6-entrance-seen', 'true');
+    /* Keep the idle screen out of a measurement it is not part of: under load
+       the focus audit's setup once outlasted the 60s delay and the screensaver
+       covered the page. Saved settings merge over the defaults. */
+    localStorage.setItem('ct6-settings', JSON.stringify({ screensaverDelaySeconds: 3600 }));
+  } catch { /* no storage - the gate helper still clicks through */ }
+});
 
 let totalFail = 0, totalChecked = 0;
 /*

@@ -105,7 +105,38 @@ const pixels = (png, pts) => decoder.evaluate(async ({ b64, pts }) => {
 async function audit(pages) {
   const browser = await chromium.launch({ channel: 'msedge', args: ['--use-gl=angle', '--use-angle=swiftshader'] });
   const page = await browser.newPage({ viewport: { width: 1440, height: 960 }, deviceScaleFactor: 1 });
-  const lines = [], failures = [];
+  /* Tell each fresh browser the opening film and the door have been seen,
+     using the site's own per-tab flags (App.tsx). Clicking them away was a
+     race: under load the film could mount AFTER the helper's quiet rounds and
+     then play over the page being measured - 45 stops on one page once read
+     as film frames. The entrance itself is exercised by the journey audit. */
+  await page.addInitScript(() => {
+    try {
+      sessionStorage.setItem('ct6-intro-film-seen', 'true');
+      sessionStorage.setItem('ct6-entrance-seen', 'true');
+      /* This audit measures focus rings, not the idle screen. Under load its
+         own setup on a heavy page once took over 60s before the first Tab, so
+         the site - correctly - went idle and the screensaver covered the page
+         (timeline: "up 63858ms after load, before any key"). A long delay
+         keeps it out of the way; saved settings merge over the defaults
+         (SettingsContext), so every other setting stays as a new visitor's. */
+      localStorage.setItem('ct6-settings', JSON.stringify({ screensaverDelaySeconds: 3600 }));
+    } catch { /* no storage - the gate helper below still clicks through */ }
+    /* A timeline, so a covered page can say WHY. Runs rose the screensaver
+       over the first page of a worker while a lone keyboard visit never did
+       (130s of tabbing, every keydown reached the window). If it happens,
+       the report prints when it rose and how long after the last key. */
+    const log = (window.__auditTimeline = []);
+    const now = () => Math.round(performance.now());
+    window.addEventListener('keydown', (e) => log.push([now(), 'key', e.key]), true);
+    window.addEventListener('mousedown', () => log.push([now(), 'mousedown', '']), true);
+    let up = false;
+    new MutationObserver(() => {
+      const isUp = !!document.querySelector('.screensaver-field');
+      if (isUp !== up) { up = isUp; log.push([now(), isUp ? 'SCREENSAVER-UP' : 'screensaver-down', '']); }
+    }).observe(document, { childList: true, subtree: true });
+  });
+  const lines = [], failures = [], covered = [];
   let pass = 0, fail = 0, skipped = 0;
   try {
     for (const path of pages) {
@@ -134,7 +165,7 @@ async function audit(pages) {
       await page.evaluate(() => document.activeElement?.blur?.());
 
       const seen = new Set();
-      let pp = 0, pf = 0;
+      let pp = 0, pf = 0, pageCovered = false;
       for (let t = 0; t < TABS; t++) {
         await page.keyboard.press('Tab');
         await page.waitForTimeout(SETTLE);
@@ -152,6 +183,19 @@ async function audit(pages) {
         });
         if (!info || seen.has(info.id)) break;
         seen.add(info.id);
+        /* Something over the page is not a missing ring - say what, and when. */
+        const cover = await page.evaluate(() => {
+          if (!document.querySelector('.screensaver-field')) return null;
+          const log = window.__auditTimeline || [];
+          const rose = log.find((l) => l[1] === 'SCREENSAVER-UP');
+          const lastKey = rose ? [...log].reverse().find((l) => l[0] <= rose[0] && l[1] === 'key') : null;
+          return { rose: rose ? rose[0] : null, sinceKey: rose && lastKey ? rose[0] - lastKey[0] : null, keys: log.filter((l) => l[1] === 'key').length };
+        });
+        if (cover) {
+          covered.push(`${path}: screensaver up ${cover.rose}ms after load, ${cover.sinceKey === null ? 'before any key' : cover.sinceKey + 'ms after the last key'}; found at stop ${seen.size}, ${cover.keys} keys seen`);
+          pageCovered = true;
+          break;
+        }
         const cy = info.y + info.h / 2;
         if (cy < 4 || cy > info.vh - 4 || info.w < 2) { skipped++; continue; }
         const where = `@${Math.round(info.x)},${Math.round(info.y)}`;
@@ -181,12 +225,12 @@ async function audit(pages) {
         if (ok) { pass++; pp++; }
         else { fail++; pf++; failures.push(`${path} "${info.label}" ${where}  ${detail}`); }
       }
-      lines.push(`  ${path.padEnd(16)} ${String(pp + pf).padStart(3)} stops   ${String(pf).padStart(3)} not visible`);
+      lines.push(`  ${path.padEnd(16)} ${String(pp + pf).padStart(3)} stops   ${String(pf).padStart(3)} not visible${pageCovered ? '   COVERED by the screensaver - not judged past here' : ''}`);
     }
   } finally {
     await browser.close();
   }
-  return { lines, failures, pass, fail, skipped };
+  return { lines, failures, pass, fail, skipped, covered };
 }
 
 console.log('\nFocus visibility — every focus stop, judged by rendered pixels\n');
@@ -204,7 +248,12 @@ try {
   console.log(`\n${'='.repeat(64)}`);
   console.log(`FOCUS: ${fail} of ${pass + fail} focus stops show no visible indicator  (${skipped} off-screen, not judged)`);
   for (const f of results.flatMap((r) => r.failures).slice(0, 25)) console.log('   ' + f);
-  exitCode = fail ? 1 : 0;
+  const coveredAll = results.flatMap((r) => r.covered);
+  if (coveredAll.length) {
+    console.log(`\nCOVERED: ${coveredAll.length} page(s) had the screensaver over them, so were not fully judged:`);
+    for (const c of coveredAll) console.log('   ' + c);
+  }
+  exitCode = fail || coveredAll.length ? 1 : 0;
 } finally {
   await decoderBrowser.close();
   server.kill();
