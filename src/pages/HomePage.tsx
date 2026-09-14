@@ -372,7 +372,7 @@ export default function HomePage() {
                {[
                  { icon: Award, label: "Regulated", val: "GOsC Registered", desc: "General Osteopathic Council." },
                  { icon: ShieldCheck, label: "Insurance", val: "Check your policy", desc: "Many insurers cover osteopathy." },
-                 { icon: Clock, label: "Open", val: "Mon–Sat", desc: "Weekdays 8am–8pm." },
+                 { icon: Clock, label: "Open", val: "Mon–Sat", desc: `Weekdays ${CLINIC.openingHours[0].hours}, Saturday ${CLINIC.openingHours[1].hours}.` },
                  { icon: MapPin, label: "Location", val: CLINIC.address.town, desc: `${CLINIC.address.line1}, ${CLINIC.address.postcode}.` }
                ].map((item, i) => (
                  <div key={i} className="bg-white/95 backdrop-blur-sm border border-slate-100 p-8 rounded-[2.5rem] hover:bg-white hover:shadow-[0_20px_40px_rgba(0,0,0,0.05)] hover:border-teal-100 hover:-translate-y-1 transition-all duration-500 group relative overflow-hidden">
@@ -840,7 +840,7 @@ export default function HomePage() {
              <div className="hidden sm:block w-px h-16 bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
              <div className="flex flex-col items-center gap-3">
                 <span className="text-white font-display font-medium text-3xl tracking-tight">{CLINIC.address.postcode}</span>
-                <span className="text-teal-500/80 text-[10px] uppercase tracking-[0.3em] font-black">{CLINIC.address.town} {CLINIC.address.line1.replace(/^d+s/, "")}</span>
+                <span className="text-teal-500/80 text-[10px] uppercase tracking-[0.3em] font-black">{CLINIC.address.town} {CLINIC.address.line1.replace(/^\d+\s/, "")}</span>
              </div>
              <div className="hidden sm:block w-px h-16 bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
              <div className="flex flex-col items-center gap-3">

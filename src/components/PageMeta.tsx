@@ -11,7 +11,7 @@ import { TREATMENTS, PRACTITIONERS } from '../data';
 const SITE_NAME = 'Osteopathy & Wellbeing @CT6';
 const DEFAULT_TITLE = 'Osteopathy & Wellbeing @CT6 | Osteopath in Herne Bay, Kent';
 const DEFAULT_DESCRIPTION =
-  'Osteopathy, sports massage, acupuncture and rehabilitation in Herne Bay, Kent. Osteopaths registered with the General Osteopathic Council.';
+  'Osteopathy, massage, acupuncture, foot care and hypnotherapy in Herne Bay, Kent. Osteopaths registered with the General Osteopathic Council.';
 
 interface Meta {
   title: string;
@@ -27,12 +27,12 @@ const STATIC_META: Record<string, Meta> = {
   '/treatments': {
     title: `Treatments — Osteopathy, Massage & Acupuncture | ${SITE_NAME}`,
     description:
-      'Osteopathy, sports and therapeutic massage, acupuncture, footcare and rehabilitation. What each treatment involves, what it helps with, and how to book.',
+      'Osteopathy, massage, acupuncture, foot care and hypnotherapy. What each treatment involves, what it helps with, and how to book.',
   },
   '/practitioners': {
     title: `Our Practitioners — Registered Osteopaths & Therapists | ${SITE_NAME}`,
     description:
-      'Meet the practitioners: their training, clinical interests and the conditions they treat. Registered, insured and accountable.',
+      'Meet the practitioners: their training, their interests and what they treat. Our osteopaths are registered with the General Osteopathic Council.',
   },
   '/faq': {
     title: `Osteopathy Questions Answered — Before Your First Visit | ${SITE_NAME}`,
@@ -46,7 +46,7 @@ const STATIC_META: Record<string, Meta> = {
   },
   '/locations': {
     title: `Where to Find Us | ${SITE_NAME}`,
-    description: 'Clinic locations, opening times and how to reach us.',
+    description: 'The clinic at 180 High Street, Herne Bay: opening times and how to reach us.',
   },
   '/resources': {
     title: `Patient Resources & Self-Care Guides | ${SITE_NAME}`,
@@ -83,8 +83,8 @@ function resolve(pathname: string): Meta {
     : undefined;
   if (treatment) {
     return {
-      title: `${treatment.title} in Kent | ${SITE_NAME}`,
-      description: `${treatment.desc} What the treatment involves and how to book with a registered practitioner.`.slice(0, 300),
+      title: `${treatment.title} in Herne Bay, Kent | ${SITE_NAME}`,
+      description: `${treatment.desc} What the treatment involves and how to book at the Herne Bay clinic.`.slice(0, 300),
     };
   }
 
