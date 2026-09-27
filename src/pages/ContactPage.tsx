@@ -144,7 +144,7 @@ export default function ContactPage() {
                 <a href={`tel:${CLINIC.telephoneLink}`} className="text-xl font-bold text-slate-900 hover:text-teal-600 transition-colors block">
                   {CLINIC.telephone}
                 </a>
-                <p className="text-xs text-slate-500 font-medium">{CLINIC.openingHours[0].days}, {CLINIC.openingHours[0].hours}</p>
+                <p className="text-xs text-slate-500 font-medium">{CLINIC.openingHours.slice(0, 2).map((h) => `${h.days}, ${h.hours}`).join(" · ")}</p>
               </div>
             </div>
 
@@ -338,7 +338,7 @@ export default function ContactPage() {
                   <div className="flex items-center justify-center gap-8 pt-4">
                      <div className="flex items-center gap-2 text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">
                         <Clock size={12} className="text-teal-500" />
-                        {CLINIC.openingHours[0].days}, {CLINIC.openingHours[0].hours}
+                        {CLINIC.openingHours.slice(0, 2).map((h) => `${h.days}, ${h.hours}`).join(" · ")}
                      </div>
                      <div className="flex items-center gap-2 text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">
                         <MessageSquare size={12} className="text-teal-500" />

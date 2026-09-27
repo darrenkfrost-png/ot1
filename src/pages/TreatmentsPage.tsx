@@ -61,9 +61,9 @@ export default function TreatmentsPage() {
         </div>
         <div className="relative z-10 max-w-3xl space-y-8">
           <span className="inline-flex items-center gap-3 px-5 py-2 bg-teal-500/10 backdrop-blur-md rounded-full border border-teal-400/20 text-teal-400 font-bold text-xs uppercase tracking-[0.4em] mb-4">
-            <Sparkles size={16} className="animate-pulse" /> Clinical Services
+            <Sparkles size={16} className="animate-pulse" /> What we offer
           </span>
-          <h1 className="text-6xl md:text-8xl font-display font-medium text-white mb-6 tracking-tighter leading-[0.85]">Science-Led <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-300">Total Body Care</span></h1>
+          <h1 className="text-5xl sm:text-6xl md:text-8xl font-display font-medium text-white mb-6 tracking-tighter leading-[0.9] break-words">Our <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-300">treatments</span></h1>
           <p className="text-2xl text-slate-400 font-light leading-relaxed max-w-2xl border-l-4 border-teal-500 pl-8">Osteopathy, massage, acupuncture, foot care and hypnotherapy, under one roof on Herne Bay High Street.</p>
           
           <div className="flex flex-wrap gap-6 pt-4">

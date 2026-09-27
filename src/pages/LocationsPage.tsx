@@ -47,7 +47,7 @@ export default function LocationsPage() {
         <span className="text-sm font-black text-teal-600 uppercase tracking-[0.4em]">Herne Bay, Kent</span>
         <h1 className="text-5xl md:text-7xl font-display font-medium text-slate-50 tracking-tight">Find the Clinic</h1>
         <p className="text-xl text-slate-300 font-light max-w-2xl mx-auto">
-          One accessible, professional clinical space on Herne Bay High Street, designed for your comfort and recovery.
+          One clinic, on Herne Bay High Street. Here is how to find us, and when we are open.
         </p>
       </div>
 

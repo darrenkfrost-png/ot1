@@ -94,7 +94,7 @@ export default function GalleryPage() {
 
       <header className="text-center space-y-6 max-w-2xl mx-auto">
         <span className="inline-flex items-center gap-2 text-teal-600 font-bold text-xs uppercase tracking-[0.3em]">
-          <Sparkles size={16} /> Visual Journey
+          <Sparkles size={16} /> Guides & tour
         </span>
         <h1 className="text-5xl md:text-6xl font-display font-medium text-slate-50 tracking-tight leading-tight">Patient <span className="text-teal-600">guides</span></h1>
         <p className="text-xl text-slate-300 font-light leading-relaxed">Illustrated guides to the problems we treat, and a look inside the clinic in Herne Bay.</p>
