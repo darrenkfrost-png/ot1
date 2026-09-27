@@ -170,7 +170,7 @@ export default function SettingsPanel() {
       {!settings.hideOverlays && (
         <button
           onClick={handleOpen}
-          className="fixed top-24 sm:top-20 right-4 sm:right-8 p-3.5 bg-white/90 backdrop-blur-md rounded-2xl shadow-premium border border-slate-200/60 hover:bg-white transition-all hover:scale-105 active:scale-95 group focus-visible:outline-teal-500"
+          className="fixed bottom-28 right-4 lg:bottom-auto lg:top-20 lg:right-8 p-3.5 bg-white/90 backdrop-blur-md rounded-2xl shadow-premium border border-slate-200/60 hover:bg-white transition-all hover:scale-105 active:scale-95 group focus-visible:outline-teal-500"
           style={{ zIndex: 'calc(var(--z-overlay) - 5)' }}
           aria-label="Open Settings"
         >
