@@ -172,7 +172,7 @@ export default function HomePage() {
         {[
           { label: "Choose a Treatment", icon: Calendar, path: "/treatments", color: "bg-teal-700 border-teal-500 text-white shadow-[0_0_40px_rgba(20,184,166,0.2)]", sub: "Then Book Online", desc: "See what we treat, then book at the Herne Bay clinic.", hoverColor: "group-hover:bg-teal-800" },
           { label: "Our Treatments", icon: Stethoscope, path: "/treatments", color: "bg-slate-900 border-slate-700 text-white shadow-xl", sub: "What We Offer", desc: "Osteopathy, acupuncture, massage, foot care.", hoverColor: "group-hover:bg-slate-800" },
-          { label: "Meet the Team", icon: Users, path: "/practitioners", color: "bg-white/95 backdrop-blur-3xl border-white/40 text-slate-900 shadow-premium", sub: "Expert Practitioners", desc: "View clinical backgrounds.", hoverColor: "group-hover:bg-white" },
+          { label: "Meet the Team", icon: Users, path: "/practitioners", color: "bg-white/95 backdrop-blur-3xl border-white/40 text-slate-900 shadow-premium", sub: "Who You Will See", desc: "Each practitioner's training and interests.", hoverColor: "group-hover:bg-white" },
           { label: "Recovery Tools", icon: Activity, path: "/dashboard", color: "bg-white/95 backdrop-blur-3xl border-white/40 text-slate-900 shadow-premium", sub: "A Preview", desc: "A look at the tools we are building.", hoverColor: "group-hover:bg-white" }
         ].map((action, i) => (
           <motion.div key={i} variants={fadeInUp}>

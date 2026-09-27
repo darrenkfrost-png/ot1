@@ -49,6 +49,14 @@ export default function PractitionerDetailPage() {
       className="max-w-5xl mx-auto space-y-10"
     >
 
+      {/* On a phone the photo and contact card stack first, so the name came
+          after them. Show it first there; the real h1 below stays for screen
+          readers and becomes visible from md up. */}
+      <div className="md:hidden" aria-hidden="true">
+        <div className="text-4xl font-display font-medium text-slate-50 mb-2 tracking-tight">{practitioner.name}</div>
+        <div className="text-xl text-teal-300 font-light tracking-tight">{practitioner.role}</div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
         <div className="md:col-span-4 space-y-8">
           <motion.div 
@@ -119,7 +127,7 @@ export default function PractitionerDetailPage() {
         </div>
 
         <div className="md:col-span-8 space-y-12">
-          <div>
+          <div className="sr-only md:not-sr-only">
             <h1 className="text-5xl md:text-6xl font-display font-medium text-slate-50 mb-4 tracking-tight">{practitioner.name}</h1>
             <p className="text-2xl text-teal-300 font-light tracking-tight">{practitioner.role}</p>
           </div>
