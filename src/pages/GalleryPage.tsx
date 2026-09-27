@@ -276,7 +276,7 @@ export default function GalleryPage() {
                  src={tourVideoUrl}
                  className="w-full h-full"
                  allow="autoplay"
-                 title="Clinical Virtual Tour"
+                 title="Clinic tour video"
                />
             </motion.div>
           </motion.div>

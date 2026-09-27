@@ -102,7 +102,7 @@ export default function ResourcesPage() {
             <LifeBuoy size={16} /> Patient Support
           </span>
           <h1 className="text-5xl md:text-6xl font-display font-medium text-white mb-6 tracking-tight leading-tight">Patient Resources</h1>
-          <p className="text-xl text-slate-300 font-light leading-relaxed">Access our comprehensive library of clinical documents, exercise videos, and expert guidance for your wellbeing.</p>
+          <p className="text-xl text-slate-300 font-light leading-relaxed">Guides to read, short films to watch, and useful contacts, for between your appointments.</p>
         </div>
         <div className="absolute top-0 right-0 w-96 h-96 bg-teal-500/10 rounded-full blur-[120px] -mr-32 -mt-32"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/5 rounded-full blur-[100px] -ml-32 -mb-32"></div>
