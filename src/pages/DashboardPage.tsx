@@ -357,7 +357,7 @@ export default function DashboardPage() {
                     <Activity size={14} className="animate-pulse" /> Patient Tools — Preview
                 </span>
                 <h1 className="text-5xl lg:text-7xl font-display font-bold tracking-tighter leading-none text-white">
-                    The <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-300">Progress Board.</span>
+                    Recovery <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-300">Tools.</span>
                 </h1>
                 <p className="text-slate-400 max-w-xl text-lg font-light leading-relaxed">
                     Try the self-help tools we're building: log daily exercises, track movement and discomfort, and put together a summary sheet to bring to your appointment.

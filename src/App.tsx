@@ -80,7 +80,7 @@ import { TREATMENTS, PRACTITIONERS } from './data';
 // --- Components ---
 const NAV_ITEMS = [
   { id: 'home', label: 'Home', icon: Home, path: '/' },
-  { id: 'health-dashboard', label: 'Progress Board', icon: Activity, path: '/dashboard' },
+  { id: 'health-dashboard', label: 'Recovery Tools', icon: Activity, path: '/dashboard' },
   { id: 'treatments', label: 'Treatments', icon: HeartPulse, path: '/treatments' },
   { id: 'practitioners', label: 'Practitioners', icon: Users, path: '/practitioners' },
   { id: 'gallery', label: 'Gallery', icon: ImageIcon, path: '/gallery' },
@@ -894,12 +894,12 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
 function AppContent() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   // The brand film opens the app, then hands over to the entry door.
-  // Shown once per TAB (sessionStorage is per tab, not per browser session),
-  // so a refresh or a link followed in the same tab does not replay it; a new
-  // tab still does. Change to useState(true) to play it on every load.
+  // Shown once per VISIT: a session cookie is shared by every tab and ends
+  // when the browser closes, so a new tab no longer replays it (founder,
+  // 2026-09-27). Change to useState(true) to play it on every load.
   const [showIntroVideo, setShowIntroVideo] = useState(() => {
     try {
-      return sessionStorage.getItem('ct6-intro-film-seen') !== 'true';
+      return !seenThisVisit('ct6-intro-film-seen');
     } catch {
       return true;
     }
@@ -914,14 +914,14 @@ function AppContent() {
    */
   const [showIntro, setShowIntro] = useState(() => {
     try {
-      return sessionStorage.getItem('ct6-entrance-seen') !== 'true';
+      return !seenThisVisit('ct6-entrance-seen');
     } catch {
       return true;
     }
   });
   const completeEntrance = () => {
     try {
-      sessionStorage.setItem('ct6-entrance-seen', 'true');
+      markSeenThisVisit('ct6-entrance-seen');
     } catch { /* private mode - just carry on */ }
     setShowIntro(false);
   };
@@ -929,7 +929,7 @@ function AppContent() {
 
   const completeIntroVideo = () => {
     try {
-      sessionStorage.setItem('ct6-intro-film-seen', 'true');
+      markSeenThisVisit('ct6-intro-film-seen');
     } catch { /* private mode — just carry on */ }
     setShowIntroVideo(false);
   };
@@ -1027,6 +1027,26 @@ function AppContent() {
       </ToastProvider>
     </AnalyticsProvider>
   );
+}
+
+/*
+ * "Seen this visit" for the opening film and the door. A session cookie (no
+ * expiry, first-party, never sent anywhere but this site) is what every tab of
+ * one browser visit shares; it is strictly necessary for the page to behave
+ * as asked, so it needs no consent banner - but the cookie policy should name
+ * it: ct6-intro-film-seen, ct6-entrance-seen. The old per-tab flag still counts.
+ */
+function seenThisVisit(key: string): boolean {
+  try {
+    if (document.cookie.split('; ').includes(`${key}=1`)) return true;
+    return sessionStorage.getItem(key) === 'true';
+  } catch {
+    return false;
+  }
+}
+function markSeenThisVisit(key: string) {
+  try { document.cookie = `${key}=1; path=/; SameSite=Lax`; } catch { /* blocked - carry on */ }
+  try { sessionStorage.setItem(key, 'true'); } catch { /* private mode - carry on */ }
 }
 
 export default function App() {

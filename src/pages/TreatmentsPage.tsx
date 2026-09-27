@@ -31,7 +31,7 @@ export default function TreatmentsPage() {
   const [activeCategory, setActiveCategory] = useState('All');
   const { showToast } = useToast();
 
-  const categories = ['All', 'Osteopathy', 'Physiotherapy', 'Massage', 'Wellness', 'Footcare'];
+  const categories = ['All', 'Osteopathy', 'Massage', 'Wellness', 'Footcare'];
 
   const filteredTreatments = useMemo(() => {
     return TREATMENTS.filter(t => {
@@ -40,7 +40,6 @@ export default function TreatmentsPage() {
       
       if (activeCategory === 'All') return matchesSearch;
       if (activeCategory === 'Osteopathy') return matchesSearch && t.id === 'osteopathy';
-      if (activeCategory === 'Physiotherapy') return matchesSearch && t.id === 'physiotherapy';
       if (activeCategory === 'Massage') return matchesSearch && (t.title.includes('Massage') || t.id.includes('massage'));
       if (activeCategory === 'Wellness') return matchesSearch && (t.id === 'hypnotherapy' || t.id === 'acupuncture');
       if (activeCategory === 'Footcare') return matchesSearch && t.id === 'footcare';

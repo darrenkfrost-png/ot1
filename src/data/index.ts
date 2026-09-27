@@ -262,21 +262,6 @@ Unlike relaxation massage, sports massage is more vigorous and can be tailored f
     sessionFocus: 'Injury prevention, performance optimisation, and physical recovery.'
   },
   {
-    id: 'physiotherapy',
-    title: 'Physiotherapy',
-    desc: 'Restores movement and function affected by injury, illness or disability.',
-    image: 'https://osteopathyandwellbeing.co.uk/wp-content/uploads/2018/02/foot.jpg',
-    content: `Physiotherapy helps to restore movement and function when someone is affected by injury, illness or disability. It can also help to reduce your risk of injury or illness in the future. Physiotherapy can be helpful for people of all ages with a wide range of health conditions.
-
-Physiotherapists consider the body as a whole, rather than just focusing on the individual aspects of an injury or illness.`,
-    conditions: [
-      'Brain or nervous system – such as movement problems resulting from a stroke, MS or Parkinson\'s',
-      'Bones, joints and soft tissue – such as back pain, neck pain, shoulder pain and sports injuries',
-      'Heart and circulation – such as rehabilitation after a heart attack',
-      'Lungs and breathing – such as COPD and cystic fibrosis'
-    ]
-  },
-  {
     id: 'acupuncture',
     title: 'Acupuncture',
     desc: 'Western-style medical acupuncture stimulating sensory nerves to produce natural pain-relieving substances.',
@@ -300,7 +285,7 @@ Alexandra works with clients from all walks of life on reducing anxiety, stress 
     benefits: [
       'Sleep Issues and Insomnia', 'Anxiety', 'IBS – Gut Directed Hypnotherapy',
       'Dental Phobia & Bruxism', 'Weight Management', 'Alcohol Issues',
-      'Depression', 'Diabetes', 'Social Media Anxiety', 'Exam Stress or Performance',
+      'Depression', 'Social Media Anxiety', 'Exam Stress or Performance',
       'Procrastination or Decision Making', 'Fear & Phobias'
     ]
   },
@@ -403,5 +388,29 @@ She works with people on reducing anxiety, stress and self-limiting beliefs, and
     approach: `She works with you to find solutions that are right for you, helping you make the changes you want to make.`,
     specialisations: ['Solution Focused Hypnotherapy', 'Anxiety & Stress', 'Insomnia', 'IBS'],
     services: ['Solution Focused Hypnotherapy', 'Anxiety & Stress', 'Sleep Problems', 'Confidence']
+  }
+];
+
+/**
+ * Parked, not deleted. Physiotherapy has a page on the clinic's own site but no
+ * physiotherapist is named there or here, so it is not offered on this site.
+ * To bring it back, move this entry into TREATMENTS and restore the
+ * 'Physiotherapy' filter tab in TreatmentsPage.
+ */
+export const PARKED_TREATMENTS: Treatment[] = [
+  {
+    id: 'physiotherapy',
+    title: 'Physiotherapy',
+    desc: 'Restores movement and function affected by injury, illness or disability.',
+    image: 'https://osteopathyandwellbeing.co.uk/wp-content/uploads/2018/02/foot.jpg',
+    content: `Physiotherapy helps to restore movement and function when someone is affected by injury, illness or disability. It can also help to reduce your risk of injury or illness in the future. Physiotherapy can be helpful for people of all ages with a wide range of health conditions.
+
+Physiotherapists consider the body as a whole, rather than just focusing on the individual aspects of an injury or illness.`,
+    conditions: [
+      'Brain or nervous system – such as movement problems resulting from a stroke, MS or Parkinson\'s',
+      'Bones, joints and soft tissue – such as back pain, neck pain, shoulder pain and sports injuries',
+      'Heart and circulation – such as rehabilitation after a heart attack',
+      'Lungs and breathing – such as COPD and cystic fibrosis'
+    ]
   }
 ];

@@ -59,7 +59,7 @@ const STATIC_META: Record<string, Meta> = {
       'Illustrated guides to sciatica, spinal anatomy and recovery, plus a look inside the clinic.',
   },
   '/dashboard': {
-    title: `Your Progress | ${SITE_NAME}`,
+    title: `Recovery Tools (preview) | ${SITE_NAME}`,
     description: 'Track your rehabilitation progress between appointments.',
     noindex: true,
   },
@@ -169,7 +169,7 @@ export default function PageMeta() {
         locations: 'Locations',
         contact: 'Contact',
         faq: 'Questions',
-        dashboard: 'Your Progress',
+        dashboard: 'Recovery Tools',
       };
       crumbs.push({
         name: sectionLabels[segments[0]] ?? segments[0],

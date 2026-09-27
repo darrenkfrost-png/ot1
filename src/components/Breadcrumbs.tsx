@@ -27,7 +27,7 @@ export default function Breadcrumbs() {
         case 'resources': return 'Patient Resources';
         case 'locations': return 'Locations';
         case 'contact': return 'Contact Us';
-        case 'dashboard': return 'Progress Board';
+        case 'dashboard': return 'Recovery Tools';
         // Without this the fallback title-cases the path into "Faq", which is
         // not what the page is called anywhere else in the interface.
         case 'faq': return 'Questions';

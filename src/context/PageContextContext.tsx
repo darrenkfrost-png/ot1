@@ -90,7 +90,7 @@ const resolveModuleMetadata = (pathname: string): Partial<PageContextData> => {
       };
     case 'dashboard':
       return {
-        moduleTitle: 'Progress Board',
+        moduleTitle: 'Recovery Tools',
         moduleDescription: 'Patient personal progress, treatment history, and upcoming appointments.',
         category: 'Patient Portal',
         selectedItemId: null,

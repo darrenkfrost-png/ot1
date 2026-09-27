@@ -173,7 +173,7 @@ export default function HomePage() {
           { label: "Choose a Treatment", icon: Calendar, path: "/treatments", color: "bg-teal-700 border-teal-500 text-white shadow-[0_0_40px_rgba(20,184,166,0.2)]", sub: "Then Book Online", desc: "See what we treat, then book at the Herne Bay clinic.", hoverColor: "group-hover:bg-teal-800" },
           { label: "Our Treatments", icon: Stethoscope, path: "/treatments", color: "bg-slate-900 border-slate-700 text-white shadow-xl", sub: "What We Offer", desc: "Osteopathy, acupuncture, massage, foot care.", hoverColor: "group-hover:bg-slate-800" },
           { label: "Meet the Team", icon: Users, path: "/practitioners", color: "bg-white/95 backdrop-blur-3xl border-white/40 text-slate-900 shadow-premium", sub: "Expert Practitioners", desc: "View clinical backgrounds.", hoverColor: "group-hover:bg-white" },
-          { label: "Progress Board", icon: Activity, path: "/dashboard", color: "bg-white/95 backdrop-blur-3xl border-white/40 text-slate-900 shadow-premium", sub: "A Preview", desc: "A look at the tools we are building.", hoverColor: "group-hover:bg-white" }
+          { label: "Recovery Tools", icon: Activity, path: "/dashboard", color: "bg-white/95 backdrop-blur-3xl border-white/40 text-slate-900 shadow-premium", sub: "A Preview", desc: "A look at the tools we are building.", hoverColor: "group-hover:bg-white" }
         ].map((action, i) => (
           <motion.div key={i} variants={fadeInUp}>
             <Link 
@@ -560,9 +560,9 @@ export default function HomePage() {
                   <BookOpen size={16} className="text-teal-600" /> Guides & films
                 </div>
                 <h2 className="text-5xl md:text-7xl font-display font-medium text-slate-50 leading-[1.05] tracking-tight">
-                  Your Health, <br/>
+                  Understand <br/>
                   <span className="relative">
-                    <span className="relative z-10 text-teal-600">Fully Mastered</span>
+                    <span className="relative z-10 text-teal-600">what's going on</span>
                     <svg className="absolute w-full h-4 -bottom-1 left-0 text-teal-200/50 -z-0" viewBox="0 0 100 20" preserveAspectRatio="none"><path d="M0 10 Q50 20 100 10" fill="none" stroke="currentColor" strokeWidth="8"/></svg>
                   </span>.
                 </h2>

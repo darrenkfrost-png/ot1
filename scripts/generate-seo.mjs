@@ -43,7 +43,8 @@ function idsBetween(source, startMarker, endMarker) {
 
 const data = readFileSync(join(root, 'src/data/index.ts'), 'utf8');
 const treatments = idsBetween(data, 'export const TREATMENTS', 'export const PRACTITIONERS');
-const practitioners = idsBetween(data, 'export const PRACTITIONERS', null);
+// PARKED_TREATMENTS follows PRACTITIONERS in the file and is not a page.
+const practitioners = idsBetween(data, 'export const PRACTITIONERS', 'export const PARKED_TREATMENTS');
 
 // priority and change frequency reflect how central each page is, not wishes
 const staticRoutes = [
