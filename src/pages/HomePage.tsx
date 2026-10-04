@@ -1,7 +1,8 @@
 import React, { useRef } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
+import { motion, useScroll, useTransform, AnimatePresence, useReducedMotion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { useToast } from '../components/ToastSystem';
+import { useSettings } from '../context/SettingsContext';
 import { 
   Calendar, Users, Phone, BookOpen, Clock, MapPin, Activity, Sparkles,
   ChevronRight, ShieldCheck, Zap, ArrowRight, TrendingUp, Brain, Award,
@@ -15,8 +16,36 @@ import { REVIEWS, REVIEWS_SOURCE } from '../data/reviews';
 import { VIDEOS } from '../data/resources';
 import { GALLERY_IMAGES } from '../data/images';
 
+/* The days the clinic is open, read from its own hours: "Monday to Saturday". */
+const OPEN_DAYS = CLINIC.openingHours.filter((s) => s.hours !== 'Closed');
+const FIRST_OPEN_DAY = OPEN_DAYS[0]?.days.split(' – ')[0] ?? '';
+const LAST_OPEN_DAY = OPEN_DAYS[OPEN_DAYS.length - 1]?.days.split(' – ').pop() ?? '';
+
+/* Shown on each home treatment card. Only things true of EVERY treatment,
+   all read from the clinic's details - nothing about results. */
+const TREATMENT_FACTS = [
+  { icon: Calendar, text: 'Book online' },
+  { icon: Phone, text: `Or call ${CLINIC.telephone}` },
+  { icon: MapPin, text: `${CLINIC.address.line1}, ${CLINIC.address.town}` },
+  { icon: Clock, text: `Open ${FIRST_OPEN_DAY} to ${LAST_OPEN_DAY}` },
+];
+
 export default function HomePage() {
   const { showToast } = useToast();
+  // The endless loops on this page (the floating review, the glowing orbs,
+  // the scroll cue) stop when the device asks for less motion, or the
+  // visitor turns on the site's own "reduce motion" setting, or turns off
+  // "Page movement and film" - the same three signals the rest of the site
+  // obeys. The settings only add a CSS class and a MotionConfig, and neither
+  // stops an opacity loop, so they are checked here. The review in
+  // particular is text people are reading; it must be able to hold still.
+  const deviceCalm = useReducedMotion();
+  const { settings } = useSettings();
+  const calm = !!deviceCalm || !!settings.reduceMotion || settings.animationsEnabled === false;
+  // A still target with no duration, rather than removing `animate`: taking
+  // the prop away does not reliably halt a loop that is already running, so
+  // switching the setting on mid-visit settles each piece back to rest.
+  const STILL = { duration: 0 };
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
@@ -102,8 +131,8 @@ export default function HomePage() {
             </motion.h1>
             
             <motion.div variants={fadeInUp} className="relative inline-block">
-               <p className="text-xl md:text-3xl text-slate-300/90 max-w-2xl leading-relaxed font-light border-l-[6px] border-teal-500 pl-8 drop-shadow-sm opacity-90">
-                 Osteopathy, acupuncture, massage and foot care in Herne Bay, from practitioners registered with their professional bodies.
+               <p className="text-xl md:text-3xl text-slate-200 max-w-2xl leading-relaxed font-light border-l-[6px] border-teal-500 pl-8 drop-shadow-sm">
+                 Osteopathy, acupuncture, massage, foot care and hypnotherapy in Herne Bay, from qualified practitioners. Our osteopaths are registered with the General Osteopathic Council.
                </p>
             </motion.div>
           </motion.div>
@@ -120,18 +149,18 @@ export default function HomePage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="focus-inset calm-cta w-full sm:w-auto px-12 py-6 rounded-2xl bg-teal-700 hover:bg-teal-800 text-white font-bold text-xl transition-all shadow-[0_0_40px_rgba(20,184,166,0.3)] hover:shadow-[0_0_60px_rgba(20,184,166,0.5)] hover:-translate-y-1.5 active:scale-[0.98] flex items-center justify-center gap-4 group cinematic-glow"
-                aria-label="Book an assessment — opens our booking system in a new tab"
+                aria-label="Book Assessment — opens our booking system in a new tab"
               >
                 <Calendar size={22} className="group-hover:rotate-12 transition-transform" />
                 Book Assessment
                 <ExternalLink size={16} className="opacity-70" aria-hidden="true" />
               </a>
-              <span className="text-[11px] text-white/50 font-medium tracking-wide">
+              <span className="text-[11px] text-slate-300 font-medium tracking-wide">
                 Opens our secure booking system in a new tab
               </span>
             </div>
             <Link to="/treatments" className="w-full sm:w-auto px-12 py-6 rounded-2xl bg-white/5 backdrop-blur-2xl border border-white/10 hover:bg-white/10 text-white font-semibold text-lg transition-all hover:border-white/30 flex items-center justify-center gap-4 group/btn shadow-[0_8px_32px_0_rgba(255,255,255,0.05)]">
-              Our Specialties <ChevronRight size={18} className="opacity-50 group-hover/btn:translate-x-1 group-hover/btn:opacity-100 transition-all" />
+              Our Treatments <ChevronRight size={18} className="opacity-50 group-hover/btn:translate-x-1 group-hover/btn:opacity-100 transition-all" />
             </Link>
           </motion.div>
         </div>
@@ -150,11 +179,11 @@ export default function HomePage() {
           transition={{ delay: 2, duration: 1 }}
           className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 hidden sm:flex pointer-events-none"
         >
-           <span className="text-[9px] font-black uppercase tracking-[0.4em] text-white/70">Scroll to Explore</span>
+           <span className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-200">Scroll to Explore</span>
            <div className="w-px h-12 bg-gradient-to-b from-white/40 to-transparent relative overflow-hidden">
-             <motion.div 
-                animate={{ y: [0, 48] }}
-                transition={{ duration: 1.5, ease: "linear", repeat: Infinity }}
+             <motion.div
+                animate={calm ? { y: 0 } : { y: [0, 48] }}
+                transition={calm ? STILL : { duration: 1.5, ease: "linear", repeat: Infinity }}
                 className="w-full h-1/2 bg-teal-400 blur-[2px]"
              />
            </div>
@@ -171,7 +200,7 @@ export default function HomePage() {
       >
         {[
           { label: "Choose a Treatment", icon: Calendar, path: "/treatments", color: "bg-teal-700 border-teal-500 text-white shadow-[0_0_40px_rgba(20,184,166,0.2)]", sub: "Then Book Online", desc: "See what we treat, then book at the Herne Bay clinic.", hoverColor: "group-hover:bg-teal-800" },
-          { label: "Our Treatments", icon: Stethoscope, path: "/treatments", color: "bg-slate-900 border-slate-700 text-white shadow-xl", sub: "What We Offer", desc: "Osteopathy, acupuncture, massage, foot care.", hoverColor: "group-hover:bg-slate-800" },
+          { label: "Our Treatments", icon: Stethoscope, path: "/treatments", color: "bg-slate-900 border-slate-700 text-white shadow-xl", sub: "What We Offer", desc: "Osteopathy, acupuncture, massage, foot care, hypnotherapy.", hoverColor: "group-hover:bg-slate-800" },
           { label: "Meet the Team", icon: Users, path: "/practitioners", color: "bg-white/95 backdrop-blur-3xl border-white/40 text-slate-900 shadow-premium", sub: "Who You Will See", desc: "Each practitioner's training and interests.", hoverColor: "group-hover:bg-white" },
           { label: "Recovery Tools", icon: Activity, path: "/dashboard", color: "bg-white/95 backdrop-blur-3xl border-white/40 text-slate-900 shadow-premium", sub: "A Preview", desc: "A look at the tools we are building.", hoverColor: "group-hover:bg-white" }
         ].map((action, i) => (
@@ -196,7 +225,10 @@ export default function HomePage() {
                    )}>
                      <action.icon size={28} />
                    </div>
-                   <h4 className="font-display font-bold text-2xl tracking-tight leading-tight mb-2 drop-shadow-sm">{action.label}</h4>
+                   {/* h2, not h4: these four are the page's main choices and sit
+                       directly under the h1. The classes set the size, so the
+                       level change is invisible and only helps screen readers. */}
+                   <h2 className="font-display font-bold text-2xl tracking-tight leading-tight mb-2 drop-shadow-sm">{action.label}</h2>
                    <p className={cn("text-[10px] font-black uppercase tracking-[0.25em]", action.color.includes('bg-teal') || action.color.includes('bg-slate') ? "text-white/90" : "text-teal-700")}>{action.sub}</p>
                  </div>
                  {/*
@@ -240,8 +272,12 @@ export default function HomePage() {
                 We look for what is actually causing the problem, treat that, and show you how to keep it settled — rather than easing the symptoms for a day.
               </p>
               <div className="pt-6">
+                 {/* Resources holds the films, a written guide and common
+                     questions. The full set of illustrated guides is on the
+                     Gallery page, which the "Illustrated Guides" tile below
+                     links to. */}
                  <Link to="/resources" className="focus-inset inline-flex items-center gap-3 px-8 py-4 bg-slate-950 text-white rounded-2xl text-xs font-bold uppercase tracking-widest group shadow-xl shadow-slate-900/20 hover:-translate-y-1 transition-all">
-                    Patient Guides &amp; Films <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                    Guides, films and answers <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                  </Link>
               </div>
            </motion.div>
@@ -314,18 +350,20 @@ export default function HomePage() {
                     The clinic, <br/> <span className="relative inline-block"><span className="relative z-10 text-slate-950">at a glance.</span><div className="absolute bottom-2 left-0 right-0 h-4 bg-teal-300/40 -z-0 -rotate-2"></div></span>
                   </h2>
                   <p className="text-xl text-slate-600 font-light leading-relaxed max-w-md drop-shadow-sm">
-                    Registered practitioners, genuine reviews, opening hours and where to find us — the essentials, before you book.
+                    Qualified practitioners, genuine reviews, opening hours and where to find us — the essentials, before you book.
                   </p>
                 </div>
 
                 <div className="space-y-8 bg-white/95 backdrop-blur-md p-8 rounded-[2rem] border border-white shadow-sm">
                     {/* Checkable figures only. A 98.4% recovery rate and a
                         4.9/5 satisfaction score were stated here with nothing
-                        behind them; the real Google rating is better anyway. */}
+                        behind them; the real Google rating is better anyway.
+                        Read from the data files, never typed here, so this
+                        card cannot drift from every other page. */}
                     {[
-                      { label: "Google rating", value: "5.0", color: "teal", delay: 0.2 },
-                      { label: "Reviews", value: "56", color: "emerald", delay: 0.4 },
-                      { label: "Practising since", value: "2012", color: "blue", delay: 0.6 }
+                      { label: "Google rating", value: REVIEWS_SOURCE.rating, color: "teal", delay: 0.2 },
+                      { label: "Reviews", value: String(REVIEWS_SOURCE.count), color: "emerald", delay: 0.4 },
+                      { label: "Practising since", value: String(CLINIC.establishedYear), color: "blue", delay: 0.6 }
                     ].map((stat, i) => (
                       <div key={i} className="space-y-3">
                          <div className="flex justify-between text-sm font-bold uppercase tracking-[0.2em] text-slate-600">
@@ -407,10 +445,10 @@ export default function HomePage() {
                 <Users size={16} className="text-teal-400" /> The Team
               </div>
               <h2 className="text-6xl font-display font-medium text-slate-50 tracking-tight leading-[1.05]">Meet the team.</h2>
-              <p className="text-2xl text-slate-400 font-light max-w-2xl leading-relaxed">Registered practitioners, each with their own specialism — from osteopathy to foot care.</p>
+              <p className="text-2xl text-slate-400 font-light max-w-2xl leading-relaxed">Qualified practitioners, each with their own specialism — from osteopathy to foot care. Our osteopaths are registered with the General Osteopathic Council.</p>
             </motion.div>
             <Link to="/practitioners" className="shrink-0 px-10 py-5 bg-white border border-slate-200 text-slate-900 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-slate-950 hover:border-slate-950 hover:text-white transition-all shadow-premium flex items-center gap-3 group">
-              View All Experts <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
+              See all practitioners <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
             </Link>
         </div>
 
@@ -430,14 +468,18 @@ export default function HomePage() {
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-700"></div>
                       
                       <div className="absolute bottom-8 left-8 right-8 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
+                         {/* The first specialism the clinic publishes for this
+                           * person. This chip used to glue the first word of the
+                           * role to "Specialist", inventing titles nobody holds
+                           * ("Principal Specialist", "Foot Specialist"). */}
                          <div className="px-4 py-1.5 bg-white/10 backdrop-blur-md border border-white/20 text-white text-[9px] font-black uppercase tracking-widest rounded-xl inline-block mb-3 shadow-lg">
-                            <span className="text-teal-300">{p.role.split(' ')[0]}</span> Specialist
+                            <span className="text-teal-300">{p.specialisations?.[0] ?? p.role}</span>
                          </div>
                          <h3 className="text-3xl font-display font-medium text-white mb-2">{p.name}</h3>
                          <p className="text-[10px] text-slate-300 font-bold uppercase tracking-[0.2em] leading-none">{p.role}</p>
                       </div>
                   </div>
-                  <div className="px-4 flex items-center justify-between opacity-70 group-hover:opacity-100 transition-opacity">
+                  <div className="px-4 flex items-center justify-between">
                      <div className="flex gap-2 items-center">
                         <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">View Profile</span>
                      </div>
@@ -456,9 +498,9 @@ export default function HomePage() {
         {/* Animated Background Layers */}
         <div className="absolute inset-0 z-0 opacity-30">
            <div className="absolute inset-0 neural-grid opacity-40 mix-blend-screen pointer-events-none"></div>
-           <motion.div 
-             animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
-             transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+           <motion.div
+             animate={calm ? { scale: 1, opacity: 0.3 } : { scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+             transition={calm ? STILL : { duration: 15, repeat: Infinity, ease: "easeInOut" }}
              className="absolute top-1/2 left-1/4 w-[1000px] h-[1000px] bg-teal-500/20 rounded-full blur-[200px]"
            />
            <div className="absolute bottom-0 right-0 w-[800px] h-[800px] bg-blue-600/10 rounded-full blur-[160px]"></div>
@@ -475,9 +517,12 @@ export default function HomePage() {
             <div className="inline-flex items-center gap-3 px-6 py-2.5 bg-teal-500/10 backdrop-blur-md rounded-full border border-teal-500/20 text-teal-400 text-[10px] font-black uppercase tracking-[0.4em] shadow-[0_0_20px_rgba(20,184,166,0.15)]">
               <Activity size={16} className="animate-pulse" /> What we treat
             </div>
+            {/* Was "Engineered for Your Total Structural Resilience." —
+                engineering jargon that also implied an outcome. The brand
+                hero line at the top of the page is unchanged. */}
             <h2 className="text-6xl md:text-8xl font-display font-medium leading-[0.9] tracking-tighter drop-shadow-lg">
-              Engineered for Your <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-300">Total Structural Resilience</span>.
+              Find the treatment <br/>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-300">that suits you</span>.
             </h2>
             <p className="text-2xl text-slate-400 font-light leading-relaxed max-w-2xl border-l-4 border-teal-500/30 pl-6">
               From acute back pain to sports injuries, treatment is matched to what is
@@ -494,7 +539,7 @@ export default function HomePage() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
                 whileHover={{ y: -12, scale: 1.02 }}
-                className="group relative flex flex-col lg:flex-row bg-slate-900/40 backdrop-blur-2xl border border-slate-700/50 rounded-[3rem] overflow-hidden hover:bg-slate-800/80 hover:border-teal-500/30 transition-all duration-700 cursor-pointer shadow-lg hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]"
+                className="group relative flex flex-col lg:flex-row bg-slate-900/40 backdrop-blur-2xl border border-slate-700/50 rounded-[3rem] overflow-hidden hover:bg-slate-800/80 hover:border-teal-500/30 transition-all duration-700 shadow-lg hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]"
               >
                   <div className="lg:w-56 overflow-hidden shrink-0 relative">
                       <div className="absolute inset-0 bg-teal-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700 mix-blend-overlay z-10"></div>
@@ -504,13 +549,22 @@ export default function HomePage() {
                       <div>
                           <div className="flex justify-between items-start mb-4">
                              <h3 className="text-3xl font-display font-medium text-white group-hover:text-teal-400 transition-colors tracking-tight">{t.title}</h3>
-                             <span className="shrink-0 px-3 py-1 bg-slate-950/50 rounded-lg text-teal-400 text-[9px] font-black uppercase tracking-[0.3em] border border-slate-800 shadow-inner">Module {i + 1}</span>
+                             {/* Was "Module 1" - software language. Now says
+                                 where this sits in the full list of treatments. */}
+                             <span className="shrink-0 px-3 py-1 bg-slate-950/50 rounded-lg text-teal-400 text-[9px] font-black uppercase tracking-[0.3em] border border-slate-800 shadow-inner"><span className="sr-only">Treatment </span>{i + 1} of {TREATMENTS.length}</span>
                           </div>
                           <p className="text-slate-400 text-sm font-light leading-relaxed mb-6 group-hover:text-slate-300 transition-colors">{t.desc}</p>
+                          {/* These used to tick off "Clinical Assessment",
+                            * "Targeted Rehab", "Digital Plan" and "Support Hub"
+                            * on every card, massages included. There is no
+                            * digital plan or support hub, and rehab is not what
+                            * a relaxing massage offers. What is listed now is
+                            * true of every treatment, read from the clinic's
+                            * own details. */}
                           <ul className="grid grid-cols-2 gap-4 pb-2">
-                             {["Clinical Assessment", "Targeted Rehab", "Digital Plan", "Support Hub"].map((item, idx) => (
+                             {TREATMENT_FACTS.map((item, idx) => (
                                <li key={idx} className="flex items-center gap-2 text-[10px] font-black text-slate-300 group-hover:text-slate-200 uppercase tracking-widest transition-colors">
-                                  <CheckCircle2 size={12} className="text-teal-500" /> {item}
+                                  <item.icon size={12} className="shrink-0 text-teal-500" aria-hidden="true" /> {item.text}
                                </li>
                              ))}
                           </ul>
@@ -529,8 +583,12 @@ export default function HomePage() {
           <div className="mt-24 pt-12 border-t border-slate-800/80 flex flex-col sm:flex-row justify-between items-center gap-10">
              <div className="flex items-center gap-10 p-6 bg-slate-900/50 rounded-[2.5rem] border border-slate-800/50 backdrop-blur-md">
                 <div className="flex -space-x-4">
-                   {PRACTITIONERS.slice(0, 5).map((p, idx) => (
-                     <img key={idx} src={p.image} alt={p.name} loading="lazy" decoding="async" width={56} height={56} className="w-14 h-14 rounded-full border-2 border-slate-900 object-cover shadow-xl hover:scale-110 hover:z-10 transition-transform relative cursor-pointer" />
+                   {/* Each face looked clickable and went nowhere; now each
+                       opens that practitioner's profile. */}
+                   {PRACTITIONERS.slice(0, 5).map((p) => (
+                     <Link key={p.id} to={`/practitioners/${p.id}`} aria-label={p.name} className="relative rounded-full hover:scale-110 hover:z-10 focus-visible:z-10 transition-transform">
+                       <img src={p.image} alt="" loading="lazy" decoding="async" width={56} height={56} className="block w-14 h-14 rounded-full border-2 border-slate-900 object-cover shadow-xl" />
+                     </Link>
                    ))}
                 </div>
                 <div className="pr-6">
@@ -572,34 +630,51 @@ export default function HomePage() {
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 w-full max-w-2xl">
+               {/* The first two open the page they describe. The last two have
+                   no page of their own, so they no longer lift or show a hand
+                   cursor - they used to look clickable and do nothing. Counts
+                   are read from the data, never typed. */}
                {[
-                 { icon: Video, title: "Short Films", count: `${VIDEOS.length} films`, desc: "What osteopaths do, and the treatments on offer." },
-                 { icon: FileText, title: 'Illustrated Guides', count: `${GALLERY_IMAGES.length} illustrated guides`, desc: "Illustrated guides to common problems, like sciatica." },
+                 { icon: Video, title: "Short Films", count: `${VIDEOS.length} films`, desc: "What osteopaths do, and the treatments on offer.", path: "/resources" },
+                 { icon: FileText, title: 'Illustrated Guides', count: `${GALLERY_IMAGES.length} illustrated guides`, desc: "Illustrated guides to common problems, like sciatica.", path: "/gallery" },
                  { icon: Stethoscope, title: "Self-Care Advice", count: "From your practitioner", desc: "What to do between appointments, shown to you in clinic." },
                  { icon: Smartphone, title: "Works on Your Phone", count: "Any device", desc: "The guides, films and answers above, wherever you are." }
-               ].map((item, i) => (
-                 <motion.div 
-                   key={i}
-                   whileHover={{ y: -5 }}
-                   className="flex gap-5 group cursor-pointer p-4 rounded-3xl bg-white hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all"
-                 >
-                    <div className="shrink-0 w-16 h-16 rounded-[1.2rem] bg-teal-50 flex items-center justify-center text-teal-600 shadow-sm border border-teal-100/50 group-hover:bg-teal-700 group-hover:text-white transition-all duration-500">
-                      <item.icon size={26} strokeWidth={1.5} />
+               ].map((item, i) => {
+                 const linked = !!item.path;
+                 const body = (
+                   <>
+                    <div className={cn("shrink-0 w-16 h-16 rounded-[1.2rem] bg-teal-50 flex items-center justify-center text-teal-600 shadow-sm border border-teal-100/50 transition-all duration-500", linked && "group-hover:bg-teal-700 group-hover:text-white")}>
+                      <item.icon size={26} strokeWidth={1.5} aria-hidden="true" />
                     </div>
                     <div className="space-y-1 mt-1">
-                      <h4 className="font-bold text-[17px] text-slate-900 group-hover:text-teal-700 transition-colors tracking-tight">{item.title}</h4>
+                      <h3 className={cn("font-bold text-[17px] text-slate-900 transition-colors tracking-tight", linked && "group-hover:text-teal-700")}>{item.title}</h3>
                       <div className="flex items-center gap-2 mb-1.5">
                          <div className="w-1 h-1 rounded-full bg-teal-500"></div>
                          <p className="text-[9px] font-black text-teal-800 uppercase tracking-[0.2em]">{item.count}</p>
                       </div>
                       <p className="text-xs text-slate-500 font-medium leading-relaxed">{item.desc}</p>
                     </div>
-                 </motion.div>
-               ))}
+                   </>
+                 );
+                 return linked ? (
+                   <motion.div key={i} whileHover={{ y: -5 }}>
+                     <Link
+                       to={item.path!}
+                       className="flex gap-5 group p-4 rounded-3xl bg-white hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all"
+                     >
+                       {body}
+                     </Link>
+                   </motion.div>
+                 ) : (
+                   <div key={i} className="flex gap-5 p-4 rounded-3xl bg-white border border-transparent">
+                     {body}
+                   </div>
+                 );
+               })}
             </div>
 
             <Link to="/resources" className="mt-8 inline-flex items-center gap-4 px-10 py-5 bg-slate-900 hover:bg-teal-700 text-white rounded-2xl text-xs font-black uppercase tracking-[0.2em] transition-all shadow-xl hover:-translate-y-1 group">
-              Explore Resource Hub <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
+              Guides, films and answers <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
             </Link>
         </motion.div>
 
@@ -610,13 +685,18 @@ export default function HomePage() {
           className="relative group h-full min-h-[600px] flex items-center"
         >
            <div className="w-full aspect-[4/5] rounded-[4rem] overflow-hidden shadow-2xl shadow-slate-900/10 border-8 border-white relative z-10">
-              <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=1000" alt="Specialist Consulting" loading="lazy" decoding="async" className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-[2s] ease-out" />
+              {/* The clinic's own emblem artwork, as neutral decoration. This was
+                * a stock photo of masked surgeons under operating-theatre lights,
+                * captioned "Specialist Consulting", with a real patient's review
+                * floating over it - as if that were the patient, or the clinic.
+                * An osteopathy and massage clinic does not do surgery. */}
+              <img src="/video/emblem-grid.jpg" alt="" loading="lazy" decoding="async" width={1280} height={720} className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-[2s] ease-out" />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
               
               {/* Floating Review Card - Glassmorphism */}
-              <motion.div 
-                animate={{ y: [0, -15, 0] }}
-                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+              <motion.div
+                animate={calm ? { y: 0 } : { y: [0, -15, 0] }}
+                transition={calm ? STILL : { duration: 7, repeat: Infinity, ease: "easeInOut" }}
                 className="absolute bottom-10 left-10 right-10 p-10 bg-white/10 backdrop-blur-3xl border border-white/30 rounded-[3rem] shadow-[0_20px_40px_rgba(0,0,0,0.2)]"
               >
                   <div className="flex items-center gap-2 mb-6">
@@ -677,7 +757,7 @@ export default function HomePage() {
                 address: `${CLINIC.address.line1}, ${CLINIC.address.postcode}`,
                 hours: CLINIC.openingHours.map((s) => `${s.days}: ${s.hours}`).join(' · '),
                 phone: CLINIC.telephone,
-                features: ["Osteopathy", "Acupuncture", "Sports Massage", "Foot Care"]
+                features: ["Osteopathy", "Acupuncture", "Sports Massage", "Foot Care", "Hypnotherapy"]
               }
             ].map((clinic, i) => (
               <motion.div 
@@ -791,14 +871,14 @@ export default function HomePage() {
            <div className="absolute inset-0 neural-grid opacity-[0.15] mix-blend-screen pointer-events-none"></div>
            
            {/* Animated glowing orbs */}
-           <motion.div 
-             animate={{ x: [0, 50, 0], y: [0, -50, 0], scale: [1, 1.2, 1] }} 
-             transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+           <motion.div
+             animate={calm ? { x: 0, y: 0, scale: 1 } : { x: [0, 50, 0], y: [0, -50, 0], scale: [1, 1.2, 1] }}
+             transition={calm ? STILL : { duration: 15, repeat: Infinity, ease: "easeInOut" }}
              className="absolute -top-48 -right-48 w-[800px] h-[800px] bg-teal-600/20 rounded-full blur-[180px]"
            />
-           <motion.div 
-             animate={{ x: [0, -50, 0], y: [0, 50, 0], scale: [1, 1.1, 1] }} 
-             transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+           <motion.div
+             animate={calm ? { x: 0, y: 0, scale: 1 } : { x: [0, -50, 0], y: [0, 50, 0], scale: [1, 1.1, 1] }}
+             transition={calm ? STILL : { duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
              className="absolute -bottom-48 -left-48 w-[600px] h-[600px] bg-blue-600/15 rounded-full blur-[160px]"
            />
         </div>
@@ -812,7 +892,7 @@ export default function HomePage() {
                 Ready when <br/>
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-emerald-300 to-teal-500 bg-300% animate-gradient-x drop-shadow-sm">you are.</span>
               </h2>
-              <p className="text-2xl lg:text-3xl text-slate-400 mx-auto font-light leading-relaxed max-w-3xl opacity-90 drop-shadow-md">
+              <p className="text-2xl lg:text-3xl text-slate-400 mx-auto font-light leading-relaxed max-w-3xl drop-shadow-md">
                 Book an assessment at the clinic on Herne Bay High Street, and find out what is actually going on.
               </p>
           </div>
@@ -834,18 +914,20 @@ export default function HomePage() {
 
           <div className="pt-16 flex flex-col sm:flex-row items-center justify-center gap-12 lg:gap-20 border-t border-white/10">
              <div className="flex flex-col items-center gap-3">
-                <span className="text-white font-display font-medium text-3xl tracking-tight">08:00 <span className="opacity-40">-</span> 20:00</span>
-                <span className="text-teal-500/80 text-[10px] uppercase tracking-[0.3em] font-black">Mon - Fri • Clinical Hours</span>
+                {/* Read from the clinic's own hours. This used to be typed as
+                  * "08:00 - 20:00, Mon - Fri" and left out Saturday morning. */}
+                <span className="text-white font-display font-medium text-3xl tracking-tight">{CLINIC.openingHours[0].hours}</span>
+                <span className="text-teal-400 text-[10px] uppercase tracking-[0.3em] font-black text-center">{CLINIC.openingHours[0].days} · {CLINIC.openingHours[1].days} {CLINIC.openingHours[1].hours}</span>
              </div>
              <div className="hidden sm:block w-px h-16 bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
              <div className="flex flex-col items-center gap-3">
                 <span className="text-white font-display font-medium text-3xl tracking-tight">{CLINIC.address.postcode}</span>
-                <span className="text-teal-500/80 text-[10px] uppercase tracking-[0.3em] font-black">{CLINIC.address.town} {CLINIC.address.line1.replace(/^\d+\s/, "")}</span>
+                <span className="text-teal-400 text-[10px] uppercase tracking-[0.3em] font-black">{CLINIC.address.town} {CLINIC.address.line1.replace(/^\d+\s/, "")}</span>
              </div>
              <div className="hidden sm:block w-px h-16 bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
              <div className="flex flex-col items-center gap-3">
                 <span className="text-white font-display font-medium text-3xl tracking-tight">GOsC</span>
-                <span className="text-teal-500/80 text-[10px] uppercase tracking-[0.3em] font-black">Registered Osteopaths</span>
+                <span className="text-teal-400 text-[10px] uppercase tracking-[0.3em] font-black">Registered Osteopaths</span>
              </div>
           </div>
         </div>
@@ -859,12 +941,6 @@ export default function HomePage() {
           100% { transform: translateX(400%); }
         }
         .bg-300\\% { background-size: 300% 100%; }
-        /* Film grain as a 120px SVG turbulence tile inlined as a data URI —
-           the old hotlink to grainy-gradients.vercel.app put a stranger's
-           demo site in the first-paint path. */
-        .noise-tile {
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-        }
         .holographic-border {
           position: relative;
         }

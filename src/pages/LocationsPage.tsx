@@ -1,4 +1,5 @@
 import { motion } from 'motion/react';
+import { Link } from 'react-router-dom';
 import { Globe, Navigation, Shield, MapPin, Clock, Phone, Mail, ChevronRight } from 'lucide-react';
 import { BOOKING_URL, CLINIC } from '../constants';
 import { REVIEWS_SOURCE } from '../data/reviews';
@@ -29,8 +30,15 @@ const LOCATIONS = [
     phoneLink: CLINIC.telephoneLink,
     email: CLINIC.email,
     hours: CLINIC.openingHours.map((s) => `${s.days}: ${s.hours}`).join(' | '),
-    image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=800',
-    tags: ['Osteopathy', 'Acupuncture', 'Sports Massage', 'Footcare']
+    /*
+     * The practice's own emblem artwork. This was a stock photograph of a hospital
+     * reception with a Spanish sign ("PISO 1 … Banco de Sangre"), captioned as
+     * the clinic — a patient looking for 180 High Street would never find that
+     * building. The clinic's own website has no photograph of the premises, so
+     * the emblem stands in until the clinic supplies one of the front door.
+     */
+    image: '/video/emblem-close.jpg',
+    tags: ['Osteopathy', 'Acupuncture', 'Sports Massage', 'Footcare', 'Hypnotherapy']
   }
 ];
 
@@ -44,7 +52,7 @@ export default function LocationsPage() {
       className="max-w-7xl mx-auto px-4 md:px-6 py-12"
     >
       <div className="text-center mb-16 space-y-4">
-        <span className="text-sm font-black text-teal-600 uppercase tracking-[0.4em]">Herne Bay, Kent</span>
+        <span className="text-sm font-black text-teal-400 uppercase tracking-[0.4em]">Herne Bay, Kent</span>
         <h1 className="text-5xl md:text-7xl font-display font-medium text-slate-50 tracking-tight">Find the Clinic</h1>
         <p className="text-xl text-slate-300 font-light max-w-2xl mx-auto">
           One clinic, on Herne Bay High Street. Here is how to find us, and when we are open.
@@ -61,10 +69,12 @@ export default function LocationsPage() {
             className="group bg-white rounded-[3rem] border border-slate-100 shadow-premium hover:shadow-2xl transition-all overflow-hidden flex flex-col"
           >
             <div className="relative aspect-video overflow-hidden">
-              <img src={loc.image} alt={loc.name} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
-              <div className="absolute top-6 left-6 flex flex-wrap gap-2">
+              <img src={loc.image} alt={`${loc.name} emblem`} loading="lazy" decoding="async" width={1280} height={720} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+              {/* Solid dark chips: the emblem behind them is mid-grey, and white
+                  text on a see-through white chip over it would be hard to read. */}
+              <div className="absolute top-6 left-6 right-6 flex flex-wrap gap-2">
                 {loc.tags.map(tag => (
-                  <span key={tag} className="px-3 py-1 bg-white/20 backdrop-blur-md text-white text-[10px] font-black uppercase tracking-widest rounded-lg border border-white/20">
+                  <span key={tag} className="px-3 py-1 bg-slate-950/85 text-white text-[10px] font-black uppercase tracking-widest rounded-lg border border-white/20">
                     {tag}
                   </span>
                 ))}
@@ -73,7 +83,7 @@ export default function LocationsPage() {
 
             <div className="p-10 flex-1 flex flex-col space-y-6">
               <div>
-                <h3 className="text-2xl font-display font-bold text-slate-900 group-hover:text-teal-600 transition-colors mb-2">{loc.name}</h3>
+                <h2 className="text-2xl font-display font-bold text-slate-900 group-hover:text-teal-600 transition-colors mb-2">{loc.name}</h2>
                 <div className="flex gap-2 text-slate-600 font-medium text-sm">
                   <MapPin size={16} className="shrink-0 text-teal-500" />
                   <span>{loc.address}</span>
@@ -91,13 +101,26 @@ export default function LocationsPage() {
                   <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-teal-600">
                     <Phone size={16} />
                   </div>
-                  <span>{loc.phone}</span>
+                  {/* A tap on a phone rings the clinic, from the page that is
+                      literally called "Find the Clinic". */}
+                  <a
+                    href={`tel:${loc.phoneLink}`}
+                    onClick={() => trackClick(`Call: ${loc.name}`)}
+                    className="font-semibold text-slate-900 underline underline-offset-4 decoration-slate-300 hover:text-teal-700 hover:decoration-teal-700 transition-colors"
+                  >
+                    {loc.phone}
+                  </a>
                 </div>
                 <div className="flex items-center gap-3 text-slate-600 text-sm">
                   <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-teal-600">
                     <Mail size={16} />
                   </div>
-                  <span className="truncate">{loc.email}</span>
+                  <a
+                    href={`mailto:${loc.email}`}
+                    className="inline-block min-w-0 break-all font-semibold text-slate-900 underline underline-offset-4 decoration-slate-300 hover:text-teal-700 hover:decoration-teal-700 transition-colors"
+                  >
+                    {loc.email}
+                  </a>
                 </div>
               </div>
 
@@ -122,14 +145,16 @@ export default function LocationsPage() {
         {/*
           * This panel once promised "AI and voice-guided diagnostic hubs" and a
           * "100% Certified Spaces" figure — none of which exist. What is true:
-          * the practitioners are GOsC-registered, appointments book online any
-          * time, and the phone is answered during opening hours. Everything
-          * below is read from CLINIC and REVIEWS_SOURCE so it stays true.
+          * the osteopaths are GOsC-registered (the other practitioners are not
+          * GOsC professions, so the badge names the osteopaths only),
+          * appointments book online any time, and the phone is answered during
+          * opening hours. Everything below is read from CLINIC and
+          * REVIEWS_SOURCE so it stays true.
           */}
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
            <div className="space-y-8">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-[10px] font-black uppercase tracking-widest">
-                <Shield size={14} /> {CLINIC.regulator.name} registered
+                <Shield size={14} aria-hidden="true" /> {CLINIC.regulator.abbreviation}-registered osteopaths
               </div>
               <h2 className="text-4xl md:text-5xl font-display font-medium text-white tracking-tight leading-tight">
                 Questions before <br />
@@ -137,27 +162,47 @@ export default function LocationsPage() {
               </h2>
               <p className="text-slate-400 text-lg font-light leading-relaxed max-w-md">
                 Appointments can be booked online at any time. If you would rather talk it
-                through first, call us on {CLINIC.telephone} during opening hours or email{' '}
-                {CLINIC.email} and we will help you choose the right appointment.
+                through first, call us on{' '}
+                <a href={`tel:${CLINIC.telephoneLink}`} className="text-white underline underline-offset-4 hover:text-teal-300">
+                  {CLINIC.telephone}
+                </a>{' '}
+                during opening hours or email{' '}
+                <a href={`mailto:${CLINIC.email}`} className="text-white underline underline-offset-4 break-all box-decoration-clone hover:text-teal-300">
+                  {CLINIC.email}
+                </a>{' '}
+                and we will help you choose the right appointment.
               </p>
               <div className="flex flex-wrap gap-4">
-                 <button
-                   onClick={() => window.open(BOOKING_URL, '_blank')}
+                 {/* A real link, not a script: it can be long-pressed or
+                     middle-clicked, and noopener keeps the booking site from
+                     getting a handle on this tab. */}
+                 <a
+                   href={BOOKING_URL}
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   onClick={() => trackClick('Locations: Book Online')}
+                   aria-label="Book online — opens our booking system in a new tab"
                    className="px-8 py-4 bg-white text-slate-950 rounded-2xl font-bold hover:bg-teal-500 transition-all flex items-center gap-2"
                  >
                     <Globe size={18} /> Book Online
-                 </button>
-                 <a
-                   href="#/faq"
+                 </a>
+                 {/* This was href="#/faq". The site uses real addresses, so
+                     that only added "#/faq" to this page's address and nothing
+                     happened. */}
+                 <Link
+                   to="/faq"
                    className="px-8 py-4 bg-white/5 border border-white/10 text-white rounded-2xl font-bold hover:bg-white/10 transition-all flex items-center gap-2"
                  >
                     Common Questions <ChevronRight size={18} />
-                 </a>
+                 </Link>
               </div>
            </div>
            <div className="relative">
+              {/* Decoration only. This was a stock photograph of an empty
+                  operating theatre, and the clinic does no surgery. The dark
+                  field of the practice's own emblem takes its place. */}
               <div className="aspect-[4/3] rounded-[3rem] overflow-hidden border border-white/10">
-                 <img src="https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&q=80&w=800" loading="lazy" decoding="async" className="w-full h-full object-cover opacity-50" alt="" />
+                 <img src="/video/emblem-field.jpg" loading="lazy" decoding="async" width={1280} height={720} className="w-full h-full object-cover opacity-50" alt="" />
                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
               </div>
               <a
@@ -167,7 +212,9 @@ export default function LocationsPage() {
                 className="absolute -bottom-6 -left-6 bg-teal-700 p-8 rounded-[2.5rem] shadow-2xl text-white block hover:bg-teal-800 transition-colors"
               >
                  <div className="text-4xl font-bold mb-1">{REVIEWS_SOURCE.rating}</div>
-                 <div className="text-[10px] uppercase font-black tracking-widest opacity-80">{REVIEWS_SOURCE.count} {REVIEWS_SOURCE.label}</div>
+                 {/* Full-strength white: at 80% opacity this small label on
+                     teal-700 fell to about 4.1:1. */}
+                 <div className="text-[10px] uppercase font-black tracking-widest">{REVIEWS_SOURCE.count} {REVIEWS_SOURCE.label}</div>
               </a>
            </div>
         </div>

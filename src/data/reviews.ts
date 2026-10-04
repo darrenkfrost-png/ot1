@@ -1,8 +1,19 @@
 import { CLINIC } from './clinic';
+import { PRACTITIONERS, type Practitioner } from './index';
 
 export interface Review {
   author: string;
   quote: string;
+  /**
+   * Set only on a review about the practice as a whole: it names no
+   * practitioner and describes no single patient's injury or condition.
+   * `treatments` lists the treatments the reviewer mentions, as words matched
+   * against a practitioner's role and specialisations; it is empty when they
+   * mention none. A review that names treatments is only shown beside a
+   * practitioner who gives one of them, so a foot care review never sits on
+   * the hypnotherapist's page.
+   */
+  practiceWide?: { treatments: string[] };
 }
 
 /**
@@ -16,8 +27,9 @@ export interface Review {
  * half is not the review, and completing someone else's sentence is inventing
  * a testimonial.
  *
- * Order matters — the first three appear on the treatments page, the next two
- * on practitioner pages, and the sixth is the spotlight quote.
+ * Order matters — the treatments page, the treatment pages and the home page
+ * pick reviews by their position in this list, so add new ones at the end.
+ * Practitioner pages choose theirs with reviewsForPractitioner below.
  */
 export const REVIEWS: Review[] = [
   {
@@ -58,10 +70,12 @@ export const REVIEWS: Review[] = [
     author: 'angela smith',
     quote:
       'Fantastic osteopath, massage therapy and foot care,10/10.I have been coming here for years,can’t recommend this practice enough',
+    practiceWide: { treatments: ['osteopath', 'massage', 'foot care'] },
   },
   {
     author: 'karen kendall',
     quote: 'Professional, caring and knowledgeable. Always able to offer an appointment when required.',
+    practiceWide: { treatments: [] },
   },
   {
     author: 'Micky Orr',
@@ -89,10 +103,14 @@ export const REVIEWS: Review[] = [
   {
     author: 'Derek Harris',
     quote: 'Great for osteopathy and chiropody',
+    // "Chiropodist" is a protected title, and the clinic does not describe
+    // its foot care practitioner as one — so this matches the osteopaths only.
+    practiceWide: { treatments: ['osteopath', 'chiropod'] },
   },
   {
     author: 'Sharon Moon',
     quote: 'Absolutely brilliant',
+    practiceWide: { treatments: [] },
   },
 ];
 
@@ -104,20 +122,47 @@ export const REVIEWS: Review[] = [
  * under another's photograph misattributes it, and a reader who notices stops
  * believing the rest of the page.
  *
- * A review is only shown on a practitioner's page if it names them. Reviews
- * that name a *different* practitioner are excluded outright; the remainder,
- * which praise the practice without naming anyone, are used to make up the
- * numbers — they are true of whoever the reader is looking at.
+ * The page gets two separate lists, shown under separate headings:
+ *
+ * - `named`: reviews that name this practitioner. Reviews naming a
+ *   *different* practitioner are never used.
+ * - `general`: reviews about the practice as a whole (marked `practiceWide`
+ *   above). These used to be merged into the first list to make up the
+ *   numbers, so a shoulder-injury review sat under the hypnotherapist's photo
+ *   as if she had treated it. Now they are labelled as being about the clinic,
+ *   and one that names treatments only appears beside someone who gives them.
  */
-export function reviewsForPractitioner(fullName: string, limit = 2): Review[] {
-  const firstName = fullName.trim().split(/\s+/)[0];
-  const everyFirstName = ['Adrian', 'Leon', 'Keri'];
-  const names = (r: Review) => everyFirstName.filter((n) => new RegExp(`\\b${n}\\b`, 'i').test(r.quote));
+export interface PractitionerReviews {
+  named: Review[];
+  general: Review[];
+}
 
-  const aboutThem = REVIEWS.filter((r) => names(r).some((n) => n.toLowerCase() === firstName.toLowerCase()));
-  const aboutNobody = REVIEWS.filter((r) => names(r).length === 0);
+const firstNameOf = (fullName: string) => fullName.trim().split(/\s+/)[0].toLowerCase();
 
-  return [...aboutThem, ...aboutNobody].slice(0, limit);
+/** The first names of the whole team, read from the roster, never typed. */
+const TEAM_FIRST_NAMES = PRACTITIONERS.map((p) => firstNameOf(p.name));
+
+const namesIn = (r: Review) =>
+  TEAM_FIRST_NAMES.filter((n) => new RegExp(`\\b${n}\\b`, 'i').test(r.quote));
+
+export function reviewsForPractitioner(
+  practitioner: Pick<Practitioner, 'name' | 'role' | 'specialisations'>,
+  limit = 2,
+): PractitionerReviews {
+  const firstName = firstNameOf(practitioner.name);
+  const named = REVIEWS.filter((r) => namesIn(r).includes(firstName));
+
+  const gives = [practitioner.role, ...(practitioner.specialisations ?? [])].map((s) => s.toLowerCase());
+  const fits = (treatment: string) => gives.some((g) => g.includes(treatment.toLowerCase()));
+
+  const practiceWide = REVIEWS.filter((r) => r.practiceWide && namesIn(r).length === 0);
+  const aboutTheirWork = practiceWide.filter((r) => r.practiceWide!.treatments.some(fits));
+  const aboutNoTreatment = practiceWide.filter((r) => r.practiceWide!.treatments.length === 0);
+
+  return {
+    named: named.slice(0, limit),
+    general: [...aboutTheirWork, ...aboutNoTreatment].slice(0, limit),
+  };
 }
 
 /** Where these came from, so a reader can check them. */

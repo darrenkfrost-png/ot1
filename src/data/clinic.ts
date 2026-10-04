@@ -53,10 +53,15 @@ export const CLINIC = {
     url: 'https://www.osteopathy.org.uk',
   },
 
-  /** The practice's Google listing — 56 reviews, rated 5.0 at the time of writing. */
+  /** Social profiles. The footer reads these, through SOCIAL_LINKS in constants.ts. */
   facebook: 'https://www.facebook.com/osteoCT6',
   youtube: 'https://www.youtube.com/@OsteopathyWellbeingCT6HerneBay',
 
+  /**
+   * The practice's Google listing. The rating and review count shown on the
+   * site are NOT typed here: they live once, in REVIEWS_SOURCE
+   * (src/data/reviews.ts).
+   */
   reviewsUrl: 'https://g.page/r/CZpeWBaDHrHKEB0/review',
   /** Same link, used where we invite a patient to leave one of their own. */
   writeReviewUrl: 'https://g.page/r/CZpeWBaDHrHKEB0/review',

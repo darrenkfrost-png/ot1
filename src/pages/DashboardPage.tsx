@@ -14,16 +14,17 @@ import {
   Sliders, 
   AlertTriangle, 
   Stethoscope, 
-  HeartPulse, 
-  Share2, 
-  Cpu, 
+  HeartPulse,
+  Cpu,
   RefreshCw, 
   Terminal,
   Printer,
   Info,
   Brain,
-  Sparkles
+  Sparkles,
+  ClipboardList
 } from 'lucide-react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { 
   LineChart, 
@@ -45,6 +46,9 @@ import { BOOKING_URL } from '../constants';
 import { GALLERY_IMAGES } from '../data/images';
 import { VIDEOS } from '../data/resources';
 
+/** The four example stages - the card titles and the dialog titles. */
+const MILESTONE_TITLES = ['Settling down', 'Moving more easily', 'Getting stronger', 'Finishing treatment'];
+
 interface AuditData {
   overallHealth: number;
   architecturalInsights: string[];
@@ -56,18 +60,6 @@ export default function DashboardPage() {
   const { trackClick } = useAnalytics();
   const { showToast } = useToast();
 
-  // Dynamic state for Recharts data
-  const [chartData, setChartData] = useState([
-    { week: 'Wk 1', painLevel: 8, mobility: 30, strength: 25 },
-    { week: 'Wk 2', painLevel: 6, mobility: 45, strength: 35 },
-    { week: 'Wk 3', painLevel: 5, mobility: 55, strength: 45 },
-    { week: 'Wk 4', painLevel: 4, mobility: 65, strength: 55 },
-    { week: 'Wk 5', painLevel: 3, mobility: 75, strength: 65 },
-    { week: 'Wk 6', painLevel: 2, mobility: 85, strength: 75 },
-    { week: 'Wk 7', painLevel: 1, mobility: 90, strength: 85 },
-    { week: 'Wk 8', painLevel: 0, mobility: 95, strength: 95 },
-  ]);
-
   // Daily Exercise Tracking State
   const [exercises, setExercises] = useState([
     { id: 'ex1', title: 'Cervical Retraction (Isometric)', sets: '3 sets of 10s', completed: false },
@@ -75,6 +67,36 @@ export default function DashboardPage() {
     { id: 'ex3', title: 'Thoracic Extension mobilisation', sets: '12 slow reps', completed: false },
     { id: 'ex4', title: 'Decompression Breathwork Cycle', sets: '5 slow minutes', completed: false },
   ]);
+
+  /*
+   * The sample chart. Eight weeks of an EXAMPLE neck recovery, not anyone's
+   * record. Ticking the practice checklist moves the last week, so a visitor
+   * can see how a chart like this works. Week 8 starts at its no-ticks values
+   * (it used to start higher, so the first tick made the numbers WORSE while
+   * a toast announced progress). Derived from the checklist, not stored, so
+   * resetting the checklist resets the chart too.
+   */
+  const completedCount = exercises.filter(ex => ex.completed).length;
+  const chartData = useMemo(() => {
+    const weeks = [
+      { week: 'Wk 1', painLevel: 8, mobility: 30, strength: 25 },
+      { week: 'Wk 2', painLevel: 6, mobility: 45, strength: 35 },
+      { week: 'Wk 3', painLevel: 5, mobility: 55, strength: 45 },
+      { week: 'Wk 4', painLevel: 4, mobility: 65, strength: 55 },
+      { week: 'Wk 5', painLevel: 3, mobility: 75, strength: 65 },
+      { week: 'Wk 6', painLevel: 2, mobility: 85, strength: 75 },
+      { week: 'Wk 7', painLevel: 1, mobility: 90, strength: 85 },
+      { week: 'Wk 8', painLevel: 1, mobility: 92, strength: 90 },
+    ];
+    const last = weeks.length - 1;
+    weeks[last] = {
+      ...weeks[last],
+      mobility: Math.min(92 + completedCount * 2, 100),
+      strength: Math.min(90 + completedCount * 2, 100),
+      painLevel: completedCount > 2 ? 0 : 1,
+    };
+    return weeks;
+  }, [completedCount]);
 
   // Biomechanical ROM Simulator States
   const [romNeckFlexion, setRomNeckFlexion] = useState(65); // degrees (optimal ~45-80)
@@ -84,13 +106,34 @@ export default function DashboardPage() {
   // UPGRADE 1: Interactive Milestone States
   const [selectedMilestone, setSelectedMilestone] = useState<number | null>(null);
   const milestoneDialogRef = React.useRef<HTMLDivElement | null>(null);
+  // The card that opened the dialog, so focus can go back to it on close.
+  const milestoneOpenerRef = React.useRef<HTMLButtonElement | null>(null);
 
   // Keyboard and screen-reader users must land inside the dialog when it
-  // opens — focus also lets the dialog's own Escape handler receive the key.
+  // opens; Escape closes it, and focus returns to the card that opened it.
+  // Tab stays inside it too: its Close button is its only control, so Tab
+  // goes there rather than to the page hidden behind the dimmed backdrop.
   useEffect(() => {
-    if (selectedMilestone !== null) {
-      milestoneDialogRef.current?.focus();
-    }
+    if (selectedMilestone === null) return;
+    milestoneDialogRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        setSelectedMilestone(null);
+      } else if (e.key === 'Tab') {
+        const close = milestoneDialogRef.current?.querySelector<HTMLButtonElement>('button');
+        if (close) {
+          e.preventDefault();
+          close.focus();
+        }
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      const opener = milestoneOpenerRef.current;
+      if (opener && document.contains(opener)) opener.focus();
+    };
   }, [selectedMilestone]);
 
   // UPGRADE 5: Sound Synthesizer function
@@ -114,9 +157,13 @@ export default function DashboardPage() {
     }
   }, []);
 
-  // Triage Sharing State
-  const [isGeneratingTriage, setIsGeneratingTriage] = useState(false);
-  const [triageReport, setTriageReport] = useState<{ id: string; timestamp: string } | null>(null);
+  // The printable visit summary. Built on this device only; it holds the
+  // date it was made, nothing else - the readings on it are always live.
+  const [triageReport, setTriageReport] = useState<{ date: string } | null>(null);
+  // A stable callback ref: moves keyboard focus onto the summary when it
+  // appears (the button that made it disappears), and only then - an inline
+  // arrow would re-run on every slider move and steal focus back.
+  const focusOnMount = useCallback((el: HTMLElement | null) => { el?.focus(); }, []);
 
   // System Audit Live State
   const [isAuditing, setIsAuditing] = useState(false);
@@ -167,38 +214,16 @@ export default function DashboardPage() {
     showToast("Your note is ready below. Check it, then copy or print it.", "success");
   };
 
-  // Exercise log effect that updates chartData directly on completion
+  // Ticking a row. The sample chart follows from `exercises` (see chartData),
+  // so nothing here reaches into other state from inside an updater.
   const handleToggleExercise = useCallback((id: string) => {
     trackClick("Toggle Rehab Exercise Checkbox");
-    setExercises(prev => {
-      const updated = prev.map(ex => ex.id === id ? { ...ex, completed: !ex.completed } : ex);
-      const totalCompleted = updated.filter(ex => ex.completed).length;
-      
-      // Dynamically shift Wk 8 parameters representing the 'Active Today' state
-      setChartData(prevChart => {
-        const copy = [...prevChart];
-        const lastIdx = copy.length - 1;
-        
-        // Base starting point
-        const baseMobility = 92;
-        const baseStrength = 90;
-        const basePain = 1;
-
-        copy[lastIdx] = {
-          ...copy[lastIdx],
-          mobility: Math.min(baseMobility + totalCompleted * 2, 100),
-          strength: Math.min(baseStrength + totalCompleted * 2, 100),
-          painLevel: Math.max(basePain - (totalCompleted > 2 ? 1 : 0), 0)
-        };
-        return copy;
-      });
-
-      if (updated.find(ex => ex.id === id)?.completed) {
-        showToast("Exercise logged successfully! Kinetic progression updated in real-time.", "success");
-      }
-      return updated;
-    });
-  }, [trackClick, showToast]);
+    const willBeTicked = !exercises.find(ex => ex.id === id)?.completed;
+    setExercises(prev => prev.map(ex => ex.id === id ? { ...ex, completed: !ex.completed } : ex));
+    if (willBeTicked) {
+      showToast("Ticked off. The last week of the sample chart moves with your ticks. Nothing is saved.", "success");
+    }
+  }, [exercises, trackClick, showToast]);
 
   // Musculoskeletal rating formulas
   const calculatedBioScore = useMemo(() => Math.round(((romNeckFlexion / 80) * 45) + ((romNeckRotation / 90) * 45) - (painLevel * 5) + 10), [romNeckFlexion, romNeckRotation, painLevel]);
@@ -206,67 +231,97 @@ export default function DashboardPage() {
 
   const advice = useMemo(() => {
     if (painLevel >= 7) {
-      return { status: "High discomfort", desc: "That is a high score. If pain is severe or getting worse, or comes with numbness, weakness or a fever, call the clinic or NHS 111 rather than waiting for your next visit.", color: "text-red-500", border: "border-red-500/20", bg: "bg-red-500/5" };
+      return { status: "High discomfort", desc: "That is a high score. If pain is severe or getting worse, or comes with numbness, weakness or a fever, call the clinic or NHS 111 rather than waiting for your next visit.", color: "text-red-700", border: "border-red-500/20", bg: "bg-red-500/5" };
     }
     if (bioScoreLimit < 55) {
       return { status: "Some stiffness", desc: "Your neck is not moving as far as it could. Keep to the movements your practitioner gave you, and mention these numbers at your next appointment.", color: "text-amber-700", border: "border-amber-500/20", bg: "bg-amber-500/5" };
     }
-    return { status: "Moving comfortably", desc: "Your neck is moving well and pain is low. Keep up the exercises you were given, and ask before adding anything new.", color: "text-teal-400", border: "border-teal-500/20", bg: "bg-teal-500/5" };
+    return { status: "Moving comfortably", desc: "Your neck is moving well and pain is low. Keep up the exercises you were given, and ask before adding anything new.", color: "text-teal-800", border: "border-teal-500/20", bg: "bg-teal-500/5" };
   }, [painLevel, bioScoreLimit]);
 
-  // Export prep triage action
+  /*
+   * The visit summary. This used to wait 1.8 seconds, play beeps and show a
+   * random "CT6-REHAB-######" number beside claims of encryption and a
+   * therapist "pre-briefed" - none of which happened. It is built at once,
+   * here, and dated; nothing is sent to the clinic.
+   */
   const handleGenerateTriage = () => {
-    trackClick("Generate Triage PDF Package");
-    setIsGeneratingTriage(true);
-    showToast("Compiling your slider entries and logged exercises...", "loading");
-    
-    // Play double beep on build startup
-    playAcousticPing(587.33, 0.15, 'sine'); // D5
-    setTimeout(() => playAcousticPing(880, 0.25, 'sine'), 130);
-
-    setTimeout(() => {
-      setIsGeneratingTriage(false);
-      setTriageReport({
-        id: `CT6-REHAB-${Math.floor(Math.random() * 900000 + 100000)}`,
-        timestamp: new Date().toLocaleDateString('en-GB', {
-          year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
-        })
-      });
-      showToast("Your summary is ready below. It lives only in this browser — nothing has been sent anywhere.", "success");
-      
-      // Play a diagnostic sync chime sequence on success
-      playAcousticPing(523.25, 0.12, 'triangle'); // C5
-      setTimeout(() => playAcousticPing(659.25, 0.12, 'triangle'), 80); // E5
-      setTimeout(() => playAcousticPing(783.99, 0.3, 'sine'), 160); // G5
-    }, 1800);
+    trackClick("Make visit summary");
+    setTriageReport({
+      date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
+    });
+    showToast("Your summary is ready. It stays on this device, and nothing has been sent anywhere.", "success");
   };
 
-  // Run the Live AI Autonomous System Audit using Gemini API
+  /*
+   * Device check. Real checks only - the server audit this once called was
+   * removed.
+   *
+   * "The clinic website answered" used to fetch /api/health, which only exists
+   * while the site's own Node server runs. Served as plain files (as it is on
+   * the host) that address is a 404, so every visitor was told the website did
+   * not answer while reading it. It now fetches robots.txt: a file every build
+   * writes, which the service worker neither precaches nor routes, so a Yes
+   * means the website really answered over the network just now.
+   *
+   * /api/health is still asked, but only to say whether the CONTACT FORM can
+   * send, as a tip with the phone number - it is not a device matter and never
+   * counts against the score.
+   */
+  const fetchWithTimeout = async (url: string, ms = 8000) => {
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => controller.abort(), ms);
+    try {
+      return await fetch(url, { cache: 'no-store', signal: controller.signal });
+    } finally {
+      window.clearTimeout(timer);
+    }
+  };
+
   const handleRunSystemAudit = async () => {
     trackClick("Run Live System Audit");
     setIsAuditing(true);
-    
 
-    /* Real checks only - the server audit this once called was removed. */
     const checks: [string, boolean][] = [];
-    try { checks.push(['The clinic website answered', (await fetch('/api/health')).ok]); }
+    try { checks.push(['The clinic website answered', (await fetchWithTimeout('/robots.txt')).ok]); }
     catch { checks.push(['The clinic website answered', false]); }
     let canSave = false;
     try { localStorage.setItem('ct6-check', '1'); canSave = localStorage.getItem('ct6-check') === '1'; localStorage.removeItem('ct6-check'); } catch { /* blocked */ }
     checks.push(['This device can remember your settings', canSave]);
     checks.push(['This device is online', navigator.onLine]);
+
+    // The contact form posts to the site's own server. 'yes' only when that
+    // server says a delivery address is set (contactReady); 'unknown' when it
+    // runs but does not say; 'no' when it is not there at all.
+    let contactForm: 'yes' | 'no' | 'unknown' = 'no';
+    try {
+      const res = await fetchWithTimeout('/api/health');
+      const isJson = (res.headers.get('content-type') || '').includes('application/json');
+      if (res.ok && isJson) {
+        const body = await res.json();
+        contactForm = body?.contactReady === true ? 'yes' : body?.contactReady === false ? 'no' : 'unknown';
+      }
+    } catch { /* not reachable: the form cannot send either */ }
+    const contactTip =
+      contactForm === 'yes'
+        ? 'The contact form can send messages to the clinic at the moment.'
+        : contactForm === 'no'
+          ? `Messages from the contact form cannot be sent at the moment. Call ${CLINIC.telephone} or email ${CLINIC.email} instead.`
+          : `If a message from the contact form does not send, call ${CLINIC.telephone} or email ${CLINIC.email} instead.`;
+
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     setAuditResult({
       overallHealth: Math.round((checks.filter(([, ok]) => ok).length / checks.length) * 100),
       architecturalInsights: checks.map(([name, ok]) => `${ok ? 'Yes' : 'No'}: ${name.toLowerCase()}.`),
       nextStepRoadmap: [
+        contactTip,
         'Text too small? The Settings cog can make it larger.',
         reduced ? 'Reduced motion is on, so the page keeps movement to a minimum.' : 'Prefer less movement on screen? Turn on reduced motion in Settings.',
         'Nothing you type or set on this page is sent to the clinic.',
       ],
       upgradeReview: checks.every(([, ok]) => ok)
         ? 'Everything this page needs is working on your device.'
-        : 'Something above said No. The page will still work, but if anything looks wrong, call the clinic.',
+        : `Something above said No. The page will still work, but if anything looks wrong, call the clinic on ${CLINIC.telephone}.`,
     });
     setIsAuditing(false);
     showToast("Check finished.", "success");
@@ -277,7 +332,10 @@ export default function DashboardPage() {
       
       {/* Header Section */}
       <section className="relative p-12 bg-slate-950 rounded-[4rem] text-white shadow-3xl overflow-hidden group holographic-border">
-        <div className="absolute inset-0 z-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
+        {/* The site's own grain tile (.noise-tile in index.css). This texture
+            used to be hotlinked from transparenttextures.com, an unrelated
+            third-party site, which saw every visitor's address. */}
+        <div className="absolute inset-0 z-0 noise-tile opacity-10 pointer-events-none"></div>
         <div className="absolute inset-0 neural-grid opacity-30 mix-blend-screen pointer-events-none"></div>
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-teal-500/20 rounded-full blur-[100px] opacity-50 group-hover:opacity-80 transition-opacity duration-700 pointer-events-none"></div>
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none"></div>
@@ -299,12 +357,12 @@ export default function DashboardPage() {
                 <div className="text-center bg-white/5 backdrop-blur-md px-6 py-4 rounded-2xl border border-white/10">
                     <div className="text-[10px] uppercase font-black tracking-widest text-teal-400 mb-1">Current Phase</div>
                     <div className="text-2xl font-bold text-white">Active Rehab</div>
-                    <div className="text-[8px] uppercase font-black tracking-widest text-slate-400 mt-1.5">Sample data</div>
+                    <div className="text-[11px] uppercase font-black tracking-widest text-slate-400 mt-1.5">Sample data</div>
                 </div>
                 <div className="text-center bg-white/5 backdrop-blur-md px-6 py-4 rounded-2xl border border-white/10">
                     <div className="text-[10px] uppercase font-black tracking-widest text-emerald-400 mb-1">Goal Completion</div>
                     <div className="text-2xl font-bold text-white">78%</div>
-                    <div className="text-[8px] uppercase font-black tracking-widest text-slate-400 mt-1.5">Sample data</div>
+                    <div className="text-[11px] uppercase font-black tracking-widest text-slate-400 mt-1.5">Sample data</div>
                 </div>
             </div>
         </div>
@@ -339,14 +397,14 @@ export default function DashboardPage() {
                   <div className="space-y-4">
                       <h3 className="text-xl font-bold text-slate-900">Neck recovery (sample)</h3>
                       <p className="text-sm text-slate-600 font-light leading-relaxed">
-                          Your weekly mobility and core strength levels show positive trajectory. Real-time updates depend on your daily exercise completions.
+                          An example of how eight weeks of neck recovery might look. It is not your record. Ticking an exercise below moves the last week of this example so you can see how a chart like this works. It does not measure you.
                       </p>
                   </div>
-                  
+
                   <div className="space-y-4">
                      {[
-                         { label: "Movement", val: `${chartData[chartData.length - 1].mobility}%`, desc: 'From the readings above', color: "text-emerald-600" },
-                         { label: "Pain", val: `${chartData[chartData.length - 1].painLevel}/10`, desc: "Out of 10", color: "text-teal-600" },
+                         { label: "Movement", val: `${chartData[chartData.length - 1].mobility}%`, desc: 'Week 8 of the sample chart', color: "text-emerald-600" },
+                         { label: "Pain", val: `${chartData[chartData.length - 1].painLevel}/10`, desc: "Week 8 of the sample chart", color: "text-teal-600" },
                      ].map((stat, i) => (
                          <div key={i} className="flex items-center justify-between p-4 rounded-2xl bg-white border border-slate-100/80 shadow-sm hover:shadow-lg transition-all cursor-default">
                              <div>
@@ -380,9 +438,9 @@ export default function DashboardPage() {
                                 contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)', fontWeight: 'bold' }}
                                 itemStyle={{ fontWeight: 600, color: '#334155' }}
                             />
-                            <Area type="monotone" dataKey="mobility" stroke="#14b8a6" strokeWidth={3} fillOpacity={1} fill="url(#colorMobility)" name="Mobility Level (%)" activeDot={{ r: 6, fill: "#14b8a6", stroke: "#fff", strokeWidth: 2 }} />
-                            <Area type="monotone" dataKey="strength" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorStrength)" name="Core Strength (%)" activeDot={{ r: 6, fill: "#3b82f6", stroke: "#fff", strokeWidth: 2 }} />
-                            <Line type="monotone" dataKey="painLevel" stroke="#ef4444" strokeWidth={2} strokeDasharray="5 5" name="Pain (0-10)" dot={false} activeDot={{ r: 4 }} />
+                            <Area type="monotone" dataKey="mobility" stroke="#14b8a6" strokeWidth={3} fillOpacity={1} fill="url(#colorMobility)" name="Movement, sample (%)" activeDot={{ r: 6, fill: "#14b8a6", stroke: "#fff", strokeWidth: 2 }} />
+                            <Area type="monotone" dataKey="strength" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorStrength)" name="Strength, sample (%)" activeDot={{ r: 6, fill: "#3b82f6", stroke: "#fff", strokeWidth: 2 }} />
+                            <Line type="monotone" dataKey="painLevel" stroke="#ef4444" strokeWidth={2} strokeDasharray="5 5" name="Pain, sample (0-10)" dot={false} activeDot={{ r: 4 }} />
                         </AreaChart>
                    </ResponsiveContainer>
                </div>
@@ -391,63 +449,40 @@ export default function DashboardPage() {
              <div className="mt-12 pt-8 border-t border-slate-100">
                 <div className="flex items-center justify-between mb-6">
                    <h4 className="text-sm font-bold uppercase tracking-widest text-slate-800 flex items-center gap-2">
-                     <Target size={18} className="text-teal-500" /> Kinetic Recovery Milestone Explorer
+                     <Target size={18} className="text-teal-500" /> Stages of recovery (example)
                    </h4>
                    <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Tap a card to see what each stage means</span>
                 </div>
+                {/*
+                  * These cards used to grade the visitor: a tick for "Full Range
+                  * of Motion" once the sliders passed 75° and 85°, "Pre-approved"
+                  * discharge when the pain slider fell below 3. Nothing on a web
+                  * page may approve discharge or set targets from what a visitor
+                  * types, so every card is now just an example stage. They are
+                  * real buttons, so a keyboard can open them too.
+                  */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                   {['Inflammation Reduced', 'Full Range of Motion', 'Load Bearing Achieved', 'Functional Discharge'].map((m, i) => {
-                       // Live requirements evaluation
-                       let requirementsMet = false;
-                       let statusText = "Pending";
-                       let highlightColor = "text-slate-600";
-                       let bgDot = "bg-slate-200";
-
-                       if (i === 0) {
-                         requirementsMet = true;
-                         statusText = "Completed & Audited";
-                         highlightColor = "text-teal-800";
-                         bgDot = "bg-teal-500 text-white";
-                       } else if (i === 1) {
-                         const flexionCheck = romNeckFlexion >= 75;
-                         const rotationCheck = romNeckRotation >= 85;
-                         requirementsMet = flexionCheck && rotationCheck;
-                         statusText = requirementsMet ? "Completed & Met" : "Requires Slider Adjustment";
-                         highlightColor = requirementsMet ? "text-emerald-600" : "text-amber-700 font-bold animate-pulse";
-                         bgDot = requirementsMet ? "bg-emerald-500 text-white" : "bg-amber-400 text-slate-950";
-                       } else if (i === 2) {
-                         requirementsMet = exercises.filter(ex => ex.completed).length >= 2;
-                         statusText = requirementsMet ? "Completed & Met" : "Active Treatment";
-                         highlightColor = "text-teal-800";
-                         bgDot = "bg-teal-500 text-white";
-                       } else if (i === 3) {
-                         requirementsMet = painLevel < 3;
-                         statusText = requirementsMet ? "Pre-approved" : "Target: Week 8 Discharge";
-                         highlightColor = "text-slate-500";
-                         bgDot = "bg-slate-200 text-slate-500";
-                       }
-
-                       return (
-                         <div 
-                           key={i} 
-                           onClick={() => { setSelectedMilestone(i); playAcousticPing(440, 0.08, 'triangle'); }}
-                           className="flex flex-col gap-3 p-4 rounded-2xl bg-slate-50 hover:bg-teal-50/30 border border-transparent hover:border-teal-100 hover:shadow-md cursor-pointer transition-all duration-300 relative group"
+                   {MILESTONE_TITLES.map((m, i) => (
+                         <button
+                           type="button"
+                           key={i}
+                           onClick={(e) => { milestoneOpenerRef.current = e.currentTarget; setSelectedMilestone(i); playAcousticPing(440, 0.08, 'triangle'); }}
+                           className="w-full text-left flex flex-col gap-3 p-4 rounded-2xl bg-slate-50 hover:bg-teal-50/30 border border-transparent hover:border-teal-100 hover:shadow-md cursor-pointer transition-all duration-300 relative group"
                          >
-                            <div className="flex items-center gap-3">
-                               <div className={cn("w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-[10px] font-black", bgDot)}>
-                                   {i === 0 || requirementsMet ? <CheckCircle2 size={13} /> : <span className="text-[9px] font-mono">{i+1}</span>}
-                               </div>
-                               <div className={cn("h-0.5 flex-1 rounded-full", i === 0 || requirementsMet ? "bg-teal-500" : "bg-slate-200")} />
-                            </div>
-                            <div>
-                               <p className="font-bold text-sm text-slate-900 group-hover:text-teal-700 transition-colors">{m}</p>
-                               <p className={cn("text-[9px] uppercase font-black tracking-widest mt-1", highlightColor)}>
-                                 {statusText}
-                               </p>
-                            </div>
-                         </div>
-                       );
-                   })}
+                            <span className="flex items-center gap-3 w-full">
+                               <span className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-[10px] font-black bg-teal-700 text-white">
+                                   <span className="text-[10px] font-mono">{i + 1}</span>
+                               </span>
+                               <span className="h-0.5 flex-1 rounded-full bg-slate-200" />
+                            </span>
+                            <span className="block">
+                               <span className="block font-bold text-sm text-slate-900 group-hover:text-teal-700 transition-colors">{m}</span>
+                               <span className="block text-[10px] uppercase font-black tracking-widest mt-1 text-slate-600">
+                                 Example stage
+                               </span>
+                            </span>
+                         </button>
+                   ))}
                 </div>
 
                 {/* MIL_DETAIL OVERLAY (Upgrade 1 Modal dialog) */}
@@ -460,7 +495,12 @@ export default function DashboardPage() {
                       className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4"
                       onClick={() => setSelectedMilestone(null)}
                     >
-                      <motion.div 
+                      <motion.div
+                        ref={milestoneDialogRef}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="milestone-title"
+                        tabIndex={-1}
                         initial={{ scale: 0.95, y: 15 }}
                         animate={{ scale: 1, y: 0 }}
                         exit={{ scale: 0.95, y: 15 }}
@@ -472,13 +512,20 @@ export default function DashboardPage() {
                         <div className="absolute top-4 right-4 w-4 h-4 border-t-2 border-r-2 border-slate-200"></div>
 
                         <div className="space-y-2">
-                          <span className="text-[10px] uppercase font-black text-teal-600 tracking-widest">Clinical Milestone Phase 0{selectedMilestone + 1}</span>
-                          <h3 className="text-2xl font-bold font-display text-slate-100 tracking-tight">
-                            {['Inflammation Reduced (Acute Relief)', 'Physiological Range of Motion', 'Active Load Resiliency', 'Functional Checkout & Discharge'][selectedMilestone]}
+                          <span className="text-[10px] uppercase font-black text-teal-800 tracking-widest">Example stage {selectedMilestone + 1}</span>
+                          <h3 id="milestone-title" className="text-2xl font-bold font-display text-slate-900 tracking-tight">
+                            {MILESTONE_TITLES[selectedMilestone]}
                           </h3>
                         </div>
 
-                        <div className="space-y-4 text-xs leading-relaxed text-slate-500 font-light">
+                        {/*
+                          * Every verdict that stood here is gone: "Physiological
+                          * discharge approved", "(Discharge Ready)", named therapies
+                          * "required", and a request to push the neck past 85° and
+                          * 75° "to approve this milestone". The visitor's own
+                          * readings are shown as they are, never graded.
+                          */}
+                        <div className="space-y-4 text-xs leading-relaxed text-slate-600">
                           {selectedMilestone === 0 && (
                             <>
                               <p>Sample: the first sore, tender stage has settled. Your practitioner decides when you are ready to move on.</p>
@@ -494,79 +541,60 @@ export default function DashboardPage() {
                               <p>Being able to look down and turn your head both ways without your shoulders joining in.</p>
                               <div className="space-y-2.5 p-4 bg-slate-50 rounded-2xl border border-slate-100">
                                 <div className="flex justify-between items-center">
-                                  <span>Cervical Flexion ROM Target:</span>
-                                  <span className={cn("font-mono font-bold", romNeckFlexion >= 75 ? "text-emerald-600" : "text-amber-600")}>
-                                    {romNeckFlexion}° / 75° {romNeckFlexion >= 75 ? "✓" : "✗"}
-                                  </span>
+                                  <span>Looking down (your slider):</span>
+                                  <span className="font-mono font-bold text-slate-800">{romNeckFlexion}°</span>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                  <span>Cervical Rotation ROM Target:</span>
-                                  <span className={cn("font-mono font-bold", romNeckRotation >= 85 ? "text-emerald-600" : "text-amber-600")}>
-                                    {romNeckRotation}° / 85° {romNeckRotation >= 85 ? "✓" : "✗"}
-                                  </span>
+                                  <span>Turning your head (your slider):</span>
+                                  <span className="font-mono font-bold text-slate-800">{romNeckRotation}°</span>
                                 </div>
                               </div>
-                              {romNeckFlexion >= 75 && romNeckRotation >= 85 ? (
-                                <div className="p-3.5 bg-emerald-50 text-emerald-800 rounded-xl border border-emerald-100 font-medium flex items-center gap-2">
-                                  <CheckCircle2 size={14} /> Biomechanic criteria fully met via live inputs.
-                                </div>
-                              ) : (
-                                <div className="p-3.5 bg-amber-50 text-amber-800 rounded-xl border border-amber-100 font-medium leading-relaxed">
-                                  Attention: Please adjust cervical rotation beyond 85° and flexion beyond 75° using the sliders to approve this milestone limit.
-                                </div>
-                              )}
+                              <div className="p-3.5 bg-slate-50 text-slate-700 rounded-xl border border-slate-100 font-medium leading-relaxed space-y-2">
+                                <p>Your practitioner decides when you have reached this stage.</p>
+                                <p>There is no number to reach here. Do not push your neck further to change these readings. Your practitioner will set targets that suit you.</p>
+                              </div>
                             </>
                           )}
                           {selectedMilestone === 2 && (
                             <>
-                              <p>Gentle strengthening with light weights or bands, once you are doing at least two of your daily exercises.</p>
+                              <p>Gentle strengthening, when your practitioner says you are ready.</p>
                               <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-100 space-y-2">
                                 <div className="flex justify-between">
-                                  <span>Core Tasks Logged:</span>
-                                  <span className="font-bold text-slate-800">{exercises.filter(ex => ex.completed).length} Completed</span>
+                                  <span>Ticked on the practice list:</span>
+                                  <span className="font-bold text-slate-800">{completedCount} of {exercises.length}</span>
                                 </div>
-                                <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
-                                  <div className="bg-teal-500 h-full" style={{ width: `${Math.min(100, (exercises.filter(ex => ex.completed).length / 2) * 100)}%` }}></div>
+                                <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden" aria-hidden="true">
+                                  <div className="bg-teal-600 h-full" style={{ width: `${Math.round((completedCount / exercises.length) * 100)}%` }}></div>
                                 </div>
                               </div>
-                              {exercises.filter(ex => ex.completed).length >= 2 ? (
-                                <div className="p-3.5 bg-emerald-50 text-emerald-800 rounded-xl border border-emerald-100 font-medium flex items-center gap-2">
-                                  <CheckCircle2 size={14} /> Muscle recruitment load bearing verified.
-                                </div>
-                              ) : (
-                                <div className="p-3.5 bg-slate-50 text-slate-500 rounded-xl border border-slate-100 leading-relaxed">
-                                  Check off 2 or more active rehab exercises in your checklist to verify kinetic strength load-bearing status!
-                                </div>
-                              )}
+                              <div className="p-3.5 bg-slate-50 text-slate-700 rounded-xl border border-slate-100 leading-relaxed">
+                                This stage is an example. Your practitioner will tell you when to start strengthening work.
+                              </div>
                             </>
                           )}
                           {selectedMilestone === 3 && (
                             <>
-                              <p>Getting ready to finish treatment: usually when your pain stays below 3 out of 10.</p>
+                              <p>Getting ready to finish treatment is a decision you and your practitioner make together.</p>
                               <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-100 flex justify-between items-center">
-                                <span>Your Pain Score Checklist:</span>
-                                <span className={cn("font-mono font-bold", painLevel < 3 ? "text-emerald-600" : "text-amber-600")}>
-                                  VAS {painLevel} / 10 {painLevel < 3 ? "✓ (Discharge Ready)" : "✗ (Restricted)"}
+                                <span>Your pain score (your slider):</span>
+                                <span className="font-mono font-bold text-slate-800">
+                                  {painLevel} out of 10
                                 </span>
                               </div>
-                              {painLevel < 3 ? (
-                                <div className="p-3.5 bg-emerald-50 text-emerald-800 rounded-xl border border-emerald-100 font-medium">
-                                  Physiological discharge approved. Alignment lock target verified.
-                                </div>
-                              ) : (
-                                <div className="p-3.5 bg-slate-100 text-slate-500 rounded-xl border border-slate-200 leading-relaxed">
-                                  Subjective pain scale is too high. Active recovery, vagus breath coaching, and muscle relaxation required to clear discharge checkpoints.
-                                </div>
-                              )}
+                              <div className="p-3.5 bg-slate-50 text-slate-700 rounded-xl border border-slate-100 leading-relaxed space-y-2">
+                                <p>Only your practitioner can say when treatment can finish.</p>
+                                <p>If your pain is not settling, tell your practitioner. If it is severe or getting worse, call the clinic or NHS 111.</p>
+                              </div>
                             </>
                           )}
                         </div>
 
-                        <button 
+                        <button
+                          type="button"
                           onClick={() => setSelectedMilestone(null)}
                           className="w-full py-4 bg-slate-950 hover:bg-slate-800 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer"
                         >
-                          Minimize Milestone
+                          Close
                         </button>
                       </motion.div>
                     </motion.div>
@@ -593,37 +621,45 @@ export default function DashboardPage() {
             </div>
             
             <p className="text-sm text-slate-600 font-light leading-relaxed">
-              Completing daily exercises lowers your calculated somatic pain metrics and updates your visual kinetic recovery lines.
+              Tick each exercise when you have done it. This is a practice list: your ticks move the last week of the sample chart above, and nothing is saved.
             </p>
 
-            <div className="space-y-3">
+            {/*
+              * Real checkboxes for a keyboard and a screen reader: each row is
+              * a button with role="checkbox", so Tab reaches it, Space or
+              * Enter ticks it, and its ticked state is announced.
+              */}
+            <div className="space-y-3" role="group" aria-label="Practice exercise list">
               {exercises.map((ex) => (
-                <div 
+                <button
+                  type="button"
+                  role="checkbox"
+                  aria-checked={ex.completed}
                   key={ex.id}
                   onClick={() => handleToggleExercise(ex.id)}
                   className={cn(
-                    "p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between group",
-                    ex.completed 
-                      ? "bg-teal-50/40 border-teal-500/30 text-slate-900" 
+                    "w-full text-left p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between group",
+                    ex.completed
+                      ? "bg-teal-50/40 border-teal-500/30 text-slate-900"
                       : "bg-white hover:bg-slate-50 border-slate-100 text-slate-600"
                   )}
                 >
-                  <div className="flex items-center gap-4">
-                    <div className={cn(
+                  <span className="flex items-center gap-4">
+                    <span className={cn(
                       "w-6 h-6 rounded-lg border-2 flex items-center justify-center shrink-0 transition-colors duration-300",
-                      ex.completed 
-                        ? "bg-teal-500 border-teal-500 text-white" 
-                        : "border-slate-300 group-hover:border-teal-500"
-                    )}>
+                      ex.completed
+                        ? "bg-teal-500 border-teal-500 text-white"
+                        : "border-slate-500 group-hover:border-teal-600"
+                    )} aria-hidden="true">
                       {ex.completed && <CheckCircle2 size={14} />}
-                    </div>
-                    <div>
-                      <h4 className={cn("text-xs md:text-sm font-bold", ex.completed ? "line-through text-slate-500" : "text-slate-800")}>{ex.title}</h4>
-                      <p className="text-[10px] text-slate-600 uppercase mt-0.5">{ex.sets}</p>
-                    </div>
-                  </div>
-                  <ChevronRight size={16} className={cn("text-slate-300 transition-all", ex.completed ? "text-teal-500" : "group-hover:translate-x-1")} />
-                </div>
+                    </span>
+                    <span className="block">
+                      <span className={cn("block text-xs md:text-sm font-bold", ex.completed ? "line-through text-slate-600" : "text-slate-800")}>{ex.title}</span>
+                      <span className="block text-[10px] text-slate-600 uppercase mt-0.5">{ex.sets}</span>
+                    </span>
+                  </span>
+                  <ChevronRight size={16} aria-hidden="true" className={cn("text-slate-300 transition-all", ex.completed ? "text-teal-500" : "group-hover:translate-x-1")} />
+                </button>
               ))}
             </div>
           </div>
@@ -662,7 +698,7 @@ export default function DashboardPage() {
           <div className="mt-8 p-4 bg-teal-500/5 rounded-2xl border border-teal-500/10 flex items-center gap-4">
             <Award className="text-teal-600 shrink-0" size={24} />
             <p className="text-[11px] text-slate-600 font-medium font-sans">
-              A little movement each day helps preserve bone density and joint lubrication.
+              Keep to the exercises your practitioner gives you, and ask before adding new ones.
             </p>
           </div>
         </div>
@@ -675,19 +711,19 @@ export default function DashboardPage() {
               <h3 className="text-2xl font-bold text-slate-900 font-display">How far your neck moves</h3>
             </div>
             <p className="text-sm text-slate-600 font-light leading-relaxed">
-              Log cervical angles and current acute discomfort scales. The system compiles these to index safety alignments before hands-on treatment.
+              Move the sliders to show roughly how far your neck moves and how much it hurts today. This is not a test, and nothing is sent to the clinic.
             </p>
 
             {/* Slider Interfaces */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
                 <div className="flex justify-between items-center text-sm">
-                  <span className="font-bold text-slate-700">Looking down</span>
+                  <label htmlFor="neck-looking-down" className="font-bold text-slate-700">Looking down</label>
                   <span className="font-mono text-indigo-600 font-bold">{romNeckFlexion}° <span className="text-xs text-slate-600">/ 80°</span></span>
                 </div>
                 <input
                   type="range"
-                  aria-label="Cervical flexion range of motion, in degrees"
+                  id="neck-looking-down"
                   aria-valuetext={`${romNeckFlexion} degrees of 80`}
                   min="20"
                   max="80"
@@ -703,12 +739,12 @@ export default function DashboardPage() {
 
               <div className="space-y-4">
                 <div className="flex justify-between items-center text-sm">
-                  <span className="font-bold text-slate-700">Turning your head</span>
+                  <label htmlFor="neck-turning" className="font-bold text-slate-700">Turning your head</label>
                   <span className="font-mono text-indigo-600 font-bold">{romNeckRotation}° <span className="text-xs text-slate-600">/ 90°</span></span>
                 </div>
                 <input
                   type="range"
-                  aria-label="Cervical rotation range of motion, in degrees"
+                  id="neck-turning"
                   aria-valuetext={`${romNeckRotation} degrees of 90`}
                   min="30"
                   max="90"
@@ -724,12 +760,12 @@ export default function DashboardPage() {
 
               <div className="md:col-span-2 space-y-4 pt-2">
                 <div className="flex justify-between items-center text-sm">
-                  <span className="font-bold text-slate-700">How much it hurts (0-10)</span>
-                  <span className="font-mono text-red-500 font-bold">{painLevel} <span className="text-xs text-slate-600">/ 10</span></span>
+                  <label htmlFor="pain-score" className="font-bold text-slate-700">How much it hurts (0-10)</label>
+                  <span className="font-mono text-red-700 font-bold">{painLevel} <span className="text-xs text-slate-600">/ 10</span></span>
                 </div>
                 <input
                   type="range"
-                  aria-label="Subjective discomfort, visual analogue scale from 0 to 10"
+                  id="pain-score"
                   aria-valuetext={`${painLevel} out of 10`}
                   min="0"
                   max="10"
@@ -744,13 +780,15 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              /*
-               * A "ROM Vision Calibration" panel stood here. It opened the
-               * camera, showed a crosshair, and measured nothing at all -
-               * the angles it "calibrated" came from the sliders above.
-               * Asking a patient for their camera on a medical site in
-               * exchange for theatre is not a feature, so it is gone.
-               */
+              {/*
+                * A "ROM Vision Calibration" panel stood here. It opened the
+                * camera, showed a crosshair, and measured nothing at all -
+                * the angles it "calibrated" came from the sliders above.
+                * Asking a patient for their camera on a medical site in
+                * exchange for theatre is not a feature, so it is gone.
+                * (This note was once bare JSX text, so visitors saw it
+                * printed on the page; it is a real comment now.)
+                */}
 
             </div>
           </div>
@@ -759,46 +797,58 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center p-6 bg-slate-50 border border-slate-100 rounded-2xl shadow-inner font-sans">
             <div className="md:col-span-4 flex flex-col justify-center items-center text-center p-3 border-r border-slate-200">
               <span className="text-[10px] font-black uppercase text-slate-600 tracking-wider">Movement score</span>
-              <span className={cn("text-5xl font-display font-black my-2", bioScoreLimit > 70 ? "text-emerald-500" : bioScoreLimit > 45 ? "text-amber-700" : "text-red-500")}>
+              <span className={cn("text-5xl font-display font-black my-2", bioScoreLimit > 70 ? "text-emerald-700" : bioScoreLimit > 45 ? "text-amber-700" : "text-red-700")}>
                 {bioScoreLimit}%
               </span>
-              <span className="text-[9px] font-bold text-slate-600 uppercase">A guide, not a diagnosis</span>
+              <span className="text-xs font-bold text-slate-600 uppercase">A guide, not a diagnosis</span>
             </div>
-            
-            <div className="md:col-span-8 space-y-2 pl-3">
+
+            {/*
+              * A live region: when the pain score crosses into "High
+              * discomfort", a screen reader hears the call-the-clinic-or-111
+              * line too, not just a sighted visitor.
+              */}
+            <div className="md:col-span-8 space-y-2 pl-3" role="status" aria-live="polite">
               <div className="flex items-center gap-2">
-                <AlertTriangle size={15} className={cn(painLevel >= 7 ? "text-red-500" : "text-amber-700")} />
+                <AlertTriangle size={15} aria-hidden="true" className={cn(painLevel >= 7 ? "text-red-700" : "text-amber-700")} />
                 <span className={cn("text-xs font-black uppercase tracking-wider", advice.color)}>{advice.status}</span>
               </div>
-              <p className="text-xs text-slate-500 font-light leading-relaxed">{advice.desc}</p>
+              <p className="text-xs text-slate-600 leading-relaxed">{advice.desc}</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* NEW SECTION: Patient Prep Triage Exporter & Telehealth PDF Generator */}
+      {/*
+        * SUMMARY SHEET to print and bring to an appointment.
+        * This was "Pre-Visit Telehealth Triage Report Exporter": it claimed
+        * the data was synchronised, encrypted ("End-to-End Crypt Key
+        * Activated") and that the therapist was "pre-briefed", and it showed a
+        * random reference number. None of that was true - the clinic offers no
+        * telehealth and nothing here is ever sent. It now says what it does.
+        */}
       <section className="bg-slate-950 rounded-[4rem] text-white p-12 lg:p-16 relative overflow-hidden group holographic-border">
           <div className="absolute inset-0 neural-grid opacity-[0.08]" />
           <div className="absolute top-0 left-1/3 w-[300px] h-[300px] bg-teal-500/10 rounded-full blur-[90px] pointer-events-none" />
-          
+
           <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12">
             <div className="space-y-6 max-w-2xl">
               <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-teal-500/10 text-teal-300 font-bold text-[9px] uppercase tracking-widest border border-teal-500/20">
-                <Printer size={12} /> CLINICAL DATA SYNCHRONIZATION
+                <Printer size={12} /> Print for your visit
               </span>
               <h3 className="text-4xl md:text-5xl font-display font-bold leading-tight text-white mb-2 tracking-tighter">
-                Pre-Visit Telehealth <br/>Triage Report Exporter
+                A summary to bring to <br/>your appointment
               </h3>
-              <p className="text-slate-400 leading-relaxed font-light text-lg">
-                Instantly consolidate your range of motion scores, current spinal alignment indexes, yesterday's pain scales, and logged rehab tasks. Exporter auto-crypts credentials so your therapist is pre-briefed prior to spinal adjustments.
+              <p className="text-slate-300 leading-relaxed text-lg">
+                Puts your slider readings, your pain score, the exercises you ticked and your notes on one sheet you can print and bring with you. It stays on this device, and nothing is sent to the clinic.
               </p>
-              
+
               <div className="flex flex-wrap gap-6 text-sm text-slate-300 font-mono">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 size={16} className="text-teal-400" /> Current Assessment Locked
+                  <CheckCircle2 size={16} className="text-teal-400" aria-hidden="true" /> Stays on this device
                 </div>
                 <div className="flex items-center gap-2">
-                  <ShieldCheck size={16} className="text-teal-400" /> End-to-End Crypt Key Activated
+                  <ShieldCheck size={16} className="text-teal-400" aria-hidden="true" /> Nothing is sent anywhere
                 </div>
               </div>
             </div>
@@ -807,110 +857,103 @@ export default function DashboardPage() {
               <AnimatePresence mode="wait">
                 {!triageReport ? (
                   <motion.button
+                    type="button"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     onClick={handleGenerateTriage}
-                    disabled={isGeneratingTriage}
                     className="h-20 w-full sm:w-[350px] bg-teal-600 hover:bg-teal-500 text-slate-950 font-black uppercase text-xs tracking-[0.3em] rounded-[2rem] shadow-glow-teal flex items-center justify-center gap-4 transition-all hover:-translate-y-1 active:scale-95 group/btn"
                   >
-                    {isGeneratingTriage ? (
-                      <RefreshCw className="animate-spin text-slate-950" size={24} />
-                    ) : (
-                      <Share2 className="group-hover/btn:scale-125 transition-transform text-slate-950" size={20} />
-                    )}
-                    {isGeneratingTriage ? "Compiling Pack..." : "Generate Clinic Report"}
+                    <ClipboardList className="group-hover/btn:scale-125 transition-transform text-slate-950" size={20} aria-hidden="true" />
+                    Make my summary
                   </motion.button>
                 ) : (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
-                    className="p-8 bg-slate-900 border border-slate-800 rounded-[3rem] w-full sm:w-[390px] shadow-3xl text-slate-300 relative overflow-hidden group font-sans"
+                    className="p-5 sm:p-8 bg-slate-900 border border-slate-800 rounded-[2rem] sm:rounded-[3rem] w-full sm:w-[390px] shadow-3xl text-slate-300 relative overflow-hidden group font-sans"
                   >
                     <div className="absolute inset-0 bg-teal-500/5 rounded-[3rem] pointer-events-none" />
-                    
+
                     <div className="space-y-6">
                       <div className="flex items-center justify-between border-b border-slate-800 pb-4">
                         <div>
-                          <h4 className="text-sm font-bold text-white tracking-tight uppercase">Summary for your appointment</h4>
-                          <p className="text-[10px] text-teal-400 font-mono mt-0.5">{triageReport.id}</p>
+                          <h4 ref={focusOnMount} tabIndex={-1} className="text-sm font-bold text-white tracking-tight uppercase">Summary for your appointment</h4>
+                          <p className="text-xs text-teal-300 font-mono mt-0.5">Made on {triageReport.date}</p>
                         </div>
-                        <CheckCircle2 className="text-teal-400" size={28} />
+                        <CheckCircle2 className="text-teal-400" size={28} aria-hidden="true" />
                       </div>
 
-                      {/* PHYSICAL-LIKE SLIP */}
-                      <div className="bg-slate-950/60 p-4 rounded-2xl border border-slate-900 font-mono text-[11px] text-slate-300 space-y-3 relative">
-                        <div className="absolute top-2 right-3 text-[7px] text-slate-600 uppercase font-black">Example — not a clinical record</div>
-                        <div className="border-b border-dashed border-slate-800 pb-2">
-                          <div className="flex justify-between">
-                            <span className="text-slate-500">PATIENT:</span>
-                            <span className="text-white font-bold">Your name</span>
+                      {/*
+                        * PHYSICAL-LIKE SLIP - the visitor's own readings, shown
+                        * as they are. The (OK)/(LIMIT) grades that sat beside
+                        * them are gone: a page may not judge a neck from a
+                        * slider. The page's "movement score" is left off too -
+                        * it is this page's own rough formula, not a reading,
+                        * and does not belong on a sheet for a practitioner.
+                        */}
+                      <div className="bg-slate-950/60 p-3 sm:p-4 rounded-2xl border border-slate-900 font-mono text-[11px] text-slate-300 space-y-3">
+                        <div className="text-xs text-slate-300 uppercase font-black">Your own notes — not a clinical record</div>
+                        <div className="border-b border-dashed border-slate-700 pb-2">
+                          <div className="flex justify-between gap-3">
+                            <span className="text-slate-400">NAME:</span>
+                            <span className="text-white text-right">write on the printout</span>
                           </div>
-                          <div className="flex justify-between">
-                            <span className="text-slate-500">CLINIC:</span>
-                            <span className="text-white">{CLINIC.address.town} ({CLINIC.address.postcode})</span>
+                          <div className="flex justify-between gap-3">
+                            <span className="text-slate-400">CLINIC:</span>
+                            <span className="text-white text-right">{CLINIC.address.town} ({CLINIC.address.postcode})</span>
                           </div>
                         </div>
-                        
+
                         <div className="space-y-1">
-                          <div className="flex justify-between">
-                            <span className="text-slate-500">FLEXION ROM:</span>
-                            <span className={cn(romNeckFlexion >= 65 ? "text-emerald-400" : "text-amber-700")}>
-                              {romNeckFlexion}° / 80° {romNeckFlexion >= 65 ? "(OK)" : "(LIMIT)"}
-                            </span>
+                          <div className="flex justify-between gap-3">
+                            <span className="text-slate-400">LOOKING DOWN:</span>
+                            <span className="text-white">{romNeckFlexion}°</span>
                           </div>
-                          <div className="flex justify-between">
-                            <span className="text-slate-500">ROTATION ROM:</span>
-                            <span className={cn(romNeckRotation >= 70 ? "text-emerald-400" : "text-amber-700")}>
-                              {romNeckRotation}° / 90° {romNeckRotation >= 70 ? "(OK)" : "(LIMIT)"}
-                            </span>
+                          <div className="flex justify-between gap-3">
+                            <span className="text-slate-400">TURNING YOUR HEAD:</span>
+                            <span className="text-white">{romNeckRotation}°</span>
                           </div>
-                          <div className="flex justify-between">
-                            <span className="text-slate-500">DISCOMFORT VAS:</span>
-                            <span className="text-red-400">{painLevel} / 10 Scale</span>
+                          <div className="flex justify-between gap-3">
+                            <span className="text-slate-400">PAIN:</span>
+                            <span className="text-white">{painLevel} out of 10</span>
                           </div>
-                          <div className="flex justify-between">
-                            <span className="text-slate-500">MOVEMENT SCORE:</span>
-                            <span className="text-teal-400 font-bold">{bioScoreLimit}% Range</span>
+                          <div className="flex justify-between gap-3">
+                            <span className="text-slate-400">EXERCISES:</span>
+                            <span className="text-white text-right">{completedCount} of {exercises.length} ticked</span>
                           </div>
-                          <div className="flex justify-between">
-                            <span className="text-slate-500">REHAB PROGRESSES:</span>
-                            <span>{exercises.filter(ex => ex.completed).length} / {exercises.length} logged</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-slate-500">YOUR NOTES:</span>
-                            <span className="text-teal-400">{soapNoteResult ? "INCLUDED" : "NONE YET"}</span>
+                          <div className="flex justify-between gap-3">
+                            <span className="text-slate-400">YOUR NOTES:</span>
+                            <span className="text-teal-300">{soapNoteResult ? "Included" : "None yet"}</span>
                           </div>
                         </div>
-                        
+
                       </div>
 
 
                       <div className="flex gap-3">
-                        <button 
-                          onClick={() => {
-                            playAcousticPing(800, 0.05, 'square');
-                            setTimeout(() => playAcousticPing(600, 0.05, 'square'), 50);
-                            showToast("Sending document print stream...", "loading");
-                            setTimeout(() => {
-                              window.print();
-                            }, 300);
-                          }}
-                          className="flex-1 py-4 bg-teal-500 text-slate-950 hover:bg-teal-400 rounded-2xl font-black uppercase tracking-wider text-[9px] transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                        {/*
+                          * Prints the summary sheet only - see the print copy
+                          * portalled to <body> at the foot of this page.
+                          */}
+                        <button
+                          type="button"
+                          onClick={() => { trackClick("Print visit summary"); window.print(); }}
+                          className="flex-1 py-4 bg-teal-500 text-slate-950 hover:bg-teal-400 rounded-2xl font-black uppercase tracking-wider text-[10px] transition-colors flex items-center justify-center gap-2 cursor-pointer"
                         >
-                          <Printer size={13} /> Print Docket
+                          <Printer size={13} aria-hidden="true" /> Print my summary
                         </button>
-                        
-                        <button 
+
+                        <button
+                          type="button"
                           onClick={() => {
-                            playAcousticPing(220, 0.1, 'sine');
                             setTriageReport(null);
-                            showToast("Intake slip invalidated. Re-generate to refresh.", "info");
+                            showToast("Summary cleared. Press 'Make my summary' to build it again.", "info");
                           }}
-                          className="px-4 py-4 bg-slate-800 hover:bg-slate-700 text-white rounded-2xl font-black uppercase tracking-wider text-[9px] transition-colors cursor-pointer"
+                          className="px-4 py-4 bg-slate-800 hover:bg-slate-700 text-white rounded-2xl font-black uppercase tracking-wider text-[10px] transition-colors cursor-pointer"
                         >
-                          Reset
+                          Clear
                         </button>
                       </div>
                     </div>
@@ -997,8 +1040,9 @@ export default function DashboardPage() {
                     button really does is check the things the browser can
                     actually check, which is worth saying plainly. */}
                 Runs the checks this page can genuinely make from your browser: whether the
-                site's services answer, whether your device allows local storage, and how the
-                display is currently configured.
+                clinic website answers, whether this device can remember your settings, and
+                whether you are online. It also looks at whether the contact form can send
+                messages, and gives you the clinic's phone number and email in case it cannot.
               </p>
             </div>
 
@@ -1025,7 +1069,7 @@ export default function DashboardPage() {
                   
                   {/* Cyber Health Score */}
                   <div className="bg-slate-950 p-6 rounded-2xl border border-slate-800 text-center flex flex-col justify-center items-center">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Checks passed</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Checks passed</span>
                     <span className="text-6xl font-display font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-indigo-400 my-3">
                       {auditResult.overallHealth}%
                     </span>
@@ -1036,7 +1080,7 @@ export default function DashboardPage() {
 
                   {/* Clinical Insights */}
                   <div className="md:col-span-3 space-y-4">
-                    <h4 className="text-xs font-black uppercase tracking-widest text-slate-500 flex items-center gap-2">
+                    <h4 className="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
                       <Terminal size={14} /> What the check found
                     </h4>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -1052,10 +1096,10 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="space-y-4">
-                  <h4 className="text-xs font-black uppercase tracking-widest text-slate-500 flex items-center gap-2">
+                  <h4 className="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
                     <Target size={14} /> Tips
                   </h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     {auditResult.nextStepRoadmap.map((step, idx) => (
                       <div key={idx} className="p-5 bg-slate-950 border border-slate-800 rounded-2xl relative">
                         
@@ -1151,6 +1195,79 @@ export default function DashboardPage() {
           </div>
       </section>
 
+      {/*
+        * THE PRINT COPY of the visit summary. "Print" used to print the whole
+        * page - sidebar, charts, dark panels, footer - over many sheets, and
+        * the notes' words only as far as the page happened to show them. This
+        * plain black-on-white copy is portalled straight into <body>, so the
+        * print rule can hide every other child of <body> (#root and every
+        * overlay) and paper gets this sheet alone. Invisible on screen. It
+        * exists only while a summary does, so an ordinary Ctrl+P on this page
+        * without a summary still prints the page as before.
+        */}
+      {triageReport && typeof document !== 'undefined' && createPortal(
+        <div id="visit-summary-print" className="hidden">
+          <style>{PRINT_CSS}</style>
+          <div className="vs-title">Notes for my appointment</div>
+          <p>{CLINIC.name}, {CLINIC.addressLine}</p>
+          <p>Made on {triageReport.date} with the Recovery Tools page on the clinic's website. These are my own notes, not a clinical record.</p>
+          <p className="vs-name">Name: <span className="vs-line" /></p>
+
+          <div className="vs-head">My readings</div>
+          <ul>
+            <li>Looking down: {romNeckFlexion}°</li>
+            <li>Turning my head: {romNeckRotation}°</li>
+            <li>Pain: {painLevel} out of 10</li>
+          </ul>
+
+          <div className="vs-head">Practice exercises I ticked ({completedCount} of {exercises.length})</div>
+          {completedCount > 0 ? (
+            <ul>
+              {exercises.filter(ex => ex.completed).map(ex => (
+                <li key={ex.id}>{ex.title} ({ex.sets})</li>
+              ))}
+            </ul>
+          ) : (
+            <p>None ticked.</p>
+          )}
+
+          {soapNoteResult && (
+            <>
+              <div className="vs-head">My notes</div>
+              <pre>{soapNoteResult}</pre>
+            </>
+          )}
+        </div>,
+        document.body
+      )}
+
     </div>
   );
 }
+
+/**
+ * Print rules for the visit summary. Rendered inside the print copy itself,
+ * so they exist only while a summary does. Unlayered, so they beat every
+ * Tailwind layer (the `hidden` utility and preflight's list and heading
+ * resets). Points, not rem: the site's text-size setting scales the root
+ * font, and a printed sheet should not depend on it. Black on white, so it
+ * reads the same whether or not "background graphics" is ticked.
+ */
+const PRINT_CSS = `
+#visit-summary-print { display: none; }
+@media print {
+  @page { margin: 15mm; }
+  html, body { background: #fff !important; height: auto !important; min-height: 0 !important; overflow: visible !important; }
+  body > :not(#visit-summary-print) { display: none !important; }
+  #visit-summary-print { display: block !important; color: #000 !important; background: #fff !important; font: 12pt/1.5 Arial, Helvetica, sans-serif !important; }
+  #visit-summary-print * { color: #000 !important; background: transparent !important; box-shadow: none !important; text-shadow: none !important; }
+  #visit-summary-print .vs-title { font-size: 18pt; font-weight: bold; margin: 0 0 6pt; }
+  #visit-summary-print .vs-head { font-size: 13pt; font-weight: bold; margin: 14pt 0 4pt; padding-bottom: 2pt; border-bottom: 1px solid #000; }
+  #visit-summary-print p { margin: 0 0 4pt; }
+  #visit-summary-print ul { margin: 0; padding-left: 18pt; list-style: disc; }
+  #visit-summary-print li { margin: 0 0 2pt; }
+  #visit-summary-print pre { white-space: pre-wrap; font: inherit; margin: 0; }
+  #visit-summary-print .vs-name { margin-top: 8pt; }
+  #visit-summary-print .vs-line { display: inline-block; width: 80mm; border-bottom: 1px solid #000; }
+}
+`;

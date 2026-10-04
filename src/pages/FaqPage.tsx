@@ -106,7 +106,7 @@ export default function FaqPage() {
         <AlertTriangle className="text-amber-600 shrink-0 mt-0.5" size={22} aria-hidden="true" />
         <div className="space-y-2">
           <h2 className="font-bold text-amber-900">If symptoms are urgent, do not wait for an appointment</h2>
-          <p className="text-sm text-amber-900/80 leading-relaxed font-light">
+          <p className="text-sm text-amber-900 leading-relaxed">
             Loss of bladder or bowel control, numbness around the saddle area, sudden severe leg
             weakness, or back pain with fever or unexplained weight loss all need emergency
             assessment. Go to A&amp;E or call 999.
@@ -117,7 +117,10 @@ export default function FaqPage() {
       <section className="rounded-[2.5rem] bg-slate-900 text-white p-10 md:p-14 flex flex-col md:flex-row md:items-center gap-8 justify-between">
         <div className="space-y-3">
           <div className="flex items-center gap-2 text-teal-400 text-[11px] font-black uppercase tracking-[0.3em]">
-            <ShieldCheck size={16} /> Registered practice
+            {/* Said "Registered practice". Registration belongs to people, not
+                the practice: the osteopaths are on the GOsC register (the
+                hypnotherapist is registered separately, with the NCH). */}
+            <ShieldCheck size={16} aria-hidden="true" /> GOsC-registered osteopaths
           </div>
           <h2 className="text-3xl font-display font-medium tracking-tight">Still deciding?</h2>
           <p className="text-slate-400 font-light max-w-md leading-relaxed">
@@ -131,7 +134,9 @@ export default function FaqPage() {
           rel="noopener noreferrer"
           onClick={() => trackClick('FAQ Book Online')}
           className="shrink-0 inline-flex items-center justify-center gap-3 px-9 py-5 rounded-2xl bg-teal-700 hover:bg-teal-800 text-white font-bold transition-all active:scale-[0.98] shadow-lg shadow-teal-500/25 focus-visible:outline-teal-400"
-          aria-label="Book an appointment online — opens our booking system in a new tab"
+          /* Starts with the words on the button, so a voice-control user who
+             says "click Book online" reaches it (WCAG 2.5.3). */
+          aria-label="Book online — opens our booking system in a new tab"
         >
           <Calendar size={20} />
           Book online

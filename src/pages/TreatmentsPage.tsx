@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { TREATMENTS, PRACTITIONERS } from '../data';
+import { TREATMENTS, PRACTITIONERS, type Treatment } from '../data';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { useToast } from '../components/ToastSystem';
@@ -26,24 +26,34 @@ import { BOOKING_URL, CLINIC } from '../constants';
 import { REVIEWS, REVIEWS_SOURCE } from '../data/reviews';
 import { TreatmentMotif } from '../components/AnatomyMotif';
 
+// Acupuncture and Hypnotherapy used to hide together under "Wellness", a word
+// nobody looking for acupuncture would guess. Each now has its own tab, as on
+// the Practitioners page, and a tab that would match nothing is dropped, so an
+// empty tab cannot appear.
+const inCategory = (t: Treatment, cat: string) => {
+  if (cat === 'All') return true;
+  if (cat === 'Massage') return t.title.includes('Massage') || t.id.includes('massage');
+  return t.id === cat.toLowerCase();
+};
+const CATEGORIES = ['All', 'Osteopathy', 'Massage', 'Acupuncture', 'Hypnotherapy', 'Footcare']
+  .filter((cat) => TREATMENTS.some((t) => inCategory(t, cat)));
+
 export default function TreatmentsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
   const { showToast } = useToast();
 
-  const categories = ['All', 'Osteopathy', 'Massage', 'Wellness', 'Footcare'];
-
   const filteredTreatments = useMemo(() => {
+    // The search reads each treatment's own lists from the clinic too, as the
+    // header search does: "sciatica" used to find nothing here while the
+    // header found Osteopathy.
+    const q = searchQuery.trim().toLowerCase();
     return TREATMENTS.filter(t => {
-      const matchesSearch = t.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          t.desc.toLowerCase().includes(searchQuery.toLowerCase());
-      
-      if (activeCategory === 'All') return matchesSearch;
-      if (activeCategory === 'Osteopathy') return matchesSearch && t.id === 'osteopathy';
-      if (activeCategory === 'Massage') return matchesSearch && (t.title.includes('Massage') || t.id.includes('massage'));
-      if (activeCategory === 'Wellness') return matchesSearch && (t.id === 'hypnotherapy' || t.id === 'acupuncture');
-      if (activeCategory === 'Footcare') return matchesSearch && t.id === 'footcare';
-      return matchesSearch;
+      const matchesSearch = !q
+        || t.title.toLowerCase().includes(q)
+        || t.desc.toLowerCase().includes(q)
+        || [...(t.conditions ?? []), ...(t.whoFor ?? [])].some((c) => c.toLowerCase().includes(q));
+      return matchesSearch && inCategory(t, activeCategory);
     });
   }, [searchQuery, activeCategory]);
 
@@ -53,9 +63,10 @@ export default function TreatmentsPage() {
       <header className="relative bg-slate-950 rounded-[4rem] p-12 md:p-24 text-white shadow-3xl overflow-hidden group holographic-border">
         <div className="absolute inset-0 z-0 opacity-40">
            <div className="absolute inset-0 neural-grid opacity-30 mix-blend-screen pointer-events-none"></div>
-           {/* A stock photograph, not our building — it sits behind a gradient
-               as atmosphere, so screen readers skip it rather than being told
-               it is the clinic. */}
+           {/* A photograph from the clinic's own website (whether it shows
+               the building is for the clinic to say). It sits behind a
+               gradient as atmosphere, so screen readers skip it rather than
+               being told what it is. */}
            <img src="https://osteopathyandwellbeing.co.uk/wp-content/uploads/2018/02/4590922.jpg" fetchPriority="high" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[20s]" alt="" />
            <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent"></div>
         </div>
@@ -69,7 +80,9 @@ export default function TreatmentsPage() {
           <div className="flex flex-wrap gap-6 pt-4">
             <div className="flex items-center gap-3 px-6 py-3 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-xl">
               <ShieldCheck size={20} className="text-teal-400" />
-              <span className="text-sm font-bold uppercase tracking-widest text-slate-200">GOsC Registered</span>
+              {/* Only the osteopaths are GOsC-registered; this header sits over
+                  massage, foot care and hypnotherapy too, so it says whose. */}
+              <span className="text-sm font-bold uppercase tracking-widest text-slate-200">GOsC-registered osteopaths</span>
             </div>
             <div className="flex items-center gap-3 px-6 py-3 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-xl">
               <Zap size={20} className="text-amber-400" />
@@ -91,7 +104,7 @@ export default function TreatmentsPage() {
         */}
         {[
           { label: "Google rating", val: REVIEWS_SOURCE.rating, sub: `from ${REVIEWS_SOURCE.count} reviews`, icon: Heart },
-          { label: "Practising since", val: "2012", sub: "in Herne Bay", icon: Clock },
+          { label: "Practising since", val: `${CLINIC.establishedYear}`, sub: "in Herne Bay", icon: Clock },
           { label: "Treatments", val: `${TREATMENTS.length}`, sub: "from osteopathy to footcare", icon: Activity },
           { label: "Practitioners", val: `${PRACTITIONERS.length}`, sub: "at one clinic", icon: Users }
         ].map((stat, i) => (
@@ -110,10 +123,12 @@ export default function TreatmentsPage() {
       <div className="space-y-12">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 bg-slate-50/50 backdrop-blur-xl p-6 rounded-[3rem] border border-slate-100 shadow-inner">
           <div className="flex items-center flex-wrap gap-3">
-            {categories.map((cat) => (
+            {CATEGORIES.map((cat) => (
               <button
                 key={cat}
+                type="button"
                 onClick={() => setActiveCategory(cat)}
+                aria-pressed={activeCategory === cat}
                 className={cn(
                   "px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.25em] transition-all",
                   activeCategory === cat 
@@ -130,7 +145,7 @@ export default function TreatmentsPage() {
             <input
               type="text"
               aria-label="Search treatments"
-              placeholder="Search detailed treatments..."
+              placeholder="Search treatments..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-14 pr-8 py-4 rounded-2xl bg-white focus:bg-white border-2 border-transparent focus:border-teal-100 outline-none transition-all shadow-sm text-sm focus:ring-8 focus:ring-teal-500/5"
@@ -195,6 +210,11 @@ export default function TreatmentsPage() {
             </motion.div>
           ))}
         </motion.div>
+        {/* Said aloud to screen readers whenever a tab or the search changes
+            the list; before, only the picture changed. */}
+        <p role="status" className="sr-only">
+          {filteredTreatments.length === 1 ? '1 treatment shown' : `${filteredTreatments.length} treatments shown`}
+        </p>
         {filteredTreatments.length === 0 && (
           <motion.div 
             initial={{ opacity: 0 }}
@@ -270,8 +290,10 @@ export default function TreatmentsPage() {
 
       <section className="bg-slate-950 p-12 md:p-24 rounded-[5rem] text-white relative overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-10">
-           {/* Stock texture at 10% opacity — decorative, and not our room. */}
-           <img src="https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&q=80&w=2000" loading="lazy" decoding="async" className="w-full h-full object-cover" alt="" />
+           {/* The clinic's own emblem, repeated, as a faint texture. This was a
+               stock photo of an empty operating theatre, which an osteopathy
+               and massage clinic is not. Decorative, so screen readers skip it. */}
+           <img src="/video/emblem-field.jpg" width={1280} height={720} loading="lazy" decoding="async" className="w-full h-full object-cover" alt="" />
         </div>
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
           <div className="space-y-10">
@@ -292,8 +314,13 @@ export default function TreatmentsPage() {
             <div className="space-y-8">
               {[
                 { title: "Talk it through first", desc: "Ring before you book and we will say plainly which treatment fits — or whether we are the right people to help at all." },
-                { title: "Integrated Assessment", desc: "A combined session of physical diagnosis and initial treatment for all new patients." },
-                { title: "Long-term Recovery Strategy", desc: "Structured plans designed around your lifestyle, workspace, and physical goals." }
+                // These two sit over all the treatments, so they must hold for
+                // massage, foot care and hypnotherapy too. "Physical diagnosis
+                // … for all new patients" and plans "around your workspace" did
+                // not: massage therapists and hypnotherapists do not diagnose,
+                // and the clinic never describes workspace plans.
+                { title: "Your first visit", desc: "Your practitioner starts by asking what brings you in, then treats you in the same visit where that is right for you." },
+                { title: "A plan that suits you", desc: "Your practitioner agrees with you what happens next, and why." }
               ].map((item, i) => (
                 <div key={i} className="flex gap-6 group">
                   <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 text-teal-400 flex items-center justify-center shrink-0 group-hover:bg-teal-700 group-hover:text-white transition-all">
@@ -313,7 +340,7 @@ export default function TreatmentsPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-12 py-6 bg-teal-700 text-white rounded-2xl font-bold text-lg hover:bg-teal-800 transition-all shadow-2xl shadow-teal-900/40 active:scale-95 flex items-center justify-center gap-3 group"
-                aria-label="Book an appointment — opens our booking system in a new tab"
+                aria-label="Book an assessment — opens our booking system in a new tab"
               >
                 Book an assessment <ChevronRight size={22} className="group-hover:translate-x-1 transition-transform" />
               </a>
@@ -329,7 +356,11 @@ export default function TreatmentsPage() {
             </div>
           </div>
           <div className="relative aspect-[4/5] rounded-[4rem] overflow-hidden shadow-[0_0_100px_rgba(20,184,166,0.15)] group">
-            <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=1000" loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[10s]" alt="Wellness care" />
+            {/* The clinic's own emblem artwork, as on the home page's review
+                card. This was a stock photo of a stranger doing yoga, which the
+                clinic does not offer, with a real reviewer's name printed over
+                it as if it were them. Decorative, so alt is empty. */}
+            <img src="/video/emblem-grid.jpg" width={1280} height={720} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[10s]" alt="" />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
             <div className="absolute bottom-12 left-12 right-12 p-10 bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[3rem]">
               <div className="flex items-center gap-3 mb-4">
@@ -345,7 +376,11 @@ export default function TreatmentsPage() {
 
       {/* The Clinical Pathway Finder - New Interactive Module */}
       <section className="bg-teal-600 rounded-[5rem] p-12 md:p-24 text-slate-950 relative overflow-hidden group">
-         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 pointer-events-none"></div>
+         {/* Film grain from the shared .noise-tile rule in index.css, a tile
+             drawn locally. It used to be fetched from grainy-gradients.vercel.app,
+             a stranger's demo site, which sent every visitor's IP address there
+             and would have broken if that site went away. */}
+         <div className="absolute inset-0 noise-tile opacity-10 pointer-events-none"></div>
          <div className="relative z-10 max-w-4xl mx-auto text-center space-y-12">
             {/* This was a "Clinical Pathway Finder" promising that "our algorithm will
                 suggest the most efficient treatment protocol". There was no algorithm —

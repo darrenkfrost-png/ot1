@@ -11,11 +11,19 @@ export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [sendFailed, setSendFailed] = useState(false);
+  /*
+   * A mistake in what was typed is not a failed send. A mistyped email used to
+   * raise the big amber "We could not send that message … Nothing has reached
+   * us" box, which reads as the website being broken, while the real reason
+   * sat in a toast in the corner that vanished after ten seconds. The problem
+   * is now named under the field itself, and focus goes there to fix it.
+   */
+  const [fieldError, setFieldError] = useState<{ field: 'name' | 'email' | 'message'; text: string } | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
-    subject: 'General Inquiry',
+    subject: 'General Enquiry',
     message: ''
   });
 
@@ -36,23 +44,23 @@ export default function ContactPage() {
     setSendFailed(false);
     trackClick("Contact Form Submission Started");
 
-    // Client-side validation
-    if (!formData.name.trim()) {
-      setSendFailed(true);
-      showToast('Please enter your name.', 'error');
+    // Client-side validation: point at the field, never at the delivery.
+    const invalid = (field: 'name' | 'email' | 'message', text: string) => {
+      setFieldError({ field, text });
       setIsSubmitting(false);
+      document.getElementById(`contact-${field}`)?.focus();
+    };
+    setFieldError(null);
+    if (!formData.name.trim()) {
+      invalid('name', 'Please enter your name.');
       return;
     }
-    if (!isValidEmail(formData.email)) {
-      setSendFailed(true);
-      showToast('Please enter a valid email address.', 'error');
-      setIsSubmitting(false);
+    if (!isValidEmail(formData.email.trim())) {
+      invalid('email', 'Please check your email address. It should look like name@example.co.uk.');
       return;
     }
     if (!formData.message.trim()) {
-      setSendFailed(true);
-      showToast('Please enter your message.', 'error');
-      setIsSubmitting(false);
+      invalid('message', 'Please write your message.');
       return;
     }
 
@@ -67,7 +75,7 @@ export default function ContactPage() {
 
       if (response.ok && result.ok) {
         setIsSuccess(true);
-        setFormData({ name: '', email: '', phone: '', subject: 'General Inquiry', message: '' });
+        setFormData({ name: '', email: '', phone: '', subject: 'General Enquiry', message: '' });
         showToast('Message sent. We will come back to you as soon as we can.', 'success');
         trackClick('Contact Form Submission Success');
       } else {
@@ -112,7 +120,20 @@ export default function ContactPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    if (fieldError?.field === e.target.name) setFieldError(null);
   };
+
+  /** Wires a field to its error message, if it has one. */
+  const errorProps = (field: 'name' | 'email' | 'message') =>
+    fieldError?.field === field
+      ? { 'aria-invalid': true as const, 'aria-describedby': `contact-${field}-error` }
+      : {};
+  const errorText = (field: 'name' | 'email' | 'message') =>
+    fieldError?.field === field ? (
+      <p id={`contact-${field}-error`} className="ml-1 text-sm font-semibold text-red-700">
+        {fieldError.text}
+      </p>
+    ) : null;
 
   return (
     <motion.div 
@@ -124,7 +145,7 @@ export default function ContactPage() {
         {/* Left Column: Info */}
         <div className="lg:col-span-5 space-y-12">
           <div className="space-y-6">
-            <span className="text-sm font-black text-teal-600 uppercase tracking-[0.4em]">Get in Touch</span>
+            <span className="text-sm font-black text-teal-400 uppercase tracking-[0.4em]">Get in Touch</span>
             <h1 className="text-5xl md:text-7xl font-display font-medium text-slate-50 tracking-tight leading-[0.9]">
               Let's start your <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-emerald-500">recovery.</span>
@@ -179,8 +200,18 @@ export default function ContactPage() {
                   <ShieldCheck size={32} />
                 </div>
                 <div>
-                   <h3 className="text-lg font-bold">Your details, handled properly</h3>
-                   <p className="text-slate-400 text-sm font-light">What you send here reaches the clinic and is used to answer you, nothing else. Sent over an encrypted connection, and kept in line with GDPR.</p>
+                   <h2 className="text-lg font-bold">What happens to your message</h2>
+                   {/*
+                     * This said "kept in line with GDPR": a legal claim made on
+                     * the clinic's behalf, with nothing to point to. It should
+                     * link the clinic's privacy statement instead — but that
+                     * page (CLINIC.policies.privacy) shows only its heading;
+                     * checked in a real browser, its document area is empty.
+                     * A link to a blank page would be a second false comfort,
+                     * so the claim is gone and the link waits for a real
+                     * privacy notice from the clinic.
+                     */}
+                   <p className="text-slate-300 text-sm font-light">What you send here goes to the clinic and is used only to answer your message. It travels over an encrypted connection. If you would like to know how the clinic keeps your details, please ask.</p>
                 </div>
              </div>
              <div className="absolute top-0 right-0 w-32 h-32 bg-teal-500/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-1000"></div>
@@ -211,8 +242,10 @@ export default function ContactPage() {
                         value={formData.name}
                         onChange={handleChange}
                         placeholder="John Doe"
-                        className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 outline-none transition-all font-medium"
+                        {...errorProps('name')}
+                        className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 outline-none transition-all font-medium aria-invalid:border-red-700"
                       />
+                      {errorText('name')}
                     </div>
                     <div className="space-y-3">
                       <label htmlFor="contact-email" className="text-xs font-black text-slate-600 uppercase tracking-widest ml-1 block">Email Address</label>
@@ -225,8 +258,10 @@ export default function ContactPage() {
                         value={formData.email}
                         onChange={handleChange}
                         placeholder="john@example.com"
-                        className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 outline-none transition-all font-medium"
+                        {...errorProps('email')}
+                        className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 outline-none transition-all font-medium aria-invalid:border-red-700"
                       />
+                      {errorText('email')}
                     </div>
                   </div>
 
@@ -253,7 +288,7 @@ export default function ContactPage() {
                         onChange={handleChange}
                         className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 outline-none transition-all font-medium appearance-none"
                       >
-                        <option>General Inquiry</option>
+                        <option>General Enquiry</option>
                         <option>Booking Request</option>
                         <option>Treatment Information</option>
                         <option>Feedback</option>
@@ -271,8 +306,10 @@ export default function ContactPage() {
                       value={formData.message}
                       onChange={handleChange}
                       placeholder="How can we help you today?"
-                      className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 outline-none transition-all font-medium resize-none"
+                      {...errorProps('message')}
+                      className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 outline-none transition-all font-medium resize-none aria-invalid:border-red-700"
                     />
+                    {errorText('message')}
                   </div>
 
                   {sendFailed && (
@@ -358,14 +395,22 @@ export default function ContactPage() {
                    <CheckCircle2 size={64} className="text-white" />
                 </div>
                 <div className="space-y-4">
-                  <h2 className="text-5xl font-display font-medium tracking-tight">Message Received.</h2>
-                  <p className="text-xl text-teal-50 font-light max-w-sm mx-auto leading-relaxed">
-                    Thank you for reaching out. A clinical associate has been notified and will contact you shortly.
+                  <h2 className="text-5xl font-display font-medium tracking-tight">Message sent.</h2>
+                  {/* This promised that "a clinical associate has been notified
+                      and will contact you shortly" — a job title the clinic
+                      does not use, and a reply time nobody has agreed to. The
+                      toast and the email card both say "as soon as we can". */}
+                  <p className="text-xl text-white font-light max-w-sm mx-auto leading-relaxed">
+                    Thank you. Your message has reached the clinic and we will reply as soon as we can.
+                    If it is urgent, please ring{' '}
+                    <a href={`tel:${CLINIC.telephoneLink}`} className="font-semibold underline underline-offset-4 whitespace-nowrap">
+                      {CLINIC.telephone}
+                    </a>.
                   </p>
                 </div>
-                <button 
+                <button
                   onClick={() => setIsSuccess(false)}
-                  className="px-10 py-4 bg-white text-teal-600 rounded-2xl font-bold text-lg hover:shadow-xl transition-all active:scale-95"
+                  className="px-10 py-4 bg-white text-teal-800 rounded-2xl font-bold text-lg hover:shadow-xl transition-all active:scale-95"
                 >
                   Send Another Message
                 </button>

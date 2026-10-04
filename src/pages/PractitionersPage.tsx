@@ -1,5 +1,6 @@
 import { PRACTITIONERS } from '../data';
 import { CLINIC } from '../data/clinic';
+import { REVIEWS_SOURCE } from '../data/reviews';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -23,6 +24,13 @@ import { useState, useMemo } from 'react';
 import { cn } from '../lib/utils';
 import { BOOKING_URL } from '../constants';
 
+// The practitioner cards' fade-in. Kept outside the component so the same
+// objects are passed on every render.
+const CARD_HIDDEN = { opacity: 0, y: 30 };
+const CARD_SHOWN = { opacity: 1, y: 0 };
+const CARD_VIEWPORT = { once: true };
+const CARD_TRANSITIONS = [0, 0.1, 0.2].map((delay) => ({ delay, layout: { duration: 0.3 } }));
+
 export default function PractitionersPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeSpecialty, setActiveSpecialty] = useState('All');
@@ -31,11 +39,17 @@ export default function PractitionersPage() {
   const FAQS = [
     {
       question: "What qualifications do your practitioners hold?",
-      answer: "Our osteopaths have each completed a four-year degree in osteopathy and are registered with the General Osteopathic Council, the profession's regulator. Our acupuncturist, massage therapists, foot care specialist and hypnotherapist hold their own qualifications and registrations in their fields — each practitioner's page sets out their training."
+      // The four-year degree and GOsC registration are the clinic's own words
+      // (osteopathyandwellbeing.co.uk home page). Registration is only
+      // claimed where the clinic states it; for everyone else, their
+      // qualifications — its phrase is "fully qualified and experienced staff".
+      answer: "Our osteopaths have each completed a four-year degree in osteopathy and are registered with the General Osteopathic Council, the profession's regulator. Our acupuncturist, massage therapist, foot care practitioner and hypnotherapist each hold qualifications in their own field. Each practitioner's page sets out their training and any memberships they hold."
     },
     {
+      // The header's Book Online button is hidden on a phone, where booking
+      // is the Book button in the bar at the bottom of the screen.
       question: "How do I book an appointment?",
-      answer: "Use the Book Online button at the top of any page to choose a treatment, a practitioner and a time that suits you — or call the clinic and we will book you in."
+      answer: `On a computer, use the Book Online button at the top of the page. On a phone, tap Book at the bottom of the screen. Either one lets you choose a treatment, a practitioner and a time. Or call the clinic on ${CLINIC.telephone} and we will book you in.`
     },
     {
       question: "What should I expect during my first osteopathic session?",
@@ -44,9 +58,11 @@ export default function PractitionersPage() {
     {
       // We haven't verified any insurer's current terms, so none are named —
       // whether a policy covers osteopathy is between the patient and their
-      // insurer.
+      // insurer. This used to promise receipts for claims; the clinic's site
+      // says nothing about receipts or insurance, so the patient is told to
+      // ask, in line with the FAQ page (data/faq.ts).
       question: "Is osteopathy covered by private health insurance?",
-      answer: "Many patients reclaim the cost of their treatment through private health insurance, and we're happy to provide receipts to support your claim. Cover varies between policies, so please check with your insurer before booking to see what yours includes."
+      answer: "Many UK insurers cover osteopathy, though the level of cover, whether a referral is needed, and which practitioners are recognised all vary by policy. Check with your insurer before your first appointment, and ask the clinic what paperwork they can give you for a claim."
     }
   ];
 
@@ -80,16 +96,39 @@ export default function PractitionersPage() {
     []
   );
 
+  // The search box says "name or speciality", but it used to read only the
+  // name and role, so typing "dry needling" or "deep tissue" found nobody.
+  // It now reads each person's specialisations and services too (the lists
+  // shown on their own page), and ignores stray spaces.
+  const query = searchQuery.trim().toLowerCase();
+
   const filteredPractitioners = useMemo(() => {
     const stem = SPECIALTY_STEMS.find(s => s.label === activeSpecialty)?.stem;
     return PRACTITIONERS.filter(p => {
-      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          p.role.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = !query ||
+        p.name.toLowerCase().includes(query) ||
+        p.role.toLowerCase().includes(query) ||
+        [...(p.specialisations ?? []), ...(p.services ?? [])].some(s => s.toLowerCase().includes(query));
 
       if (activeSpecialty === 'All' || !stem) return matchesSearch;
       return matchesSearch && describes(p, stem);
     });
-  }, [searchQuery, activeSpecialty]);
+  }, [query, activeSpecialty]);
+
+  // Said aloud (politely) after a tab or the search changes the list. It
+  // names the tab and the search, so switching between two tabs that happen
+  // to show the same number of people is still announced.
+  const shownCount = filteredPractitioners.length;
+  const resultSummary = [
+    shownCount === 1 ? '1 practitioner shown' : `${shownCount} practitioners shown`,
+    activeSpecialty !== 'All' ? `for ${activeSpecialty}` : '',
+    query ? `matching "${searchQuery.trim()}"` : '',
+  ].filter(Boolean).join(' ');
+
+  const clearFilters = () => {
+    setSearchQuery('');
+    setActiveSpecialty('All');
+  };
 
   return (
     <div className="max-w-7xl mx-auto space-y-16 pb-24">
@@ -97,7 +136,11 @@ export default function PractitionersPage() {
       <header className="relative bg-slate-950 rounded-[4rem] p-12 md:p-24 text-white shadow-3xl overflow-hidden group holographic-border">
         <div className="absolute inset-0 z-0 opacity-40">
            <div className="absolute inset-0 neural-grid opacity-30 mix-blend-screen pointer-events-none"></div>
-           <img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&q=80&w=2000" fetchPriority="high" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[20s]" alt="Clinical Team" />
+           {/* This was a stock photo, announced as "Clinical Team": a woman in
+               another clinic's scrubs with someone else's name embroidered on
+               them. The six real practitioners are on the cards below; the
+               header carries the clinic's own emblem art, as decoration. */}
+           <img src="/video/emblem-field.jpg" fetchPriority="high" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[20s]" alt="" aria-hidden="true" />
            <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent"></div>
         </div>
         <div className="relative z-10 max-w-3xl space-y-8">
@@ -105,12 +148,14 @@ export default function PractitionersPage() {
             <Users size={18} className="animate-pulse" /> Our team
           </span>
           <h1 className="text-5xl sm:text-6xl md:text-8xl font-display font-medium text-white mb-6 tracking-tighter leading-[0.9] break-words">Meet the <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-300">practitioners</span></h1>
-          <p className="text-2xl text-slate-400 font-light leading-relaxed max-w-2xl border-l-4 border-teal-500 pl-8">Meet the practitioners at the Herne Bay clinic — their training, their registrations, and what each of them treats.</p>
+          <p className="text-2xl text-slate-400 font-light leading-relaxed max-w-2xl border-l-4 border-teal-500 pl-8">Meet the practitioners at the Herne Bay clinic — their training, and what each of them treats.</p>
           
           <div className="flex flex-wrap gap-6 pt-4">
             <div className="flex items-center gap-3 px-6 py-3 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-xl">
               <ShieldCheck size={20} className="text-white" />
-              <span className="text-sm font-bold uppercase tracking-widest text-slate-200">GOsC Regulated</span>
+              {/* Only the osteopaths are on the GOsC register; this badge sits
+                  above all six practitioners, so it says so. */}
+              <span className="text-sm font-bold uppercase tracking-widest text-slate-200">GOsC-registered osteopaths</span>
             </div>
             <div className="flex items-center gap-3 px-6 py-3 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-xl">
               <Award size={20} className="text-white" />
@@ -123,11 +168,15 @@ export default function PractitionersPage() {
 
       <div className="space-y-12">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 bg-slate-50/50 backdrop-blur-xl p-6 rounded-[3rem] border border-slate-100 shadow-inner">
-          <div className="flex items-center flex-wrap gap-3">
+          {/* Toggle buttons, as on the Treatments page: aria-pressed tells a
+              screen reader which one is on, and the group names what they do. */}
+          <div role="group" aria-label="Show practitioners by treatment" className="flex items-center flex-wrap gap-3">
             {specialties.map((spec) => (
               <button
                 key={spec}
+                type="button"
                 onClick={() => setActiveSpecialty(spec)}
+                aria-pressed={activeSpecialty === spec}
                 className={cn(
                   "px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.25em] transition-all",
                   activeSpecialty === spec 
@@ -143,8 +192,8 @@ export default function PractitionersPage() {
             <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors" size={20} />
             <input
               type="text"
-              aria-label="Filter practitioners by name or specialty"
-              placeholder="Filter by name or specialty..."
+              aria-label="Filter practitioners by name or speciality"
+              placeholder="Filter by name or speciality..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-14 pr-8 py-4 rounded-2xl bg-white focus:bg-white border-2 border-transparent focus:border-teal-100 outline-none transition-all shadow-sm text-sm focus:ring-8 focus:ring-teal-500/5"
@@ -152,30 +201,23 @@ export default function PractitionersPage() {
           </div>
         </div>
 
-        <motion.div 
+        {/* Each card fades in on its own when it comes into view. The fade
+            used to be run by the grid, once; a card that came back after a
+            filter (pick "Osteopathy", then "All") mounted hidden and never
+            faded in, so four of the six people stayed invisible while the
+            count said six. */}
+        <motion.div
           layout
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-          variants={{
-            hidden: { opacity: 0 },
-            show: {
-              opacity: 1,
-              transition: {
-                staggerChildren: 0.1
-              }
-            }
-          }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
-          {filteredPractitioners.map((p) => (
+          {filteredPractitioners.map((p, i) => (
             <motion.div
               layout
               key={p.id}
-              variants={{
-                hidden: { opacity: 0, y: 30 },
-                show: { opacity: 1, y: 0 }
-              }}
+              initial={CARD_HIDDEN}
+              whileInView={CARD_SHOWN}
+              viewport={CARD_VIEWPORT}
+              transition={CARD_TRANSITIONS[i % 3]}
             >
               <Link to={`/practitioners/${p.id}`} className="block group h-full">
                 <div className="bg-white/95 backdrop-blur-3xl crystal-glass rounded-[2.5rem] p-7 border border-white/60 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] hover:shadow-premium hover:-translate-y-2 hover:border-teal-300 transition-all duration-500 h-full flex flex-col overflow-hidden holographic-border relative z-0">
@@ -183,12 +225,22 @@ export default function PractitionersPage() {
                    <div className="aspect-[4/5] rounded-[2rem] overflow-hidden mb-8 relative">
                     <img src={p.image} alt={p.name} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 grayscale group-hover:grayscale-0" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent flex flex-col justify-end p-8">
-                       <span className="text-white/60 text-xs font-bold uppercase tracking-widest mb-1">{p.role}</span>
+                       <span className="text-slate-100 text-xs font-bold uppercase tracking-widest mb-1">{p.role}</span>
                        <h3 className="text-3xl font-display font-medium text-white tracking-tight">{p.name}</h3>
                     </div>
-                    <div className="absolute top-6 right-6 px-4 py-2 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-[10px] font-black text-white uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
-                       Principal Clinical Lead
-                    </div>
+                    {/* This chip said "Principal Clinical Lead" on all six
+                        cards — a job title none of the five others holds, and,
+                        faded out rather than hidden, read aloud on every card.
+                        It now shows the person's own published letters, and
+                        nothing when none are on record. Always visible, on a
+                        dark chip, so it reads on any photo and on a phone.
+                        Not uppercased: letters such as "BSc" and "M.Ost" are
+                        shown exactly as the clinic publishes them. */}
+                    {p.qualifications && (
+                      <div className="absolute top-4 right-4 max-w-[calc(100%-2rem)] px-3 py-2 bg-slate-950/85 backdrop-blur-md rounded-xl border border-white/20 text-xs leading-snug font-bold text-white tracking-wide text-right">
+                        <span className="sr-only">Qualifications: </span>{p.qualifications}
+                      </div>
+                    )}
                   </div>
                   <div className="flex-1 space-y-6 px-2">
                     <p className="text-slate-600 leading-relaxed font-light text-base line-clamp-3">{p.bio}</p>
@@ -204,7 +256,7 @@ export default function PractitionersPage() {
                   <div className="pt-8 mt-8 border-t border-slate-50 flex items-center justify-between text-teal-700 px-2 group-hover:px-4 transition-all duration-500">
                     <div className="flex flex-col">
                        {/* "From £65.00" was invented. Fees come from the clinic. */}
-                       <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Appointments</span>
+                       <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">Appointments</span>
                        <span className="text-sm font-bold text-slate-900 group-hover:text-teal-700">Book or ask about fees</span>
                     </div>
                     <div className="w-12 h-12 rounded-2xl bg-teal-50 flex items-center justify-center group-hover:bg-teal-700 group-hover:text-white transition-all shadow-sm">
@@ -225,17 +277,32 @@ export default function PractitionersPage() {
                 <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center mx-auto text-slate-300">
                   <Users size={32} />
                 </div>
-                <p>No specialists match your search criteria.</p>
+                <p className="text-slate-700">No practitioners match that search.</p>
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-teal-700 hover:bg-teal-800 text-white text-sm font-bold transition-colors"
+                >
+                  Show all practitioners
+                </button>
               </div>
             </motion.div>
           )}
         </motion.div>
+        {/* Tells a screen-reader user what a filter or search just did. */}
+        <p role="status" className="sr-only">
+          {resultSummary}
+        </p>
       </div>
 
       <section className="py-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         <div className="order-2 lg:order-1 relative">
            <div className="aspect-[4/3] rounded-[3rem] overflow-hidden shadow-2xl relative group">
-              <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=1000" loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[10s]" alt="Clinical research and continuing professional development" />
+              {/* This was a stock photo of a stranger's hands at a laptop with
+                  a stethoscope, described as the clinic's "research". It is
+                  now the clinic's own emblem art (a still from its films in
+                  /public/video), shown as decoration, so alt is empty. */}
+              <img src="/video/emblem-rows.jpg" width={1280} height={720} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[10s]" alt="" />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
               <div className="absolute bottom-10 left-10 right-10 flex items-center justify-between">
                 <div className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl flex items-center gap-3">
@@ -251,18 +318,22 @@ export default function PractitionersPage() {
            <div className="space-y-4">
              <span className="text-teal-600 font-bold text-xs uppercase tracking-[0.3em]">Continuous Development</span>
              <h2 className="text-4xl md:text-5xl font-display font-medium text-slate-50 tracking-tighter leading-tight">Beyond the Clinic:<br/><span className="text-teal-600 underline decoration-teal-100 underline-offset-8">Professional Standards</span>.</h2>
-             <p className="text-xl text-slate-300 font-light leading-relaxed">Between them, our practitioners bring decades of clinical experience to one clinic — and each keeps their training current, from the mandatory professional development every registered osteopath completes to the qualifications each therapy requires.</p>
+             <p className="text-xl text-slate-300 font-light leading-relaxed">Between them, our practitioners bring decades of experience to one clinic, and each is qualified in their own field. Our osteopaths also keep up the professional development their regulator requires.</p>
            </div>
            
            <div className="space-y-6 pt-4">
               {/* The salons, training hub and research lab never existed.
-                  Each line below can be checked: the practising-since date,
-                  the university link the founder confirmed, and the GOsC's
-                  own CPD requirement. */}
+                  Each line below can be checked: the practising-since date
+                  (read from CLINIC), Leon's membership and rugby club work
+                  (his page on the clinic's site), and the GOsC's own CPD
+                  requirement. A "University Partnerships" line claimed sports
+                  science research with Canterbury Christ Church University;
+                  the clinic's site mentions that university only as a place
+                  where Leon supports film and music students, so it went. */}
               {[
-                { title: "Decades of Combined Experience", desc: "Practising in Herne Bay since 2012, across osteopathy, acupuncture, massage, foot care and hypnotherapy." },
-                { title: "University Partnerships", desc: "Direct links with Canterbury Christ Church University for sports science research." },
-                { title: "GOsC Registration & Development", desc: "Our osteopaths are registered with the General Osteopathic Council and complete its required continuing professional development every year." }
+                { title: "Decades of Combined Experience", desc: `Practising in Herne Bay since ${CLINIC.establishedYear}, across osteopathy, acupuncture, massage, foot care and hypnotherapy.` },
+                { title: "Sport and exercise medicine", desc: "Leon is a member of the British Association of Sports and Exercise Medicine and provides pitchside support for Canterbury Rugby Club." },
+                { title: "GOsC Registration & Development", desc: "Our osteopaths are registered with the General Osteopathic Council and keep up the continuing professional development it requires." }
               ].map((item, i) => (
                 <div key={i} className="flex gap-6 group">
                    <div className="w-12 h-12 rounded-2xl bg-teal-50 flex items-center justify-center text-teal-600 shrink-0 group-hover:bg-teal-700 group-hover:text-white transition-all shadow-sm">
@@ -280,9 +351,13 @@ export default function PractitionersPage() {
 
       <section className="bg-slate-900 rounded-[4rem] p-12 md:p-20 text-white relative overflow-hidden text-center space-y-12">
         <div className="relative z-10 max-w-2xl mx-auto space-y-6">
-          <h2 className="text-4xl md:text-5xl font-display font-medium tracking-tight">Registered, and kept up to date</h2>
+          {/* This said every member of the team was "fully registered with
+              their respective clinical bodies". The clinic's site states
+              registration for the osteopaths (GOsC) and Alexandra (NCH, CNHC)
+              only; for the team it says "fully qualified". */}
+          <h2 className="text-4xl md:text-5xl font-display font-medium tracking-tight">Qualified in their own fields</h2>
           <p className="text-xl text-slate-400 font-light leading-relaxed">
-            Every member of our team is fully registered with their respective clinical bodies and maintains ongoing professional development.
+            Our osteopaths are registered with the General Osteopathic Council. Each practitioner's page sets out their own training and memberships.
           </p>
           {/* 15+ specialists, 10k+ patients and a 4.9 average were all stated
               without a source. These three can each be checked. */}
@@ -296,8 +371,8 @@ export default function PractitionersPage() {
                <div className="text-xs font-bold uppercase tracking-widest text-slate-400">Practising Since</div>
             </div>
             <div className="space-y-2">
-               <div className="text-4xl font-display font-bold text-teal-400">5.0</div>
-               <div className="text-xs font-bold uppercase tracking-widest text-slate-400">From 56 Google Reviews</div>
+               <div className="text-4xl font-display font-bold text-teal-400">{REVIEWS_SOURCE.rating}</div>
+               <div className="text-xs font-bold uppercase tracking-widest text-slate-400">From {REVIEWS_SOURCE.count} {REVIEWS_SOURCE.label}</div>
             </div>
           </div>
         </div>
@@ -305,8 +380,11 @@ export default function PractitionersPage() {
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px] -ml-32 -mb-32"></div>
       </section>
 
-      {/* Interactive FAQ & AI Voice Assistant Hub */}
-      <section className="bg-slate-5/50 backdrop-blur-xl border border-slate-100 rounded-[3rem] p-8 md:p-16 space-y-12 shadow-inner">
+      {/* Questions about the team. The background was "bg-slate-5/50", a
+          colour step Tailwind does not have, so the panel had none and its
+          light heading and intro sat straight on the wallpaper. A dark tint
+          suits that light text (a pale one would have hidden it). */}
+      <section className="bg-slate-950/40 backdrop-blur-xl border border-slate-100 rounded-[3rem] p-8 md:p-16 space-y-12 shadow-inner">
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 pb-6 border-b border-slate-100">
           <div className="space-y-3">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-teal-50 border border-teal-100 rounded-full text-[10px] font-black uppercase text-teal-800 tracking-wider">
@@ -368,7 +446,7 @@ export default function PractitionersPage() {
                         transition={{ duration: 0.25, ease: "easeInOut" }}
                         className="overflow-hidden"
                       >
-                        <div className="p-6 md:p-8 pt-0 md:pt-0 border-t border-slate-50 text-slate-500 leading-relaxed font-light text-base space-y-4">
+                        <div className="p-6 md:p-8 pt-0 md:pt-0 border-t border-slate-50 text-slate-600 leading-relaxed font-light text-base space-y-4">
                            <p>{faq.answer}</p>
                         </div>
                       </motion.div>
@@ -385,7 +463,7 @@ export default function PractitionersPage() {
           { icon: ShieldCheck, title: "Regulated Care", desc: "Our osteopaths are registered with the General Osteopathic Council." },
           { icon: Zap, title: "Plain Explanations", desc: "We tell you what we find and what we suggest, in plain words." },
           { icon: Heart, title: "Your Comfort First", desc: "Treatment goes at your pace, and you can stop or ask at any time." },
-          { icon: Sparkles, title: "One clinic", desc: "180 High Street, Herne Bay — the same team every visit." }
+          { icon: Sparkles, title: "One clinic", desc: `${CLINIC.address.line1}, ${CLINIC.address.town} — the same team every visit.` }
         ].map((item, i) => (
           <div key={i} className="p-8 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-premium transition-all space-y-4">
             <div className="w-12 h-12 rounded-2xl bg-teal-50 flex items-center justify-center text-teal-600">

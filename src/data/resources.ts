@@ -1,3 +1,5 @@
+import { CLINIC } from './clinic';
+
 /**
  * Patient guides offered on the Resources page.
  *
@@ -56,4 +58,5 @@ export const VIDEOS = [
   },
 ];
 
-export const YOUTUBE_CHANNEL = "https://www.youtube.com/@OsteopathyWellbeingCT6HerneBay";
+/** Read from CLINIC, the one home for the practice's profiles, not retyped. */
+export const YOUTUBE_CHANNEL = CLINIC.youtube;

@@ -4,7 +4,18 @@ export interface Treatment {
   desc: string;
   image: string;
   content: string;
+  /**
+   * What the clinic's own service page says this treatment helps with, word
+   * for word. The site search matches these ("sciatica" finds Osteopathy).
+   */
   conditions?: string[];
+  /**
+   * The clinic's own list for this treatment, word for word from its service
+   * page, shown under "Who is this for?" on the treatment's page. Leave it
+   * out rather than write one: a treatment without a list tells the patient
+   * to ring the clinic instead of guessing on the clinic's behalf.
+   */
+  whoFor?: string[];
   benefits?: string[];
   techniques?: string[];
   aftercare?: string[];
@@ -66,46 +77,35 @@ Unlike deep tissue or sports massage, Swedish massage uses moderate pressure and
   {
     id: 'therapeutic-massage',
     title: 'Therapeutic Full-Body & Back Massage',
-    desc: 'Customised clinical massage targeting specific regions or conditions like chronic pain and postural imbalances.',
+    // The clinic names this massage and nothing more: a therapeutic full-body
+    // or back massage, built on Swedish (classical) massage. The chronic-pain
+    // and injury claims, the "assessment of your daily habits", the technique
+    // list (trigger points, myofascial release, cross-fibre friction) and the
+    // aftercare advice were written here, not by the clinic, so they are gone.
+    desc: 'A therapeutic full-body or back massage, built on classic Swedish massage.',
     image: 'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&q=80&w=800',
-    content: `Therapeutic massage is distinguished by its customised approach to target specific regions or conditions. While Swedish massage is generalised, therapeutic massage uses a combination of strokes to address chronic pain, postural imbalances, or recent injuries. 
+    content: `Massage therapy is used to help manage a health condition or to enhance wellness. It involves working on the soft tissues of the body.
 
-Sessions begin with a detailed assessment of your daily habits, such as desk work or physical labour, that might contribute to muscle imbalances. The therapist then designs a session plan targeting specific muscle groups like the erector spinae, trapezius, or gluteal muscles.`,
-    benefits: [
-      'Reduces chronic tension', 'Addresses chronic aches', 'Promotes deep relaxation', 
-      'Increases tissue pliability', 'Breaks down adhesions'
-    ],
+The most common form of massage in Western countries is Swedish, or classical, massage, and it is the core of most massage training. Built on it, you can have a therapeutic full-body massage or a therapeutic back massage.`,
     techniques: [
-      'Customised Swedish strokes', 'Trigger point therapy', 'Myofascial release', 
-      'Cross-fiber friction', 'Deep kneading'
+      'Swedish (classical) massage strokes'
     ],
-    aftercare: [
-      'Hydration to release metabolites', 'Daily stretching routines', 'Ergonomic workspace changes', 
-      'Heat or cold application as advised'
-    ],
-    sessionFocus: 'Specific region focus (e.g. back, neck, shoulders) or full-body clinical treatment.'
+    sessionFocus: 'A therapeutic massage of the whole body, or of the back.'
   },
   {
     id: 'thai-oil-massage',
     title: 'Thai Oil Body Massage',
-    desc: 'A fusion of traditional Thai techniques and Western oil massage for flexibility and energy balance.',
+    // The clinic says one thing about this massage: it is tailor-made with a
+    // blend of aromatic oils to suit your problem areas. The "sen lines",
+    // energy, flexibility and pain claims, the stretching techniques and the
+    // aftercare were not the clinic's, so they are gone.
+    desc: 'A massage tailor-made with a blend of aromatic oils to suit your problem areas.',
     image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=800',
-    content: `Thai oil body massage is a fusion of traditional Thai massage (Nuad Thai) and Western oil massage. It incorporates rhythmic compressions and stretches along the body\'s "sen lines" (energy pathways) to improve flexibility and energy flow. 
-
-The use of natural oils makes the massage smoother and more relaxing than traditional fully-clothed Thai massage, allowing for longer gliding strokes while retaining the emphasis on assisted yoga-like postures and passive stretching.`,
-    benefits: [
-      'Improves range of motion', 'Reduces pain', 'Lowers stress levels', 
-      'Produces sensation of lightness', 'Balances energy flow'
-    ],
+    content: `Thai oil body massage is tailor-made for you, using a blend of aromatic oils chosen to suit the needs of your problem areas.`,
     techniques: [
-      'Passive stretching', 'Rhythmic compressions', 'Energy line (sen) work', 
-      'Palm pressure', 'Forearm gliding'
+      'Massage with a blend of aromatic oils', 'Focus on your problem areas'
     ],
-    aftercare: [
-      'Hydration', 'Gentle self-stretching', 'Listen to your body', 
-      'Avoid heavy exercise immediately after'
-    ],
-    sessionFocus: 'Flexibility and energy balance.'
+    sessionFocus: 'Your problem areas, with a blend of aromatic oils chosen to suit them.'
   },
   {
     id: 'digestive-massage',
@@ -132,24 +132,27 @@ The massage follows the large intestine\'s path in a specific clockwise motion t
   {
     id: 'pregnancy-massage',
     title: 'Pregnancy Massage',
-    desc: 'Safe, gentle support during pregnancy to alleviate tension, reduce swelling, and improve sleep.',
+    // The clinic's words: not a deep tissue massage; light, relaxing, long
+    // strokes which help circulation; can include your bump; designed to make
+    // you feel comfortable and at ease. It never said "safe", never mentioned
+    // swelling, oedema or sleep, and described no positioning. Telling pregnant
+    // women a massage reduces swelling is a safety risk: sudden swelling can be
+    // a sign of pre-eclampsia, which needs a midwife, so the page now says so.
+    desc: 'Light, relaxing massage with long, gentle strokes, designed to help you feel comfortable and at ease during pregnancy.',
     image: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&q=80&w=800',
-    content: `Pregnancy massage adapts Swedish techniques to meet the unique needs of expectant mothers. It uses gentle strokes to alleviate muscular tension, support circulation, reduce swelling (oedema), and improve sleep quality. 
+    content: `Pregnancy massage is not a deep tissue massage. It uses light, relaxing, long strokes that help circulation, and can include gentle strokes over your bump.
 
-Sessions are performed in safe, comfortable side-lying positions with pillows or bolsters to support the abdomen, hips, and knees. This avoids placing pressure on the vena cava and ensures maximum comfort for both mother and baby.`,
+The massage is designed to help you feel comfortable and at ease. If you have sudden swelling of your face, hands or feet, contact your midwife or GP straight away.`,
     benefits: [
-      'Reduces swelling', 'Relieves back and hip pain', 'Lower stress and anxiety', 
-      'Helps you feel at ease', 'Nurtures emotional wellbeing'
+      'Helps circulation', 'Helps you feel comfortable and at ease', 'Light, relaxing strokes'
     ],
     techniques: [
-      'Light Swedish techniques', 'Side-lying positioning', 'Gentle belly strokes (optional)', 
-      'Oedema-reducing leg strokes'
+      'Light, long strokes', 'Gentle strokes over the bump (optional)'
     ],
     aftercare: [
-      'Hydration and rest', 'Follow obstetric advice', 'Prenatal yoga/walking', 
-      'Avoid lying flat on back'
+      'Hydration and rest', "Follow your midwife's advice", 'Avoid lying flat on your back'
     ],
-    sessionFocus: 'Support during pregnancy and relief from associated discomforts.'
+    sessionFocus: 'Light, relaxing massage during pregnancy.'
   },
   {
     id: 'natural-face-lift',
@@ -176,7 +179,7 @@ It helps soften the appearance of wrinkles and puffiness, eases tension in the j
   {
     id: 'indian-head-massage',
     title: 'Indian Head Massage',
-    desc: 'An ancient Ayurvedic therapy targeting the scalp, neck, and shoulders to relieve stress and headaches.',
+    desc: 'An Ayurvedic massage of the scalp, face, neck and shoulders that relieves head, neck and shoulder tension, and can benefit some people with sinus and headache problems.',
     image: 'https://osteopathyandwellbeing.co.uk/wp-content/uploads/2023/04/Indian-Head-Mass-pic.webp',
     content: `Indian head massage, traditionally known as Champissage, is a holistic therapy that originated in India thousands of years ago as part of Ayurveda. It focuses on the upper body, where we often hold the most tension. 
 
@@ -198,24 +201,22 @@ The treatment involves rhythmic movements and pressure point work on the scalp, 
   {
     id: 'thai-foot-massage',
     title: 'Thai Foot Massage',
-    desc: 'Invigorating reflexology treatment using hands and wooden sticks to balance energy lines.',
+    // The clinic's words: a massage of the feet and lower legs, invigorating
+    // and deeply relaxing, using hands-on massage, stretching and acupressure
+    // to stimulate reflex points. The claim that foot reflex points affect the
+    // body's organs (the reflexology claim UK advertising rules act on), the
+    // wooden stick, "energy lines", sleep claims and aftercare were not the
+    // clinic's, so they are gone.
+    desc: 'A massage of the feet and lower legs: invigorating and deeply relaxing, using massage, stretching and acupressure on reflex points.',
     image: 'https://osteopathyandwellbeing.co.uk/wp-content/uploads/2018/02/foot.jpg',
-    content: `Thai foot massage combines elements of reflexology and Thai acupressure. According to traditional Thai medicine, stimulating reflex points on the feet can influence the corresponding organs and systems throughout the body. 
-
-Using hands, fingers, and a traditional wooden stick, the therapist applies pressure to specific points and stretches the foot and lower leg. The treatment is both grounding and refreshing, leaving you with a sense of all-over vitality.`,
+    content: `Thai foot massage is a massage of the feet and lower legs. It is both invigorating and deeply relaxing, and involves hands-on massage, stretching and acupressure to stimulate reflex points.`,
     benefits: [
-      'Stimulates reflex points', 'Reduces stiffness', 'Enhances sleep quality', 
-      'Grounding and refreshing', 'Invigorating and deeply relaxing'
+      'Invigorating and deeply relaxing', 'Stimulates reflex points'
     ],
     techniques: [
-      'Hand & thumb pressure', 'Wooden stick reflex work', 'Lower leg stretching', 
-      'Calf & Achilles gliding'
+      'Hands-on massage of the feet and lower legs', 'Stretching', 'Acupressure on reflex points'
     ],
-    aftercare: [
-      'Drink plenty of water', 'Gentle walking', 'Simple foot exercises at home', 
-      'Avoid alcohol immediately after'
-    ],
-    sessionFocus: 'Balance energy flow in feet and legs.'
+    sessionFocus: 'Relaxation for the feet and lower legs.'
   },
   {
     id: 'hot-stone-massage',
@@ -268,8 +269,10 @@ Unlike relaxation massage, sports massage is more vigorous and can be tailored f
     image: 'https://osteopathyandwellbeing.co.uk/wp-content/uploads/2018/03/needles.jpg',
     content: `Traditional Chinese acupuncture is based on the belief that it can restore the flow of Qi, an energy that flows through your body, while western medical acupuncture is evidence-based and is only administered after a full diagnosis. The difference between western and eastern acupuncture is clearly marked. The western model uses anatomy, physiology and current medical models, while the eastern is philosophy based – much more about yin, yang and Qi. 
 
-Acupuncture can be used as a treatment for a wide range of health problems, including back pain, headaches and migraines, it is a traditional Chinese treatment established over 2,000 years ago. However, here at Osteopathy & Wellbeing, we offer Western-style acupuncture.`,
-    benefits: [
+Acupuncture can be used as a treatment for a wide range of health problems, including back pain, headaches and migraines, it is a traditional Chinese treatment established over 2,000 years ago. However, here at Osteopathy & Wellbeing, we offer Western-style acupuncture.\n\nIf you have a bleeding disorder, such as haemophilia, or are taking anticoagulants (blood-thinning medicines), talk to your GP before you have acupuncture.`,
+    // The clinic's page: NICE recommends considering acupuncture for the first
+    // three; it is also often used for the other three.
+    whoFor: [
       'Chronic (long-term) pain', 'Chronic tension-type headaches', 'Migraines',
       'Joint pain', 'Dental pain', 'Postoperative pain'
     ]
@@ -282,7 +285,8 @@ Acupuncture can be used as a treatment for a wide range of health problems, incl
     content: `Solution-focused hypnotherapy is a forward-looking, talking therapy which mixes psychotherapy and hypnosis to help you make progress towards your goals.
 
 Alexandra works with clients from all walks of life on reducing anxiety, stress and self-limiting beliefs, and has experience with depression, fears and phobias, problem-solving, PTSD, sleep issues, work-related stress, performance at work, exam stress and building confidence.`,
-    benefits: [
+    // The clinic's "How Can I Help?" list, less 'Diabetes' (a founder decision, commit ab052c8: do not restore it).
+    whoFor: [
       'Sleep Issues and Insomnia', 'Anxiety', 'IBS – Gut Directed Hypnotherapy',
       'Dental Phobia & Bruxism', 'Weight Management', 'Alcohol Issues',
       'Depression', 'Social Media Anxiety', 'Exam Stress or Performance',
@@ -296,8 +300,9 @@ Alexandra works with clients from all walks of life on reducing anxiety, stress 
     image: 'https://osteopathyandwellbeing.co.uk/wp-content/uploads/2018/02/4591974.jpg',
     content: `Our feet are our foundation. We often take them for granted but a problem with the health of our feet can really affect our quality of life. It is important to take care of our feet and address any minor problems early to try and prevent them from developing into more major issues.
 
-Routine foot care is offered including: removal of corns and hard skin, toenail cutting, elderly foot care, diabetic foot care, and treatment for problems such as cracked heels, ingrown toenails, verrucae and fungal skin and nails.`,
-    benefits: [
+Routine foot care is offered including: removal of corns and hard skin, toenail cutting, elderly foot care, diabetic foot care, and treatment for problems such as cracked heels, ingrown toenails, verrucae and fungal skin and nails.\n\nPlease see your GP if you think you may have an infection on your feet or in your toenails, as you may need antibiotics to treat it.`,
+    // The clinic's list of the routine foot care it offers.
+    whoFor: [
       'Removal of corns and hard skin', 'Toenail cutting', 'Elderly foot care',
       'Diabetic foot care', 'Cracked heels', 'Ingrown toenails',
       'Verrucae', 'Fungal skin and nails'
@@ -390,6 +395,38 @@ She works with people on reducing anxiety, stress and self-limiting beliefs, and
     services: ['Solution Focused Hypnotherapy', 'Anxiety & Stress', 'Sleep Problems', 'Confidence']
   }
 ];
+
+/**
+ * Who provides each treatment, matched against a practitioner's role and
+ * specialisations as the clinic's own practitioner pages state them.
+ *
+ * Every treatment page used to show the first two practitioners (the two
+ * osteopaths) as its specialists, so the Footcare page named osteopaths
+ * rather than Clare and the Hypnotherapy page rather than Alexandra.
+ *
+ * Keyed by treatment id on purpose, never by the treatment's title: /foot/
+ * would put Clare on Thai Foot Massage, and /massage/ would credit people
+ * with massages no source says they give. Acupuncture is Adrian ("Osteopathy,
+ * Sports Massage & Acupuncture") and Magdalena ("Acupuncturist"); Leon's page
+ * names dry needling, not acupuncture. A treatment with no entry here is one
+ * where neither site names who gives it, and its page says to ring and ask.
+ */
+const PROVIDED_BY: Record<string, RegExp> = {
+  osteopathy: /osteopath/i,
+  'sports-massage': /sports massage/i,
+  'swedish-massage': /swedish/i,
+  acupuncture: /acupunct/i,
+  hypnotherapy: /hypno/i,
+  footcare: /foot care/i,
+};
+
+export function practitionersFor(treatmentId: string): Practitioner[] {
+  const match = PROVIDED_BY[treatmentId];
+  if (!match) return [];
+  return PRACTITIONERS.filter((p) =>
+    [p.role, ...(p.specialisations ?? [])].some((s) => match.test(s))
+  );
+}
 
 /**
  * Parked, not deleted. Physiotherapy has a page on the clinic's own site but no

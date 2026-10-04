@@ -1,38 +1,62 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, Navigate } from 'react-router-dom';
 import { PRACTITIONERS } from '../data';
 import { BOOKING_URL, CLINIC } from '../constants';
 import { reviewsForPractitioner } from '../data/reviews';
-import { Award, Stethoscope, Mail, Phone, CheckCircle2, ChevronRight, Home, Calendar, MapPin, Star, Shield, Briefcase } from 'lucide-react';
+import { Award, Stethoscope, Mail, Phone, CheckCircle2, ChevronRight, Home, Calendar, MapPin, Star, Shield, Briefcase, Users } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useAnalytics } from '../context/AnalyticsContext';
 
+/*
+ * Addresses the clinic's own website uses that differ from ours. Its page for
+ * Alexandra is /practitioners/alexandra-gibson-2/ (the plain address redirects
+ * there), so that is the link in Google results and people's bookmarks. It
+ * used to land on "Practitioner Not Found"; it now goes to her page.
+ * A Map, not an object, so an id like "constructor" can never match.
+ */
+const LEGACY_IDS = new Map<string, string>([
+  ['alexandra-gibson-2', 'alexandra-gibson'],
+]);
+
 export default function PractitionerDetailPage() {
-  const { id } = useParams();
+  const { id = '' } = useParams();
   const { trackClick } = useAnalytics();
   const practitioner = PRACTITIONERS.find(p => p.id === id);
 
+  const currentId = LEGACY_IDS.get(id);
+  if (!practitioner && currentId && PRACTITIONERS.some(p => p.id === currentId)) {
+    return <Navigate to={`/practitioners/${currentId}`} replace />;
+  }
+
   if (!practitioner) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-8 py-20 relative bg-white/60 backdrop-blur-3xl crystal-glass rounded-[3rem] border border-white/60 shadow-premium overflow-hidden">
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-8 py-20 relative bg-white/95 backdrop-blur-3xl crystal-glass rounded-[3rem] border border-white/60 shadow-premium overflow-hidden">
         <div className="absolute inset-0 neural-grid opacity-20 pointer-events-none mix-blend-screen" />
         <div className="relative">
-          <h2 className="text-[8rem] sm:text-[10rem] font-display font-black text-slate-100 leading-none select-none drop-shadow-sm px-4">404</h2>
+          {/* Decoration: hidden from screen readers, and the one main heading
+              is the h1 below. It was slate-100 on a 60% white card over the
+              dark wallpaper (about 2.4:1); the card is now near-white like the
+              site's other cards and the numeral is teal-700 (about 5:1). */}
+          <p aria-hidden="true" className="text-[8rem] sm:text-[10rem] font-display font-black text-teal-700 leading-none select-none px-4">404</p>
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-32 h-32 bg-teal-500/10 rounded-full blur-3xl animate-pulse" />
           </div>
         </div>
         <div className="space-y-4 relative z-10 px-6">
-          <h3 className="text-3xl font-display font-bold text-slate-900 tracking-tight">Practitioner Not Found</h3>
-          <p className="text-slate-500 max-w-md mx-auto font-light text-lg">
-            We couldn't locate the clinical professional you were searching for. They may have moved to a different department.
+          <h1 className="text-3xl font-display font-bold text-slate-900 tracking-tight">Practitioner Not Found</h1>
+          {/* slate-500 was too faint here; slate-900 is not. */}
+          <p className="text-slate-900 max-w-md mx-auto text-lg">
+            We could not find that page. The link may be out of date or mistyped. Everyone who works at the clinic is on the team page, or you can call us on{' '}
+            <a href={`tel:${CLINIC.telephoneLink}`} className="font-bold underline underline-offset-4 whitespace-nowrap">{CLINIC.telephone}</a>.
           </p>
         </div>
         <Link 
           to="/practitioners" 
           className="group flex items-center gap-3 px-8 py-4 bg-teal-700 text-white rounded-2xl font-bold shadow-xl shadow-teal-900/20 hover:bg-teal-800 hover:-translate-y-1 transition-all active:scale-[0.98] z-10 relative"
         >
-          <Home size={20} />
-          Back to Team
+          {/* Said "Back to Team" under a house icon: it goes to the team page
+              (not back, and not home), so it now says where it goes. */}
+          <Users size={20} aria-hidden="true" />
+          See the whole team
         </Link>
       </div>
     );
@@ -41,6 +65,9 @@ export default function PractitionerDetailPage() {
   // Only osteopaths are on the GOsC register — a massage therapist or
   // reflexologist is not, and implying otherwise would be misleading.
   const isOsteopath = /osteopath/i.test(practitioner.role);
+
+  const firstName = practitioner.name.split(' ')[0];
+  const reviews = reviewsForPractitioner(practitioner);
 
   return (
     <motion.div
@@ -278,6 +305,7 @@ export default function PractitionerDetailPage() {
                         className="font-bold text-slate-800 hover:text-teal-600 transition-colors focus-visible:outline-teal-500"
                       >
                         {CLINIC.regulator.name}
+                        <span className="sr-only"> (opens in a new tab)</span>
                       </a>
                       <span className="block text-sm mt-1">
                         Every osteopath in the UK must be registered with the {CLINIC.regulator.abbreviation} by law. You can check the register yourself.
@@ -288,26 +316,50 @@ export default function PractitionerDetailPage() {
               </dl>
             </section>
 
-            <section className="bg-teal-50/50 p-10 rounded-[3rem] border border-teal-100/50">
-              <div className="flex items-center justify-between mb-10">
-                <h2 className="text-2xl font-display font-semibold text-slate-900 tracking-tight">Patient Experiences</h2>
-                <div className="flex gap-1 text-amber-400">
-                  <Star size={16} fill="currentColor" />
-                  <Star size={16} fill="currentColor" />
-                  <Star size={16} fill="currentColor" />
-                  <Star size={16} fill="currentColor" />
-                  <Star size={16} fill="currentColor" />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {reviewsForPractitioner(practitioner.name).map((testimonial, i) => (
-                  <div key={i} className="bg-white p-8 rounded-[2rem] shadow-sm border border-white/50 space-y-4">
-                    <p className="text-slate-600 font-light italic leading-relaxed">"{testimonial.quote}"</p>
-                    <p className="text-xs font-bold text-slate-900 uppercase tracking-widest">— {testimonial.author}</p>
+            {/* Reviews that name this practitioner, and reviews about the
+                clinic as a whole, are kept apart and labelled. They used to be
+                one list under "Patient Experiences", so the hypnotherapist's
+                page showed a stranger's shoulder-injury review as if she had
+                treated it. See reviewsForPractitioner in data/reviews.ts. */}
+            {reviews.named.length > 0 && (
+              <section className="bg-teal-50/50 p-10 rounded-[3rem] border border-teal-100/50">
+                <div className="flex items-center justify-between mb-10">
+                  <h2 className="text-2xl font-display font-semibold text-slate-900 tracking-tight">Patient Experiences</h2>
+                  <div className="flex gap-1 text-amber-400">
+                    <Star size={16} fill="currentColor" />
+                    <Star size={16} fill="currentColor" />
+                    <Star size={16} fill="currentColor" />
+                    <Star size={16} fill="currentColor" />
+                    <Star size={16} fill="currentColor" />
                   </div>
-                ))}
-              </div>
-            </section>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {reviews.named.map((testimonial, i) => (
+                    <div key={i} className="bg-white p-8 rounded-[2rem] shadow-sm border border-white/50 space-y-4">
+                      <p className="text-slate-600 font-light italic leading-relaxed">"{testimonial.quote}"</p>
+                      <p className="text-xs font-bold text-slate-900 uppercase tracking-widest">— {testimonial.author}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {reviews.general.length > 0 && (
+              <section className="bg-white/95 p-10 rounded-[3rem] border border-white/60 shadow-sm">
+                <h2 className="text-2xl font-display font-semibold text-slate-900 tracking-tight">What patients say about the clinic</h2>
+                <p className="mt-3 mb-10 text-base text-slate-600 leading-relaxed">
+                  These reviews are about the clinic as a whole and do not name {firstName}.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {reviews.general.map((testimonial, i) => (
+                    <div key={i} className="bg-slate-50 p-8 rounded-[2rem] border border-slate-100 space-y-4">
+                      <p className="text-slate-600 font-light italic leading-relaxed">"{testimonial.quote}"</p>
+                      <p className="text-xs font-bold text-slate-900 uppercase tracking-widest">— {testimonial.author}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
 
             <div className="bg-slate-900 p-12 rounded-[3.5rem] text-center space-y-8 relative overflow-hidden holographic-border crystal-glass border border-slate-800">
                <div className="absolute inset-0 neural-grid opacity-20 mix-blend-screen pointer-events-none z-0"></div>
@@ -324,7 +376,9 @@ export default function PractitionerDetailPage() {
                   rel="noopener noreferrer"
                   onClick={() => trackClick(`Book Practitioner: ${practitioner.name}`)}
                   className="w-full sm:w-auto px-12 py-5 bg-teal-700 text-white rounded-2xl font-bold text-lg hover:bg-teal-800 transition-all shadow-xl shadow-teal-900/40 active:scale-[0.98] cursor-pointer inline-flex items-center justify-center gap-3 group"
-                  aria-label={`Book an appointment with ${practitioner.name} — opens our booking system in a new tab`}
+                  /* Starts with the words on the button, so a voice-control
+                     user who says "click Book Now" reaches it (WCAG 2.5.3). */
+                  aria-label={`Book Now with ${practitioner.name} — opens our booking system in a new tab`}
                 >
                   Book Now
                   <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />

@@ -68,7 +68,7 @@ const ALL_GUIDE_IMAGES = [
 ];
 
 /**
- * GUIDES HELD BACK FROM THE GALLERY — audited 2026-08-17.
+ * GUIDES HELD BACK FROM THE GALLERY — audited 2026-08-17, four more in 2026-09.
  *
  * These are not deleted and nothing is lost: the artwork is still in
  * public/images and this list is the record of why each one is not shown.
@@ -116,6 +116,24 @@ const WITHHELD: Record<string, string> = {
   // Same again: a blank page carrying two logo marks. It was also being served
   // from the Resources page as a 19MB "Manual 1" PDF download.
   '/images/gallery-58.webp': 'not a guide, just the logo mark',
+
+  // Found in the 2026-09 guide-by-guide read (each one re-checked by eye).
+  //
+  // An invented patient: "The Story of Sarah", who after treatment "is back
+  // walking the Herne Bay seafront, pain-free". No such patient is on record,
+  // so this is a made-up testimonial with an outcome claim - the most serious
+  // of these four. It also prints its brief: "Goal: Humanize the experience".
+  '/images/gallery-11.webp': 'invented patient story with an outcome claim',
+  // The template was never filled in: "[Attach CT6 Logo Here]" is printed
+  // beside the real logo.
+  '/images/gallery-25.webp': 'placeholder "[Attach CT6 Logo Here]"',
+  // The body text is garbled, like #43 ("growth spurts can long miner
+  // bearily..."), under the headings "The Science" and "The Fix", so it reads
+  // as clinical explanation when it is none.
+  '/images/gallery-37.webp': 'body text is gibberish',
+  // The design brief is printed as the subtitle: "MONTSERRAT, ALL-CAPS,
+  // CHARCOAL SLATE" - a font note, not part of the guide.
+  '/images/gallery-55.webp': 'production note printed as the subtitle',
 };
 
 /** The guides actually shown to patients. */

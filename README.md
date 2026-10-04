@@ -58,7 +58,13 @@ The site is **not indexable by default**: `index.html` carries a
 `noindex` guard so the temporary hosting address can never compete with the
 clinic in search. Going live is a command, not a line to remember to delete:
 
-1. Point the clinic's domain at the host.
+1. Point the clinic's domain at the host. The old website's addresses
+   (`/services/osteopathy/`, `/contact-us/`, `/practitioners/alexandra-gibson-2/`
+   and the rest of its sitemap) redirect permanently to their new pages, in
+   both `public/.htaccess` and `server.ts`, so Google results and bookmarks keep
+   working. The old policy pages (`/privacy-statement-uk/`, `/cookie-policy-uk/`,
+   `/disclaimer/`) have no new page yet and will show "Page not found" until the
+   clinic's own policy pages are built.
 2. Set `CONTACT_WEBHOOK_URL` (see below) so the contact form can deliver.
 3. Build with **`npm run build:live`**. It says, loudly, that the guard was removed.
 4. Deploy, and run the Node server (`npm run start`, which runs `dist/server.cjs`).
@@ -88,7 +94,7 @@ host's environment settings.
 | Address, phone, email, opening hours, regulator, social links, policies | `src/data/clinic.ts`, the single home for all of it. Nothing else should repeat these. |
 | The Google rating shown on the site | `REVIEWS_SOURCE.rating` and `.count` in `src/data/reviews.ts`, the one place the snapshot lives. |
 | The reviews quoted on the site (16, all genuine Google reviews) | `REVIEWS` in `src/data/reviews.ts` |
-| Treatments (15) and practitioners (6) | `TREATMENTS` and `PRACTITIONERS` in `src/data/index.ts` |
+| Treatments (14 shown; Physiotherapy is parked in `PARKED_TREATMENTS` until a physiotherapist is named) and practitioners (6) | `TREATMENTS`, `PARKED_TREATMENTS` and `PRACTITIONERS` in `src/data/index.ts` |
 | Films (4) | `VIDEOS` in `src/data/resources.ts` |
 | Patient guides | `src/data/images.ts` |
 | The booking system link | `BOOKING_URL` in `src/constants.ts` |
@@ -99,7 +105,7 @@ honesty audit fails if the two disagree.
 
 ## Patient guides held back
 
-58 guide images exist; **42 are shown**. 16 are withheld in `src/data/images.ts`,
+58 guide images exist; **38 are shown**. 20 are withheld in `src/data/images.ts`,
 each with its reason, because showing them would mislead a patient:
 
 | Guides | Reason |
@@ -109,14 +115,28 @@ each with its reason, because showing them would mislead a patient:
 | #10, #20 | The template was never filled in: they show "[CT6 Logo]" and "[Address], [Phone Number], [Website]". |
 | #43 | The body text is gibberish presented as clinical explanation. The most serious of the set. |
 | #32, #58 | Not guides at all, just the logo mark. |
+| #11 | An invented patient story with an outcome claim: a fabricated testimonial. |
+| #25 | Template placeholder "[Attach CT6 Logo Here]" left in. |
+| #37 | Gibberish body text. |
+| #55 | A production note printed as the subtitle. |
 
-The first fourteen need new artwork. The guides are images only, with no source
+All but #32 and #58 need new artwork. The guides are images only, with no source
 files, so fixing one means regenerating it. Once a corrected image replaces the
 file, delete its line from `WITHHELD` to show it again.
 
 ## Still open — for the clinic
 
 - **Contact form delivery:** set `CONTACT_WEBHOOK_URL` and run the Node server.
+- **A privacy notice to link to.** The clinic's current Privacy Statement page
+  shows only its heading; its document area is empty (checked in a real
+  browser). The contact form collects names, emails and often health details,
+  so it needs a real notice beside it — and the notice should name the service
+  `CONTACT_WEBHOOK_URL` points at.
+- **A real photograph and a real tour film.** Find the Clinic shows the
+  practice's emblem and the Patient Guides page shows the clinic's own YouTube
+  film, because the clinic's website has no photograph of the premises and
+  there has never been a walk-through film. A photo of the front door and one
+  of a treatment room would help patients find it.
 - **Fourteen patient guides** need corrected artwork (above).
 - **Launch:** follow *Launch day*.
 - **Optional:** the map pin in `index.html` is the centre of the CT6 5AJ postcode.

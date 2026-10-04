@@ -16,33 +16,87 @@ import {
   MessageSquare
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, type RefObject } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 import { useToast } from '../components/ToastSystem';
+import { FAQS as CLINIC_FAQS, type FaqItem } from '../data/faq';
+import { GALLERY_IMAGES } from '../data/images';
 
-const FAQS = [
-  {
-    question: "What is osteopathy?",
-    answer: "Osteopathy is a way of detecting, treating, and preventing health problems by moving, stretching and massaging a person's muscles and joints. Osteopathy is based on the principle that the wellbeing of an individual depends on their bones, muscles, ligaments and connective tissue functioning smoothly together."
-  },
-  {
-    question: "Do I need a referral from a doctor?",
-    answer: "No, you do not need a referral from your GP to see an osteopath. Osteopaths are primary healthcare professionals, which means you can consult them directly."
-  },
-  {
-    question: "What should I wear to my appointment?",
-    answer: "It's best to wear loose, comfortable clothing. Depending on the area being treated, you may be asked to undress to your underwear so the osteopath can examine your spine or other joints, but you will always be offered a gown or towel."
-  },
-  {
-    question: "Does osteopathic treatment hurt?",
-    answer: "Osteopathic treatment is generally not painful, although you may experience some mild soreness or stiffness for a day or two after treatment, similar to that felt after unaccustomed exercise. Your osteopath will explain what to expect."
-  },
-  {
-    question: "How many treatments will I need?",
-    answer: "The number of treatments depends on your condition, how long you've had it, and your overall health. Your osteopath will discuss a treatment plan with you during your initial consultation."
-  }
+/*
+ * ONE ANSWER PER QUESTION, FROM ONE PLACE.
+ *
+ * This page kept its own copy of five answers, and they had drifted from the
+ * site's Questions page: "What should I wear?" told patients they might have
+ * to undress to their underwear but "will always be offered a gown or towel"
+ * — a promise the clinic never makes — while the Questions page says outer
+ * clothing, with a chaperone or shorts and a vest top if preferred; and the
+ * referral answer had lost the note about insurers. The five are now picked,
+ * by their question, from src/data/faq.ts, so both pages say the same thing.
+ * A question renamed there simply drops out here rather than going stale.
+ */
+const RESOURCE_QUESTIONS = [
+  'What is osteopathy?',
+  'Do I need a referral from my GP to see an osteopath?',
+  'What should I wear?',
+  'Will treatment hurt?',
+  'How many sessions will I need?',
 ];
+const FAQS = RESOURCE_QUESTIONS
+  .map((q) => CLINIC_FAQS.find((item) => item.q === q))
+  .filter((item): item is FaqItem => Boolean(item))
+  .map((item) => ({ question: item.q, answer: item.a }));
+
+/*
+ * Keyboard focus for the film window: move focus in when it opens, keep Tab
+ * inside it, and hand focus back to the film that opened it. Before, focus
+ * stayed on the card behind the overlay and Tab wandered the hidden page.
+ * (The same small hook sits in GalleryPage.tsx.)
+ */
+function useDialogFocus(open: boolean, ref: RefObject<HTMLElement | null>) {
+  useEffect(() => {
+    if (!open) return;
+    const opener = document.activeElement as HTMLElement | null;
+    const focusables = () =>
+      Array.from(
+        ref.current?.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), iframe, [tabindex]:not([tabindex="-1"])'
+        ) ?? []
+      );
+    const frame = requestAnimationFrame(() => focusables()[0]?.focus());
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return;
+      const items = focusables();
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      const active = document.activeElement;
+      if (!ref.current?.contains(active)) {
+        e.preventDefault();
+        first.focus();
+      } else if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    const onFocusIn = (e: FocusEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) focusables()[0]?.focus();
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    document.addEventListener('focusin', onFocusIn);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('focusin', onFocusIn);
+      if (opener && document.contains(opener)) opener.focus();
+    };
+  }, [open, ref]);
+}
 
 function FAQItem({ question, answer }: { question: string, answer: string }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -81,6 +135,8 @@ function FAQItem({ question, answer }: { question: string, answer: string }) {
 export default function ResourcesPage() {
   const [activeVideo, setActiveVideo] = useState<{ title: string; url: string; youtubeId?: string; blurb?: string } | null>(null);
   const { showToast } = useToast();
+  const videoDialogRef = useRef<HTMLDivElement>(null);
+  useDialogFocus(activeVideo !== null, videoDialogRef);
 
   /* Clicking the backdrop only helps a pointer user; a keyboard user needs
      Escape to leave the video. */
@@ -115,7 +171,7 @@ export default function ResourcesPage() {
               <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center">
                 <FileText size={20} />
               </div>
-              Clinical Documents
+              Patient guides
             </h2>
             <motion.div 
               initial="hidden"
@@ -158,6 +214,15 @@ export default function ResourcesPage() {
                 </motion.div>
               ))}
             </motion.div>
+            {/* The illustrated guides live on /gallery. The home page counts
+                them and sends people here, so this names the same count, read
+                from the same list the gallery shows, and goes straight there. */}
+            <Link
+              to="/gallery"
+              className="mt-6 inline-flex items-center gap-2 font-semibold text-slate-50 underline underline-offset-4 hover:text-teal-300 transition-colors"
+            >
+              See all {GALLERY_IMAGES.length} illustrated guides <ChevronRight size={18} aria-hidden="true" />
+            </Link>
           </section>
 
           <section>
@@ -224,10 +289,16 @@ export default function ResourcesPage() {
           <section>
             <h2 className="text-3xl font-display font-semibold text-slate-50 mb-10 tracking-tight">Frequently Asked Questions</h2>
             <div className="space-y-2">
-              {FAQS.map((faq, i) => (
-                <FAQItem key={i} question={faq.question} answer={faq.answer} />
+              {FAQS.map((faq) => (
+                <FAQItem key={faq.question} question={faq.question} answer={faq.answer} />
               ))}
             </div>
+            <Link
+              to="/faq"
+              className="mt-6 inline-flex items-center gap-2 font-semibold text-slate-50 underline underline-offset-4 hover:text-teal-300 transition-colors"
+            >
+              More questions answered <ChevronRight size={18} aria-hidden="true" />
+            </Link>
           </section>
         </div>
 
@@ -238,8 +309,8 @@ export default function ResourcesPage() {
                 <ShieldAlert size={24} />
                 <h3 className="text-lg font-bold text-red-800">Emergency Info</h3>
               </div>
-              <p className="text-red-900/70 text-sm leading-relaxed mb-6 font-medium">
-                Our clinic is for elective clinical care. If you are experiencing a medical emergency, please contact 999 or go to your nearest Accident & Emergency department immediately.
+              <p className="text-red-900 text-sm leading-relaxed mb-6 font-medium">
+                This clinic does not handle emergencies. If you are having a medical emergency, call 999 or go to your nearest A&amp;E department now.
               </p>
               <div className="space-y-4">
                 <a href="tel:999" className="flex items-center justify-between p-4 bg-white rounded-2xl text-red-600 font-bold border border-red-200 transition-all hover:bg-red-600 hover:text-white">
@@ -284,7 +355,7 @@ export default function ResourcesPage() {
                     >
                       <span>
                         {item.title}
-                        <span className="block text-[11px] font-normal text-slate-400">Request a copy</span>
+                        <span className="block text-[11px] font-normal text-slate-600">Request a copy</span>
                       </span>
                       <ChevronRight size={16} className="text-slate-300 group-hover:text-teal-500 transition-all" />
                     </Link>
@@ -293,11 +364,11 @@ export default function ResourcesPage() {
               </div>
             </section>
 
-            <section className="bg-gradient-to-br from-teal-600 to-emerald-600 p-8 rounded-[2.5rem] text-white shadow-xl shadow-teal-900/10 relative overflow-hidden">
+            <section className="bg-gradient-to-br from-teal-700 to-emerald-700 p-8 rounded-[2.5rem] text-white shadow-xl shadow-teal-900/10 relative overflow-hidden">
                <div className="relative z-10 space-y-4">
                 <h3 className="text-xl font-bold tracking-tight">Need further help?</h3>
-                <p className="text-teal-50/80 text-sm leading-relaxed font-light">
-                  If you cannot find the resource you are looking for, please contact our administration team.
+                <p className="text-teal-50 text-sm leading-relaxed font-light">
+                  If you cannot find what you are looking for, please contact the clinic.
                 </p>
                 <Link
                   to="/contact"
@@ -318,6 +389,7 @@ export default function ResourcesPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            ref={videoDialogRef}
             className="fixed inset-0 z-[var(--z-modal)] bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-8"
             onClick={() => setActiveVideo(null)}
             role="dialog"

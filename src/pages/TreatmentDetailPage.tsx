@@ -1,10 +1,9 @@
 ﻿import { useParams, Link } from 'react-router-dom';
-import { TREATMENTS, PRACTITIONERS } from '../data';
+import { TREATMENTS, practitionersFor } from '../data';
 import { BOOKING_URL, CLINIC } from '../constants';
 import {
   ChevronRight,
   CheckCircle2,
-  Home,
   Clock,
   Users,
   ShieldCheck,
@@ -20,7 +19,7 @@ import {
 } from 'lucide-react';
 import { REVIEWS } from '../data/reviews';
 import { motion, AnimatePresence } from 'motion/react';
-import { useState } from 'react';
+import { useState, useId } from 'react';
 import { cn } from '../lib/utils';
 import { useAnalytics } from '../context/AnalyticsContext';
 import { TreatmentMotif } from '../components/AnatomyMotif';
@@ -28,10 +27,16 @@ import { useToast } from '../components/ToastSystem';
 
 const FAQItem = ({ question, answer }: { question: string, answer: string }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const answerId = useId();
   return (
     <div className="border-b border-slate-100 last:border-0 py-4">
-      <button 
+      {/* aria-expanded tells a screen reader whether the answer is showing;
+          before, only the colour and the chevron said so. */}
+      <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
+        aria-controls={isOpen ? answerId : undefined}
         className="w-full flex items-center justify-between text-left group transition-all"
       >
         <span className={cn("font-semibold transition-colors", isOpen ? "text-teal-600" : "text-slate-800")}>{question}</span>
@@ -42,6 +47,7 @@ const FAQItem = ({ question, answer }: { question: string, answer: string }) => 
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            id={answerId}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -64,33 +70,49 @@ export default function TreatmentDetailPage() {
 
   if (!t) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-8 py-20 relative bg-white/60 backdrop-blur-3xl crystal-glass rounded-[3rem] border border-white/60 shadow-premium overflow-hidden">
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-8 py-20 relative bg-white/95 backdrop-blur-3xl crystal-glass rounded-[3rem] border border-white/60 shadow-premium overflow-hidden">
         <div className="absolute inset-0 neural-grid opacity-20 pointer-events-none mix-blend-screen" />
-        <div className="relative">
-          <h2 className="text-[8rem] sm:text-[10rem] font-display font-black text-slate-100 leading-none select-none drop-shadow-sm px-4">404</h2>
+        {/* "404" is a large watermark, not a heading: the page's one h1 is the
+            "Treatment not found" line below, so a screen reader hears what happened rather than
+            a number. The card was white at 60%, which over the dark wallpaper
+            turned mid-grey and left the grey text under 2:1; it is now solid
+            enough for the text to read, and the numeral is teal-700 (about
+            5:1) rather than a faint slate-200, as on the practitioner page. */}
+        <div className="relative" aria-hidden="true">
+          <p className="text-[8rem] sm:text-[10rem] font-display font-black text-teal-700 leading-none select-none drop-shadow-sm px-4">404</p>
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-32 h-32 bg-teal-500/10 rounded-full blur-3xl animate-pulse" />
           </div>
         </div>
         <div className="space-y-4 relative z-10 px-6">
-          <h3 className="text-3xl font-display font-bold text-slate-900 tracking-tight">Treatment Not Found</h3>
-          <p className="text-slate-500 max-w-md mx-auto font-light text-lg">
-            We couldn't locate the clinical details you were searching for. It may have been updated or moved.
+          <h1 className="text-3xl font-display font-bold text-slate-900 tracking-tight">Treatment not found</h1>
+          <p className="text-slate-600 max-w-md mx-auto font-light text-lg">
+            We couldn't find that treatment. It may have been renamed or moved.
           </p>
         </div>
-        <Link 
-          to="/treatments" 
+        {/* Says where it goes. It used to read "Back to Treatments" beside a
+            house icon, though it never went home, and someone arriving from an
+            old search link has no treatments page to go "back" to. */}
+        <Link
+          to="/treatments"
           className="group flex items-center gap-3 px-8 py-4 bg-teal-700 text-white rounded-2xl font-bold shadow-xl shadow-teal-900/20 hover:bg-teal-800 hover:-translate-y-1 transition-all active:scale-[0.98] z-10 relative"
         >
-          <Home size={20} />
-          Back to Treatments
+          See all our treatments
+          <ArrowRight size={20} aria-hidden="true" className="group-hover:translate-x-1 transition-transform" />
         </Link>
       </div>
     );
   }
 
+  // Both come from this treatment's own data, so the Hypnotherapy page no
+  // longer says it is for sports injuries, or names two osteopaths as the
+  // people who give it. (Plain values, not hooks: safe below the early return.)
+  const clinicList = t.conditions ?? t.whoFor;
+  const providers = practitionersFor(t.id);
+  const isOsteopathy = t.id === 'osteopathy';
+
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="max-w-7xl mx-auto space-y-10 px-4 md:px-6"
@@ -140,7 +162,10 @@ export default function TreatmentDetailPage() {
 
           {t.techniques && (
             <section className="space-y-6">
-              <h2 className="text-2xl font-display font-semibold text-slate-900 tracking-tight flex items-center gap-3">
+              {/* Sits straight on the dark wallpaper (no card), so it takes
+                  light text like "Who provides this treatment" below; it was
+                  slate-900, dark on dark, on every massage page. */}
+              <h2 className="text-2xl font-display font-semibold text-slate-50 tracking-tight flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center">
                    <Zap size={16} />
                 </div>
@@ -184,7 +209,7 @@ export default function TreatmentDetailPage() {
                     </div>
                   ))}
                 </div>
-                <div className="mt-10 pt-8 border-t border-white/10 flex items-center gap-4 text-xs font-black uppercase tracking-widest text-teal-500/60">
+                <div className="mt-10 pt-8 border-t border-white/10 flex items-center gap-4 text-xs font-black uppercase tracking-widest text-teal-400">
                    <ShieldCheck size={14} /> Agreed with you at each visit
                 </div>
               </div>
@@ -198,17 +223,41 @@ export default function TreatmentDetailPage() {
                 <Users size={20} className="text-teal-600" />
                 Who is this for?
               </h3>
-              <p className="text-slate-600 font-light leading-relaxed">
-                For anyone with aches, stiffness or pain in their muscles and joints, or who simply wants to keep moving comfortably.
-              </p>
-              <ul className="space-y-3">
-                {['Chronic back & neck pain', 'Sports related injuries', 'Postural tension', 'Mobility restrictions'].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-sm text-slate-600 font-medium">
-                    <div className="w-1.5 h-1.5 rounded-full bg-teal-500"></div>
-                    {item}
-                  </li>
-                ))}
-              </ul>
+              {/* This used to be one fixed list on every treatment ("Chronic
+                  back & neck pain, Sports related injuries…"), so Hypnotherapy
+                  and Footcare claimed to be for sports injuries. It now shows
+                  the clinic's own list for this treatment, word for word, and
+                  where the clinic gives none it says to ring rather than guess. */}
+              {clinicList && clinicList.length > 0 ? (
+                <>
+                  <p className="text-slate-600 font-light leading-relaxed">
+                    What the clinic lists for {t.title}:
+                  </p>
+                  <ul className="space-y-3">
+                    {clinicList.map((item) => (
+                      <li key={item} className="flex items-start gap-3 text-sm text-slate-600 font-medium">
+                        <div className="w-1.5 h-1.5 rounded-full bg-teal-500 mt-1.5 shrink-0"></div>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="text-sm text-slate-600 leading-relaxed">
+                    Not on the list, or not sure? Ring the clinic on{' '}
+                    <a href={`tel:${CLINIC.telephoneLink}`} className="text-teal-700 font-semibold hover:underline">
+                      {CLINIC.telephone}
+                    </a>
+                    .
+                  </p>
+                </>
+              ) : (
+                <p className="text-slate-600 font-light leading-relaxed">
+                  Not sure whether {t.title} suits you? Ring the clinic on{' '}
+                  <a href={`tel:${CLINIC.telephoneLink}`} className="text-teal-700 font-semibold hover:underline">
+                    {CLINIC.telephone}
+                  </a>
+                  {' '}and talk it through before you book.
+                </p>
+              )}
             </div>
             <div className="bg-teal-700 p-8 rounded-[2.5rem] text-white shadow-xl shadow-teal-900/10 space-y-6">
               <h3 className="text-xl font-display font-bold flex items-center gap-2">
@@ -216,16 +265,27 @@ export default function TreatmentDetailPage() {
                 Clinical Approach
               </h3>
               <p className="text-white font-light leading-relaxed">
-                Each session is shaped around what your assessment finds, aiming for lasting improvement rather than a quick fix.
+                Each session is shaped around what you need, and your practitioner explains what they are doing and why.
               </p>
+              {/* "Regulated Practice" used to sit on every treatment, massage,
+                  foot care and hypnotherapy included. Only osteopathy is
+                  regulated by law (the practitioner pages apply the same rule),
+                  so only the osteopathy page names the regulator. */}
               <div className="pt-4 flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
                   <Stethoscope size={24} />
                 </div>
-                <div>
-                  <div className="text-xs font-bold uppercase tracking-widest text-teal-50">Standard Care</div>
-                  <div className="text-lg font-semibold">Regulated Practice</div>
-                </div>
+                {isOsteopathy ? (
+                  <div>
+                    <div className="text-xs font-bold uppercase tracking-widest text-teal-50">Regulated by</div>
+                    <div className="text-lg font-semibold">{CLINIC.regulator.name}</div>
+                  </div>
+                ) : (
+                  <div>
+                    <div className="text-xs font-bold uppercase tracking-widest text-teal-50">Training</div>
+                    <div className="text-lg font-semibold">Set out on each practitioner's page</div>
+                  </div>
+                )}
               </div>
             </div>
           </section>
@@ -235,7 +295,7 @@ export default function TreatmentDetailPage() {
               <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center">
                 <HelpCircle size={20} />
               </div>
-              FAQ
+              Common questions
             </h2>
             <div className="space-y-2">
               {/* Durations vary by treatment and are the clinic's to quote, not
@@ -244,31 +304,50 @@ export default function TreatmentDetailPage() {
                 question="How long does a session take?"
                 answer="It depends on the treatment. The length of your appointment is confirmed when you book, so you will know exactly how long to set aside before you arrive."
               />
-              <FAQItem 
-                question="What should I wear for treatment?" 
-                answer="Comfortable, loose-fitting clothing is recommended. Some treatments may require physical examination so lightweight sports gear is usually best." 
+              {/* These answers render on every treatment, hypnotherapy and foot
+                  care included, and agree with the FAQ page (src/data/faq.ts).
+                  "Does it hurt?" used to talk about "manipulation" on the
+                  Hypnotherapy page and left out the soreness afterwards that
+                  the FAQ page mentions. */}
+              <FAQItem
+                question="What should I wear for treatment?"
+                answer="Comfortable clothing you can move in is ideal. For some treatments you may be asked to remove some outer clothing. You are entitled to ask for a chaperone, to bring someone with you, or to wear shorts and a vest top instead — just say so when you book or when you arrive."
               />
-              <FAQItem 
-                question="Do I need a GP referral?" 
-                answer="No, you can book directly with us as private patients. However, if you are using private medical insurance, you may need a GP referral depending on your provider." 
+              <FAQItem
+                question="Do I need a GP referral?"
+                answer="No. You can book with us directly, without a GP referral. If your care is being paid for through private medical insurance, your insurer may still need a referral before they will agree to cover it, so it is worth checking your policy first."
               />
-              <FAQItem 
-                question="Does the treatment hurt?" 
-                answer="Our treatments are designed to be therapeutic. While some deep tissue work or manipulation may feel intense, our goal is to maintain comfort throughout the session." 
+              <FAQItem
+                question="Does the treatment hurt?"
+                answer="It depends on the treatment. Hands-on work on tight or sore areas can be briefly uncomfortable, and mild soreness for a day or so afterwards is common. Tell your practitioner at any point if something is too much, and the treatment will be adapted."
               />
             </div>
           </section>
 
           <section className="space-y-8">
             <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-display font-semibold text-slate-50 tracking-tight">Meet the Specialists</h2>
+              <h2 className="text-2xl font-display font-semibold text-slate-50 tracking-tight">Who provides this treatment</h2>
               <Link to="/practitioners" className="text-teal-600 font-bold text-xs uppercase tracking-widest flex items-center gap-2 hover:translate-x-1 transition-transform">
                 View All <ChevronRight size={16} />
               </Link>
             </div>
+            {/* This used to show the first two practitioners — the two
+                osteopaths — on every treatment, so Footcare and Hypnotherapy
+                named the wrong people. practitionersFor (src/data) matches the
+                team's own roles and specialisations. Where neither the clinic's
+                site nor this one says who gives a treatment, say so plainly. */}
+            {providers.length === 0 ? (
+              <p className="p-6 bg-white rounded-[2rem] border border-slate-100 text-slate-700 leading-relaxed">
+                Ring the clinic on{' '}
+                <a href={`tel:${CLINIC.telephoneLink}`} className="text-teal-700 font-semibold hover:underline">
+                  {CLINIC.telephone}
+                </a>{' '}
+                to ask who offers this treatment.
+              </p>
+            ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {PRACTITIONERS.slice(0, 2).map((p, i) => (
-                <Link key={i} to={`/practitioners/${p.id}`} className="flex items-center gap-6 p-6 bg-white rounded-[2rem] border border-slate-100 hover:shadow-premium transition-all group">
+              {providers.map((p) => (
+                <Link key={p.id} to={`/practitioners/${p.id}`} className="flex items-center gap-6 p-6 bg-white rounded-[2rem] border border-slate-100 hover:shadow-premium transition-all group">
                    <div className="w-20 h-20 rounded-[1.5rem] overflow-hidden shrink-0 shadow-inner">
                       <img src={p.image} alt={p.name} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                    </div>
@@ -280,6 +359,7 @@ export default function TreatmentDetailPage() {
                 </Link>
               ))}
             </div>
+            )}
           </section>
 
           <section className="bg-slate-900 p-12 rounded-[3.5rem] relative overflow-hidden group">
@@ -302,7 +382,11 @@ export default function TreatmentDetailPage() {
                  ))}
               </div>
               <div className="relative aspect-video rounded-[2rem] overflow-hidden border border-white/10 group-hover:border-teal-500/30 transition-colors">
-                <img src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&q=80&w=800" alt="Patient training during an active rehabilitation session" loading="lazy" decoding="async" className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-1000" />
+                {/* The clinic's own emblem. This was a stock photo of a crowd
+                    at an outdoor party, described to screen readers as "Patient
+                    training during an active rehabilitation session", sitting
+                    beside real reviewers' names. Decorative, so alt is empty. */}
+                <img src="/video/emblem-close.jpg" width={1280} height={720} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-1000" />
               </div>
             </div>
             <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500/10 rounded-full blur-[100px] -mr-32 -mt-32"></div>
@@ -341,13 +425,15 @@ export default function TreatmentDetailPage() {
                     renders for every treatment, so anything listed here must
                     hold for footcare and hypnotherapy as much as for osteopathy
                     — the old "Biomechanical Analysis" and "Exercise Guidance
-                    Pack" did not. */}
+                    Pack" did not, and nor did "Hands-on treatment": hypnotherapy
+                    is a talking therapy. Treatment follows only where it is
+                    appropriate, as the FAQ page says. */}
                 <h3 className="text-sm font-bold text-slate-600 uppercase tracking-widest">What's Included</h3>
                 <ul className="space-y-3">
                   {[
-                    'A full assessment of the problem',
-                    'Hands-on treatment in the same visit',
-                    'Self-care advice to take home'
+                    'Time to talk through what you need',
+                    'Treatment in the same visit, where it is appropriate',
+                    'Advice to take home'
                   ].map((item, i) => (
                     <li key={i} className="flex items-center gap-3 text-sm text-slate-600 font-medium">
                       <CheckCircle2 size={16} className="text-emerald-500" />
@@ -357,16 +443,21 @@ export default function TreatmentDetailPage() {
                 </ul>
               </div>
 
-              <button 
-                onClick={() => {
-                  trackClick("Book Assessment Clicked");
-                  window.open(BOOKING_URL, '_blank');
-                }}
-                className="w-full flex items-center justify-center gap-3 py-5 bg-teal-700 hover:bg-teal-700 text-white rounded-2xl font-bold text-lg transition-all shadow-xl shadow-teal-600/20 active:scale-[0.98] group"
+              {/* A real link, like every other booking control (see App.tsx):
+                  a scripted window.open was announced as a plain button, could
+                  be stopped by pop-up blockers, and handed the booking site a
+                  handle on this tab. */}
+              <a
+                href={BOOKING_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackClick("Book Assessment Clicked")}
+                aria-label="Book Assessment — opens our booking system in a new tab"
+                className="w-full flex items-center justify-center gap-3 py-5 bg-teal-700 hover:bg-teal-800 text-white rounded-2xl font-bold text-lg transition-all shadow-xl shadow-teal-600/20 active:scale-[0.98] group"
               >
                 Book Assessment
                 <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-              </button>
+              </a>
               {/* A cancellation policy is a contract term. Until the clinic
                   states one, this page must not invent one for it. */}
             </div>

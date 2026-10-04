@@ -24,10 +24,14 @@ export { CLINIC };
  * nothing — they popped a message saying "Opening Instagram…" and stopped
  * there. Buttons are only rendered for entries with a real address, so an
  * empty string means the icon simply is not shown.
+ *
+ * The addresses are read from CLINIC, where the README tells anyone to change
+ * them. They used to be typed here a second time, so editing clinic.ts as told
+ * would have left the footer pointing at the old profiles.
  */
 export const SOCIAL_LINKS: { label: string; url: string }[] = [
-  { label: 'Facebook', url: 'https://www.facebook.com/osteoCT6' },
-  { label: 'YouTube', url: 'https://www.youtube.com/@OsteopathyWellbeingCT6HerneBay' },
+  { label: 'Facebook', url: CLINIC.facebook },
+  { label: 'YouTube', url: CLINIC.youtube },
   { label: 'Instagram', url: '' },
 ];
 

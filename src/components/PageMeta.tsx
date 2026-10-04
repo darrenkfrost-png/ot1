@@ -1,15 +1,16 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { TREATMENTS, PRACTITIONERS } from '../data';
+import { CLINIC } from '../data/clinic';
 
 /**
- * The practice's registered trading name. The template shipped with the
- * shorthand "CT6 Wellbeing", which is not what the practice is called and not
- * what anyone searches for. The town is in the title deliberately — local
- * searches are nearly always "osteopath in <town>".
+ * The practice's trading name. The template shipped with the shorthand "CT6
+ * Wellbeing", which is not what the practice is called and not what anyone
+ * searches for. The town is in the title deliberately — local searches are
+ * nearly always "osteopath in <town>".
  */
-const SITE_NAME = 'Osteopathy & Wellbeing @CT6';
-const DEFAULT_TITLE = 'Osteopathy & Wellbeing @CT6 | Osteopath in Herne Bay, Kent';
+const SITE_NAME = CLINIC.name;
+const DEFAULT_TITLE = `${SITE_NAME} | Osteopath in Herne Bay, Kent`;
 const DEFAULT_DESCRIPTION =
   'Osteopathy, massage, acupuncture, foot care and hypnotherapy in Herne Bay, Kent. Osteopaths registered with the General Osteopathic Council.';
 
@@ -30,7 +31,10 @@ const STATIC_META: Record<string, Meta> = {
       'Osteopathy, massage, acupuncture, foot care and hypnotherapy. What each treatment involves, what it helps with, and how to book.',
   },
   '/practitioners': {
-    title: `Our Practitioners — Registered Osteopaths & Therapists | ${SITE_NAME}`,
+    /* Only the osteopaths are GOsC-registered; the title used to say
+       "Registered Osteopaths & Therapists", which claimed it for everyone.
+       The description below names who is registered, and with whom. */
+    title: `Our Practitioners — Osteopaths & Therapists | ${SITE_NAME}`,
     description:
       'Meet the practitioners: their training, their interests and what they treat. Our osteopaths are registered with the General Osteopathic Council.',
   },
@@ -46,21 +50,29 @@ const STATIC_META: Record<string, Meta> = {
   },
   '/locations': {
     title: `Where to Find Us | ${SITE_NAME}`,
-    description: 'The clinic at 180 High Street, Herne Bay: opening times and how to reach us.',
+    description: `The clinic at ${CLINIC.address.line1}, ${CLINIC.address.town}: opening times and how to reach us.`,
   },
+  /*
+   * Descriptions say what each page actually holds. /resources promised
+   * "movement, posture, recovery and what to do when symptoms flare" and
+   * "self-care guides" it has never had; /gallery promised "a look inside the
+   * clinic", which was a still picture and a stock photo; /dashboard promised
+   * to "track your progress", and it saves nothing.
+   */
   '/resources': {
-    title: `Patient Resources & Self-Care Guides | ${SITE_NAME}`,
+    title: `Patient Resources — Films, a Guide & Answers | ${SITE_NAME}`,
     description:
-      'Guidance you can use between appointments: movement, posture, recovery and what to do when symptoms flare.',
+      'Short films from the clinic, a patient guide to sciatica, straight answers to common questions, and who to call in an emergency.',
   },
   '/gallery': {
-    title: `Patient Guides & Clinic Gallery | ${SITE_NAME}`,
+    title: `Patient Guides & a Film from the Clinic | ${SITE_NAME}`,
     description:
-      'Illustrated guides to sciatica, spinal anatomy and recovery, plus a look inside the clinic.',
+      "Illustrated guides to sciatica, neck-related headaches, joint pain and posture, plus a short film from the clinic's own YouTube channel.",
   },
   '/dashboard': {
     title: `Recovery Tools (preview) | ${SITE_NAME}`,
-    description: 'Track your rehabilitation progress between appointments.',
+    description:
+      'A preview of self-help tools: try the sliders and checklist, and print a summary to bring to your appointment.',
     noindex: true,
   },
 };
@@ -109,11 +121,28 @@ function resolve(pathname: string): Meta {
  * every browser tab and bookmark read the same.
  */
 export default function PageMeta() {
-  const { pathname } = useLocation();
+  const { pathname: rawPathname } = useLocation();
+  /*
+   * "/practitioners/" and "/practitioners" are the same page, and the
+   * clinic's old website used the trailing-slash form, so links to it are
+   * everywhere. Without this, "/practitioners/" showed the team but told
+   * search engines it was "Page not found" and not to index it.
+   */
+  const pathname = rawPathname.length > 1 ? rawPathname.replace(/\/+$/, '') || '/' : rawPathname;
 
   useEffect(() => {
     const meta = resolve(pathname);
-    const url = `${window.location.origin}${pathname}`;
+    /*
+     * THE ONE ADDRESS, NOT WHICHEVER ADDRESS THIS WAS OPENED ON.
+     *
+     * This used window.location.origin, so every page named the host it
+     * happened to be served from as its official copy: the temporary
+     * hostingersite.com address, a www or http variant, even localhost. Once
+     * the noindex guard comes off, any of those would compete with the
+     * clinic's own domain in search. index.html's canonical is CLINIC.website;
+     * so is this.
+     */
+    const url = `${CLINIC.website}${pathname}`;
 
     document.title = meta.title;
 
@@ -192,7 +221,7 @@ export default function PageMeta() {
         '@type': 'ListItem',
         position: i + 1,
         name: c.name,
-        item: `${window.location.origin}${c.path}`,
+        item: `${CLINIC.website}${c.path}`,
       })),
     };
 
