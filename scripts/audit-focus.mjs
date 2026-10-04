@@ -136,7 +136,15 @@ async function audit(pages) {
       if (isUp !== up) { up = isUp; log.push([now(), isUp ? 'SCREENSAVER-UP' : 'screensaver-down', '']); }
     }).observe(document, { childList: true, subtree: true });
   });
-  const lines = [], failures = [], covered = [];
+  const lines = [], failures = [], covered = [], stalled = [];
+  /* One retry, then give up on this stop and say so - never crash the run. */
+  const shot = async (clip) => {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try { return await page.screenshot({ clip, timeout: 30000 }); }
+      catch (e) { if (!/Timeout/i.test(String(e && e.message))) throw e; await page.waitForTimeout(1500); }
+    }
+    return null;
+  };
   let pass = 0, fail = 0, skipped = 0;
   try {
     for (const path of pages) {
@@ -169,6 +177,17 @@ async function audit(pages) {
       for (let t = 0; t < TABS; t++) {
         await page.keyboard.press('Tab');
         await page.waitForTimeout(SETTLE);
+        /* Wait until the control has stopped MOVING. Focusing a control scrolls
+           it into view and a whileInView section animates in as it arrives; under
+           load that outlasts SETTLE, and the ring was photographed on a button
+           still gliding into place (reads as no ring). Two identical rectangles
+           150ms apart = still. Gives up after ~6s and photographs anyway. */
+        for (let q = 0, last = ""; q < 40; q++) {
+          const now = await page.evaluate(() => { const r = document.activeElement?.getBoundingClientRect?.(); return r ? [r.x, r.y, r.width, r.height].map((v) => Math.round(v * 2) / 2).join() : ""; });
+          if (now === last) break;
+          last = now;
+          await page.waitForTimeout(150);
+        }
         const info = await page.evaluate(() => {
           const el = document.activeElement;
           if (!el || el === document.body) return null;
@@ -206,7 +225,9 @@ async function audit(pages) {
           const ex = Math.round(info.x);
           const clip = { x: Math.max(0, ex), y: Math.max(0, Math.round(cy) - 2), width: 24, height: 4 };
           const ly = Math.round(cy) - clip.y;
-          const [edge, dark, inner, surface] = await pixels(await page.screenshot({ clip }), [[1, ly], [3, ly], [6, ly], [16, ly]]);
+          const png = await shot(clip);
+          if (!png) { stalled.push(`${path} "${info.label}" ${where}`); continue; }
+          const [edge, dark, inner, surface] = await pixels(png, [[1, ly], [3, ly], [6, ly], [16, ly]]);
           ok = ratio(dark, inner) >= 3 && Math.max(ratio(dark, surface), ratio(inner, surface)) >= 3;
           detail = `inset: edge ${edge} | dark ${dark} | inner ${inner} | surface ${surface}`;
         } else {
@@ -218,7 +239,9 @@ async function audit(pages) {
           if (clip.x + clip.width > info.vw) clip.width = info.vw - clip.x;
           const lx = e - clip.x, ly = Math.round(cy) - clip.y, d = useLeft ? -1 : 1;
           const at = (k) => [lx + d * k - (useLeft ? 1 : 0), ly];
-          const [inner, dark, outer, beyond] = await pixels(await page.screenshot({ clip }), [at(1), at(4), at(6), at(10)]);
+          const png = await shot(clip);
+          if (!png) { stalled.push(`${path} "${info.label}" ${where}`); continue; }
+          const [inner, dark, outer, beyond] = await pixels(png, [at(1), at(4), at(6), at(10)]);
           ok = ratio(dark, outer) >= 3 && Math.max(ratio(dark, beyond), ratio(outer, beyond)) >= 3;
           detail = `inner ${inner} | dark ${dark} | outer ${outer} | beyond ${beyond}`;
         }
@@ -230,7 +253,7 @@ async function audit(pages) {
   } finally {
     await browser.close();
   }
-  return { lines, failures, pass, fail, skipped, covered };
+  return { lines, failures, pass, fail, skipped, covered, stalled };
 }
 
 console.log('\nFocus visibility — every focus stop, judged by rendered pixels\n');
@@ -253,7 +276,12 @@ try {
     console.log(`\nCOVERED: ${coveredAll.length} page(s) had the screensaver over them, so were not fully judged:`);
     for (const c of coveredAll) console.log('   ' + c);
   }
-  exitCode = fail || coveredAll.length ? 1 : 0;
+  const stalledAll = results.flatMap((r) => r.stalled);
+  if (stalledAll.length) {
+    console.log(`\nSTALLED: ${stalledAll.length} stop(s) could not be photographed (the page stopped painting for 60s):`);
+    for (const st of stalledAll) console.log('   ' + st);
+  }
+  exitCode = fail || coveredAll.length || stalledAll.length ? 1 : 0;
 } finally {
   await decoderBrowser.close();
   server.kill();

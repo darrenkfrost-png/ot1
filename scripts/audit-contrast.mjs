@@ -29,6 +29,13 @@
  * Text sitting on a photograph is reported separately and NOT counted as
  * failing: there is no single backdrop colour to measure, so those need a
  * person to look at them.
+ *
+ * TWO PASSES. The first measures the site as a new visitor gets it (the
+ * default theme) and is unchanged. The second measures the same pages in the
+ * "Midnight" theme, which the palette menu in the header and the "dark"
+ * command both offer: its sidebar words once read about 1.9:1 and no run
+ * could see it, because every run measured only the default. Each pass
+ * prints its own total, and a failure in EITHER fails the run.
  */
 
 import { createRequire } from 'node:module';
@@ -168,14 +175,13 @@ await page.addInitScript(() => {
   } catch { /* no storage - the gate helper still clicks through */ }
 });
 
-let totalFail = 0, totalChecked = 0;
 /*
  * The opening film covers the whole viewport for several seconds. Measuring
  * through it reports the film's colours as if they were the page's - the first
  * run of this audit produced 285 "failures" that were really the intro. Skip it
  * and wait for it to actually leave before measuring anything.
  */
-async function dismissIntro() {
+async function dismissIntro(page) {
   // TWO gates, not one: the film, and then a welcome screen behind it. Missing
   // the second one is just as bad as missing the first - the audit measures the
   // welcome screen's colours and reports them as the page's.
@@ -235,39 +241,87 @@ async function measureGround(page) {
   return rgb;
 }
 
-for (const path of PAGES) {
-  await page.goto(BASE + path, { waitUntil: 'domcontentloaded' });
-  await page.waitForTimeout(2500);
-  const gone = await dismissIntro();
-  if (!gone) console.log(`   (warning: the intro overlay would not dismiss on ${path} - numbers below are unreliable)`);
-  await page.waitForTimeout(1500);
-  // Scroll the whole page so the reveal animations actually fire.
-  await page.evaluate(async () => {
-    const step = Math.round(window.innerHeight * 0.8);
-    for (let y = 0; y < document.documentElement.scrollHeight; y += step) {
-      window.scrollTo(0, y);
-      await new Promise((r) => setTimeout(r, 220));
+/*
+ * ONE PASS: every page in PAGES, measured in one browser tab. `theme` is the
+ * data-app-theme the pass is meant to be measuring, or null for the default.
+ * When a theme was asked for and the page is not showing it, that page is
+ * counted as a failure instead of measured: the default colours reported
+ * under another theme's name would be a clean result that proves nothing.
+ */
+async function runPass(page, theme) {
+  let totalFail = 0, totalChecked = 0;
+  for (const path of PAGES) {
+    await page.goto(BASE + path, { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(2500);
+    const gone = await dismissIntro(page);
+    if (!gone) console.log(`   (warning: the intro overlay would not dismiss on ${path} - numbers below are unreliable)`);
+    await page.waitForTimeout(1500);
+
+    if (theme) {
+      const applied = await page.evaluate(() => document.documentElement.getAttribute('data-app-theme'));
+      if (applied !== theme) {
+        totalFail++;
+        console.log(`\n${path}  —  NOT MEASURED: this pass asked for the "${theme}" theme, but the page is showing "${applied}"`);
+        continue;
+      }
     }
-    window.scrollTo(0, 0);
-    await new Promise((r) => setTimeout(r, 600));
-  });
-  await page.waitForTimeout(800);
 
-  const ground = await measureGround(page);
-  const { checked, onMediaCount, groups } = await page.evaluate(AUDIT, ground);
-  const rows = Object.entries(groups).sort((a, b) => b[1].n - a[1].n);
-  const failing = rows.reduce((s, [, v]) => s + v.n, 0);
-  totalFail += failing; totalChecked += checked;
+    // Scroll the whole page so the reveal animations actually fire.
+    await page.evaluate(async () => {
+      const step = Math.round(window.innerHeight * 0.8);
+      for (let y = 0; y < document.documentElement.scrollHeight; y += step) {
+        window.scrollTo(0, y);
+        await new Promise((r) => setTimeout(r, 220));
+      }
+      window.scrollTo(0, 0);
+      await new Promise((r) => setTimeout(r, 600));
+    });
+    await page.waitForTimeout(800);
 
-  console.log(`\n${path}  —  ${checked} measured, ${failing} failing, ${onMediaCount} over photos (not judged)   ground rgb(${ground.join(',')})`);
-  for (const [k, v] of rows.slice(0, 8)) {
-    console.log(`   ${String(v.n).padStart(3)}x  ${String(v.cr).padStart(5)}:1 (need ${v.need})  ${k}`);
-    console.log(`         "${v.sample}"`);
+    const ground = await measureGround(page);
+    const { checked, onMediaCount, groups } = await page.evaluate(AUDIT, ground);
+    const rows = Object.entries(groups).sort((a, b) => b[1].n - a[1].n);
+    const failing = rows.reduce((s, [, v]) => s + v.n, 0);
+    totalFail += failing; totalChecked += checked;
+
+    console.log(`\n${path}  —  ${checked} measured, ${failing} failing, ${onMediaCount} over photos (not judged)   ground rgb(${ground.join(',')})`);
+    for (const [k, v] of rows.slice(0, 8)) {
+      console.log(`   ${String(v.n).padStart(3)}x  ${String(v.cr).padStart(5)}:1 (need ${v.need})  ${k}`);
+      console.log(`         "${v.sample}"`);
+    }
+    if (!rows.length) console.log('   all pass');
   }
-  if (!rows.length) console.log('   all pass');
+  return { totalFail, totalChecked };
 }
 
+/* Pass 1: the default theme, exactly as before. */
+const standard = await runPass(page, null);
 console.log(`\n${'='.repeat(64)}`);
-console.log(`TOTAL: ${totalFail} failing of ${totalChecked} measured across ${PAGES.length} pages`);
+console.log(`TOTAL: ${standard.totalFail} failing of ${standard.totalChecked} measured across ${PAGES.length} pages`);
+await page.close();
+
+/*
+ * Pass 2: the Midnight theme. A fresh page from browser.newPage() gets its
+ * own context, so its storage starts empty and nothing leaks from pass 1.
+ * The theme is saved the way the site saves it - the 'ct6-settings' entry
+ * that SettingsContext merges over its defaults - so the page opens already
+ * in Midnight, as it would for a returning visitor who chose it.
+ */
+console.log(`\n${'#'.repeat(64)}`);
+console.log('MIDNIGHT THEME - the same pages again, with the dark theme saved in Settings');
+const midnightPage = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+await midnightPage.addInitScript(() => {
+  try {
+    sessionStorage.setItem('ct6-intro-film-seen', 'true');
+    sessionStorage.setItem('ct6-entrance-seen', 'true');
+    localStorage.setItem('ct6-settings', JSON.stringify({ screensaverDelaySeconds: 3600, appTheme: 'midnight' }));
+  } catch { /* no storage - the theme check in runPass reports every page as not measured */ }
+});
+const midnight = await runPass(midnightPage, 'midnight');
+console.log(`\n${'='.repeat(64)}`);
+console.log(`MIDNIGHT TOTAL: ${midnight.totalFail} failing of ${midnight.totalChecked} measured across ${PAGES.length} pages`);
+
+console.log(`\n${'='.repeat(64)}`);
+console.log(`CONTRAST: default theme ${standard.totalFail} failing, Midnight theme ${midnight.totalFail} failing`);
 await browser.close();
-process.exit(totalFail > 0 ? 1 : 0);
+process.exit(standard.totalFail > 0 || midnight.totalFail > 0 ? 1 : 0);

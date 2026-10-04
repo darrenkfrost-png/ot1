@@ -73,6 +73,31 @@ const RULES = [
     re: /\b(Live Telemetry|interconnected ecosystem|structural engineer|Book Secure Video|Telehealth Access|Available Today|Available This Week|Methodology Whitepaper|Elite Roster|Infinite Potential|Priority Scheduling|Ready for Admittance|exponentially faster|Always On)\b/gi,
   },
   {
+    id: 'fake-clinical-verdict',
+    why: 'A web page cannot sign a patient off; only their clinician can. The recovery tools once graded a visitor\'s own slider readings as "discharge approved". This shipped.',
+    re: /discharge approved|Discharge Ready|clear discharge/gi,
+  },
+  {
+    id: 'fake-security-telehealth',
+    why: 'The dashboard\'s report tool encrypted nothing and the site has no video-consultation service, yet it once claimed an "End-to-End Crypt Key" and a telehealth triage. This shipped.',
+    re: /Crypt Key|auto-crypts|Telehealth/gi,
+  },
+  {
+    id: 'fake-system-status',
+    why: 'Status read-outs for systems that do not exist, shown on the entrance as if they were running. This shipped.',
+    re: /NEURAL UPLINK|BIOMETRIC_SYNC|Clinical Matrix/gi,
+  },
+  {
+    id: 'invented-job-title',
+    why: 'A job title that was printed on all six practitioner cards. Each card now shows only that person\'s own published qualifications.',
+    re: /Principal Clinical Lead/g,
+  },
+  {
+    id: 'invented-partnership',
+    why: 'Claimed a university research partnership that the clinic\'s own website does not describe. This shipped.',
+    re: /University Partnerships/g,
+  },
+  {
     id: 'staging-domain',
     why: 'The temporary host must never be a canonical/OG target — it would compete with the real site.',
     re: /salmon-gnat-721528\.hostingersite\.com/g,
@@ -116,6 +141,37 @@ const walk = (dir) => {
    would lose the reason the code is shaped the way it is. */
 const isComment = (line) => /^\s*(\{\s*\/\*|\/\/|\/\*|\*|<!--)/.test(line);
 
+// A COMMENT THAT RUNS OVER SEVERAL LINES. Its middle lines need not start
+// with a marker - a JSX {/* ... block often does not - so the line-by-line
+// test above read them as live page text, and a comment naming what it
+// removed failed the run. A block is followed only when it OPENS at the
+// start of a line (where isComment already looks), so a "/*" in the middle
+// of code - accept="image/*", a glob in a string - can never hide the lines
+// after it. The closing line counts as comment only when nothing but
+// brackets and punctuation follows the close; real code after it is checked.
+// If a block never closes, the guess was wrong: those lines fall back to the
+// plain test, so the worst case is the old behaviour, never a blind spot.
+const commentFlags = (lines) => {
+  const out = [];
+  let openAt = -1;
+  lines.forEach((line, i) => {
+    if (openAt !== -1) {
+      const end = line.indexOf('*/');
+      if (end === -1) { out.push(true); return; }
+      openAt = -1;
+      out.push(/^[\s})\],;]*$/.test(line.slice(end + 2)));
+      return;
+    }
+    out.push(isComment(line));
+    const opener = line.match(/^\s*\{?\s*\/\*/);
+    if (opener && !line.slice(opener[0].length).includes('*/')) openAt = i;
+  });
+  if (openAt !== -1) {
+    for (let i = openAt + 1; i < lines.length; i++) out[i] = isComment(lines[i]);
+  }
+  return out;
+};
+
 const files = [...walk(SRC), join(ROOT, 'index.html')];
 let hard = 0, soft = 0;
 
@@ -125,9 +181,10 @@ for (const rule of RULES) {
     if (rule.files && !rule.files.test(f)) continue;
     if (rule.allowFile && rule.allowFile.test(f)) continue;
     const lines = readFileSync(f, 'utf8').split('\n');
+    const inComment = commentFlags(lines);
     lines.forEach((line, i) => {
       rule.re.lastIndex = 0;
-      if (rule.re.test(line)) hits.push({ f: relative(ROOT, f), n: i + 1, line: line.trim().slice(0, 96), c: isComment(line) });
+      if (rule.re.test(line)) hits.push({ f: relative(ROOT, f), n: i + 1, line: line.trim().slice(0, 96), c: inComment[i] });
     });
   }
   const real = hits.filter((h) => !h.c);
@@ -297,9 +354,10 @@ for (const d of DRIFT) {
     if (relative(ROOT, f).replace(/\\/g, '/') === d.home) continue;
     if (/index\.html$/.test(f)) continue; // checked for agreement just above
     const lines = readFileSync(f, 'utf8').split('\n');
+    const inComment = commentFlags(lines);
     lines.forEach((line, i) => {
       d.re.lastIndex = 0;
-      if (d.re.test(line) && !isComment(line)) hits.push({ f: relative(ROOT, f), n: i + 1 });
+      if (d.re.test(line) && !inComment[i]) hits.push({ f: relative(ROOT, f), n: i + 1 });
     });
   }
   if (hits.length) {
