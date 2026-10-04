@@ -8,6 +8,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useAnalytics } from '../context/AnalyticsContext';
 import { useToast } from './ToastSystem';
 import { PREVIEW_SCREENSAVER_EVENT } from './Screensaver';
+import { CLINIC } from '../data/clinic';
+import { speechSupported } from '../utils/readAloud';
 
 /*
  * Aura colours. The first is the original gold - toned from the highlighter
@@ -31,91 +33,123 @@ export default function SettingsPanel() {
   const { trackClick } = useAnalytics();
   const { showToast } = useToast();
 
+  /*
+   * DIAGNOSTICS REPORTS ONLY WHAT IT MEASURED. This tab used to release
+   * scripted jargon lines on timers so it looked busy, print "operating
+   * within nominal boundaries" whatever the checks found, count "canvas
+   * nodes" from a hand-typed table (even with the film background, where no
+   * canvas runs) and describe a microphone and "audio consultation" feature
+   * that do not exist. Now it runs two real checks - can this browser save
+   * settings, and is the contact form's server answering - and states the
+   * rest as plain facts read from this device and these settings.
+   */
+  type ContactState = 'unchecked' | 'ready' | 'running' | 'not-set-up' | 'down';
   const [scanState, setScanState] = useState<'idle' | 'running' | 'completed'>('idle');
-  const [consoleLogs, setConsoleLogs] = useState<string[]>([]);
-  const [diagnostics, setDiagnostics] = useState({
-    apiStatus: 'Offline',
-    apiLatency: 0,
-    micStatus: 'Not Scanned',
-    localStorageCheck: 'Pending',
-    activeCanvasNodes: 0,
-    renderingFidelity: 'Balanced'
-  });
+  const [checkLog, setCheckLog] = useState<string[]>([]);
+  const [contactState, setContactState] = useState<ContactState>('unchecked');
+  const [storageState, setStorageState] = useState<'unchecked' | 'ok' | 'blocked'>('unchecked');
+
+  const canReadAloud = speechSupported();
+  const textSizePercent = Math.round((settings.fontSizeMultiplier || 1) * 100);
+
+  const backgroundName = (() => {
+    switch (settings.activeWallpaper) {
+      case 'video': {
+        const clip = VIDEO_WALLPAPERS.find((c) => c.id === settings.videoWallpaper) ?? VIDEO_WALLPAPERS[0];
+        return `Film: ${clip?.label ?? 'emblem'}`;
+      }
+      case 'none':
+        return 'Plain';
+      case 'static-image':
+        return 'Picture';
+      default: {
+        const name = settings.activeWallpaper.replace('-', ' ');
+        return `${name.charAt(0).toUpperCase()}${name.slice(1)} (animated)`;
+      }
+    }
+  })();
+
+  /*
+   * Worded to claim no more than the check saw. It asks the site's server one
+   * question (/api/health) and sends nothing, so even the best answer means
+   * "the server is up and says a delivery address is set", never "your
+   * message will arrive". "Answering" on its own read as the second.
+   */
+  const contactValue: Record<ContactState, string> = {
+    unchecked: 'Not checked yet',
+    ready: 'Server up, sending set up',
+    running: 'Server up, sending not confirmed',
+    'not-set-up': 'Sending not set up - please phone or email',
+    down: 'Server not answering - please phone or email',
+  };
 
   const runSystemDiagnostic = async () => {
-    trackClick("Execute Diagnostics Scan");
+    trackClick("Run device check");
     setScanState('running');
-    setConsoleLogs([]);
-    const addLogWithDelay = (msg: string, delay: number) => {
-      return new Promise<void>((resolve) => {
-        setTimeout(() => {
-          setConsoleLogs(prev => [...prev, `[${new Date().toLocaleTimeString()}] ${msg}`]);
-          resolve();
-        }, delay);
-      });
-    };
+    setCheckLog([]);
 
-    await addLogWithDelay("SYSTEM_INTEGRATION // Launching diagnostic master pass...", 150);
-    await addLogWithDelay("STORAGE_PERSISTENT // Checking Client State consistency...", 250);
-    
     let storageOk = false;
     try {
-      localStorage.setItem('__ct6_diagnostic', 'nominal');
+      localStorage.setItem('__ct6_diagnostic', '1');
       localStorage.removeItem('__ct6_diagnostic');
       storageOk = true;
-    } catch(e) {}
+    } catch {
+      /* blocked by this browser */
+    }
 
-    await addLogWithDelay(storageOk ? "SUCCESS: Local persistence layer verified successfully." : "WARNING: Storage layer read-only. Fallback state enabled.", 150);
-    await addLogWithDelay("COMMUNICATIONS_HUB // Pinging secure endpoint: /api/health...", 300);
-
-    let latency = 0;
-    let apiResponding = false;
-    const startTime = Date.now();
+    /*
+     * /api/health answers only while the site's own server runs, and that
+     * server is what sends the contact form. It proves the server is up, not
+     * that sending is configured, so "ready" needs the server to say so
+     * (contactReady) - a missing answer is reported as just "running".
+     */
+    let contact: ContactState = 'down';
+    // Only a refusal carries a code worth quoting. A host that answers every
+    // address with its own web page returns 200 too, and "did not answer
+    // (HTTP 200)" would read as a contradiction.
+    let refusedWith = 0;
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => controller.abort(), 8000);
     try {
-      const res = await fetch('/api/health');
+      const res = await fetch('/api/health', { cache: 'no-store', signal: controller.signal });
+      if (!res.ok) refusedWith = res.status;
       if (res.ok) {
-        latency = Date.now() - startTime;
-        apiResponding = true;
+        const body = await res.json().catch(() => null);
+        if (body && body.status === 'ok') {
+          contact = body.contactReady === true ? 'ready' : body.contactReady === false ? 'not-set-up' : 'running';
+        }
       }
-    } catch (e) {
-      console.error(e);
+    } catch {
+      /* no answer at all */
+    } finally {
+      window.clearTimeout(timer);
     }
 
-    if (apiResponding) {
-      await addLogWithDelay(`SUCCESS: Connect health endpoint responded in ${latency}ms.`, 150);
-    } else {
-      await addLogWithDelay("ERROR: Connect health endpoint timeout / non-responsive.", 150);
-    }
+    const phoneOrEmail = `Please phone ${CLINIC.telephone} or email ${CLINIC.email} instead.`;
+    const lines = [
+      `Checked at ${new Date().toLocaleTimeString('en-GB')}.`,
+      storageOk
+        ? 'Saving your settings: works on this device.'
+        : 'Saving your settings: this browser is blocking it, so your choices last until you leave or reload the page.',
+      contact === 'ready'
+        ? 'Contact form: its server answered and says an address to send messages to is set up. No test message was sent, so this does not prove a message would arrive.'
+        : contact === 'running'
+          ? 'Contact form: its server answered, but did not say whether sending is set up. No test message was sent.'
+          : contact === 'not-set-up'
+            ? `Contact form: its server answered, but sending messages is not set up yet. ${phoneOrEmail}`
+            : `Contact form: its server did not answer${refusedWith ? ` (HTTP ${refusedWith})` : ''}. ${phoneOrEmail}`,
+      canReadAloud
+        ? `Read aloud: available in this browser${settings.readAloudEnabled ? '' : ', but switched off under Accessibility'}.`
+        : 'Read aloud: not available in this browser.',
+      `Background: ${backgroundName}.`,
+      `Text size: ${textSizePercent}%. Reduce movement: ${settings.reduceMotion ? 'on' : 'off'}. Page movement and film: ${settings.animationsEnabled ? 'on' : 'off'}.`,
+    ];
 
-    await addLogWithDelay("VOICE_AI_CHANNEL // Checking microphone hardware and permissions...", 350);
-    let perm = "prompt";
-    try {
-      if (navigator.permissions && navigator.permissions.query) {
-        const result = await navigator.permissions.query({ name: 'microphone' as any });
-        perm = result.state;
-      }
-    } catch(e) {}
-
-    await addLogWithDelay(`INFO: Audio input subsystem status parsed: [${perm.toUpperCase()}]`, 150);
-    await addLogWithDelay("VISUAL_ACCELERATION // Analyzing canvas node count & quality context...", 300);
-    
-    // Node density estimations
-    const nodeMapping: Record<string, number> = { low: 40, balanced: 100, ultra: 280 };
-    const approxNodes = nodeMapping[settings.wallpaperQuality] || 100;
-    
-    await addLogWithDelay(`SUCCESS: Canvas render pipelines initialized at [${settings.wallpaperQuality.toUpperCase()}] node density (${approxNodes} nodes active).`, 150);
-    await addLogWithDelay("SUPREME_PASS_COMPLETE // System operating within nominal boundaries.", 400);
-
-    setDiagnostics({
-      apiStatus: apiResponding ? 'Online / Nominal' : 'No Connection',
-      apiLatency: latency,
-      micStatus: perm.toUpperCase(),
-      localStorageCheck: storageOk ? 'PASSED (Stateful)' : 'FAILED (Read-only)',
-      activeCanvasNodes: approxNodes,
-      renderingFidelity: settings.wallpaperQuality.toUpperCase()
-    });
+    setStorageState(storageOk ? 'ok' : 'blocked');
+    setContactState(contact);
+    setCheckLog(lines);
     setScanState('completed');
-    showToast("Diagnostics Pass Complete", "success");
+    showToast("Check finished", "info");
   };
 
   const wallpaperOptions = ['none', 'video', 'fluid', 'polymetric', 'hyperspace', 'network', 'waves', 'grid', 'matrix', 'rain', 'circuit', 'aurora', 'particles', 'constellation', 'orbs', 'ripple', 'polyrhythm', 'dna', 'static-image'];
@@ -144,29 +178,92 @@ export default function SettingsPanel() {
 
   const handleClose = () => {
     setIsOpen(false);
-    showToast("Settings Applied Permanently", "success");
+    // Say where the choices live. In a browser that blocks site data they
+    // cannot be saved, and claiming they were would be untrue.
+    let canSave = false;
+    try {
+      localStorage.setItem('__ct6_save_probe', '1');
+      localStorage.removeItem('__ct6_save_probe');
+      canSave = true;
+    } catch {
+      /* blocked */
+    }
+    showToast(
+      canSave
+        ? "Settings saved on this device"
+        : "Settings applied until you leave or reload the page - this browser is not letting the site save them",
+      canSave ? "success" : "info"
+    );
   };
 
   /*
    * The backdrop only helps a pointer user; a keyboard user needs Escape, and
    * a screen reader needs focus to land inside the dialog when it opens or the
-   * page behind it is what gets read.
+   * page behind it is what gets read. Tab stays inside the window while it is
+   * open (it used to walk out into the page hidden behind the dark overlay),
+   * and closing hands focus back to whatever opened it, rather than dropping
+   * it at the top of the page.
    */
   const panelRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!isOpen) return;
+    const opener = document.activeElement as HTMLElement | null;
     panelRef.current?.focus();
+    const focusables = () =>
+      Array.from(
+        panelRef.current?.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        ) ?? []
+      );
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsOpen(false);
+      if (e.key === 'Escape') {
+        setIsOpen(false);
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      const panel = panelRef.current;
+      const items = focusables();
+      if (!panel || !items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      const active = document.activeElement;
+      if (!panel.contains(active)) {
+        e.preventDefault();
+        first.focus();
+      } else if (e.shiftKey && (active === first || active === panel)) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
     };
     window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      if (opener && opener !== document.body && document.contains(opener)) opener.focus();
+    };
   }, [isOpen]);
 
   return (
     <>
-      {/* The cog goes with the rest of the floating furniture when the view is
-          collapsed; the pill by the microphone brings it all back. */}
+      {/* Clean View swaps the round cog for a small 'Settings' tab in the same
+          corner. The tab IS the way back: it opens this panel, where Clean View
+          can be switched off. It used to remove the cog with nothing in its
+          place (the restore control lived in the deleted voice controller), and
+          the choice is saved, so the button stayed gone on every later visit.
+          Smaller, not fainter: it keeps full contrast over the film. */}
+      {settings.hideOverlays && (
+        <button
+          type="button"
+          onClick={handleOpen}
+          className="fixed bottom-28 right-4 lg:bottom-auto lg:top-20 lg:right-8 px-3 py-1.5 rounded-lg bg-white border border-slate-200 shadow-sm text-[11px] font-bold uppercase tracking-widest text-slate-800 hover:bg-slate-50 focus-visible:outline-teal-500"
+          style={{ zIndex: 'calc(var(--z-overlay) - 5)' }}
+          aria-label="Open settings"
+        >
+          Settings
+        </button>
+      )}
       {!settings.hideOverlays && (
         <button
           onClick={handleOpen}
@@ -206,7 +303,7 @@ export default function SettingsPanel() {
                      <div className="p-3 bg-slate-950 text-teal-400 rounded-2xl shadow-lg ring-4 ring-teal-500/5"><SlidersHorizontal size={20} /></div>
                      <div className="flex flex-col">
                        <h3 className="font-display font-medium text-lg tracking-tight leading-none">Settings</h3>
-                       <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">Control Core</span>
+                       <span className="text-[10px] font-black uppercase tracking-widest text-slate-600 mt-1">For this browser</span>
                      </div>
                   </div>
                   
@@ -221,7 +318,7 @@ export default function SettingsPanel() {
                   <button
                      onClick={() => setIsOpen(false)}
                      aria-label="Close settings"
-                     className="absolute top-8 right-8 p-3 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-900 transition-all active:scale-90"
+                     className="absolute top-8 right-8 p-3 rounded-full hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition-all active:scale-90"
                   >
                      <X size={24} />
                   </button>
@@ -231,12 +328,16 @@ export default function SettingsPanel() {
                         <div className="space-y-12 pb-10 animate-in fade-in slide-in-from-right-4 duration-500">
                            <div className="space-y-3">
                              <h2 className="text-3xl font-display font-medium text-slate-900 tracking-tight">Theme & Canvas Layer</h2>
-                             <p className="text-slate-500 font-light text-base leading-relaxed">Configure the background canvas animations and core thematic colours of this site.</p>
+                             <p className="text-slate-600 font-light text-base leading-relaxed">Choose what sits behind the pages: a film, an animated pattern, a picture, or nothing.</p>
                            </div>
 
                            <div className="space-y-6">
-                              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-600 block">Dynamic Backgrounds</label>
-                              <div className="grid grid-cols-3 lg:grid-cols-4 gap-4">
+                              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-700 block">Background</label>
+                              {/* Two across until there is room for more, and a narrower
+                                  letter-spacing: long names such as CONSTELLATION were cut
+                                  off inside their buttons (nine of them on a phone), and the
+                                  text-size setting now makes these labels larger still. */}
+                              <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                                  {wallpaperOptions.map(opt => (
                                     <button 
                                        key={opt}
@@ -244,11 +345,12 @@ export default function SettingsPanel() {
                                           console.log("Switching wallpaper to:", opt);
                                           updateSetting('activeWallpaper', opt as any);
                                        }}
+                                       aria-pressed={settings.activeWallpaper === opt}
                                        className={cn(
-                                          "group relative flex flex-col items-center justify-center py-5 px-3 rounded-[1.5rem] text-[9.3px] font-black uppercase tracking-[0.2em] transition-all duration-500 border overflow-hidden",
+                                          "group relative flex flex-col items-center justify-center py-5 px-3 rounded-[1.5rem] text-[9.3px] font-black uppercase tracking-wider transition-all duration-500 border overflow-hidden",
                                           settings.activeWallpaper === opt 
                                              ? "bg-slate-950 border-slate-800 text-white shadow-premium ring-2 ring-teal-500/20" 
-                                             : "bg-slate-50/50 border-slate-100 text-slate-400 hover:bg-white hover:border-teal-200 hover:text-slate-900"
+                                             : "bg-slate-50/50 border-slate-100 text-slate-600 hover:bg-white hover:border-teal-200 hover:text-slate-900"
                                        )}
                                     >
                                        {/* Active Indicator Dot */}
@@ -256,7 +358,7 @@ export default function SettingsPanel() {
                                           "w-1.5 h-1.5 rounded-full mb-3 shadow-[0_0_8px_rgba(20,184,166,0.5)] transition-all duration-500",
                                           settings.activeWallpaper === opt ? "bg-teal-400 animate-pulse scale-125" : "bg-slate-200 group-hover:bg-teal-300"
                                        )} />
-                                       <span className="relative z-10">{opt.replace('-', ' ')}</span>
+                                       <span className="relative z-10 max-w-full text-center [overflow-wrap:anywhere]">{opt.replace('-', ' ')}</span>
                                        
                                        {/* Selected Backdrop Glow */}
                                        {settings.activeWallpaper === opt && (
@@ -274,8 +376,8 @@ export default function SettingsPanel() {
                            {settings.activeWallpaper === 'video' && (
                               <div className="space-y-6 pt-10 border-t border-slate-100">
                                  <div className="flex items-baseline justify-between gap-4">
-                                    <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-600 block">Motion Signature</label>
-                                    <span className="text-[10px] font-medium text-slate-400 tracking-wide">Silent · seamless loop</span>
+                                    <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-700 block">Background film</label>
+                                    <span className="text-[10px] font-medium text-slate-600 tracking-wide">Silent · seamless loop</span>
                                  </div>
                                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                                     {VIDEO_WALLPAPERS.map((clip) => {
@@ -306,12 +408,14 @@ export default function SettingsPanel() {
 
                            {settings.activeWallpaper === 'static-image' && (
                               <div className="space-y-6 pt-10 border-t border-slate-100">
-                                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-600 block">Select Master Asset</label>
+                                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-700 block">Choose a picture</label>
                                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                                     {GALLERY_IMAGES.slice(0, 12).map((img, i) => (
                                        <button 
                                           key={i} 
                                           onClick={() => updateSetting('staticWallpaper', img)}
+                                          aria-label={`Use picture ${i + 1} as the background`}
+                                          aria-pressed={settings.staticWallpaper === img}
                                           className={cn("w-full aspect-square rounded-[2rem] overflow-hidden border-4 transition-all shadow-lg", settings.staticWallpaper === img ? "border-teal-500 scale-95 shadow-teal-500/20" : "border-white hover:border-slate-100")}
                                        >
                                           <img src={img} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover" />
@@ -324,43 +428,53 @@ export default function SettingsPanel() {
                            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pt-10 border-t border-slate-100">
                               <div className="space-y-6">
                                  <div className="flex justify-between items-center">
-                                     <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-600">Luminosity</label>
-                                     <span className="text-xs font-black text-slate-400">{Math.round(settings.wallpaperBrightness * 100)}%</span>
+                                     <label htmlFor="setting-background-brightness" className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-700">Background brightness</label>
+                                     <span className="text-xs font-black text-slate-600">{Math.round(settings.wallpaperBrightness * 100)}%</span>
                                  </div>
-                                 <input 
+                                 <input
+                                    id="setting-background-brightness"
                                     type="range" min="0.1" max="2" step="0.1"
                                     value={settings.wallpaperBrightness}
                                     onChange={(e) => updateSetting('wallpaperBrightness', parseFloat(e.target.value))}
+                                    aria-valuetext={`${Math.round(settings.wallpaperBrightness * 100)} per cent`}
                                     className="w-full accent-teal-600 h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer"
                                  />
                               </div>
 
                               <div className="space-y-6">
                                  <div className="flex justify-between items-center">
-                                     <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-600">Velocity</label>
-                                     <span className="text-xs font-black text-slate-400">{settings.wallpaperSpeed}x</span>
+                                     <label htmlFor="setting-background-speed" className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-700">Background speed</label>
+                                     <span className="text-xs font-black text-slate-600">{settings.wallpaperSpeed}x</span>
                                  </div>
-                                 <input 
+                                 <input
+                                    id="setting-background-speed"
                                     type="range" min="0" max="3" step="0.1"
                                     value={settings.wallpaperSpeed}
                                     onChange={(e) => updateSetting('wallpaperSpeed', parseFloat(e.target.value))}
+                                    aria-valuetext={`${settings.wallpaperSpeed} times normal speed`}
+                                    aria-describedby="setting-background-speed-note"
                                     className="w-full accent-teal-600 h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer"
                                  />
+                                 <p id="setting-background-speed-note" className="text-xs text-slate-600">Animated backgrounds only, not the film.</p>
                               </div>
                            </div>
 
                            <div className="space-y-6 pt-10 border-t border-slate-100">
-                              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-600 block">Render Fidelity (3D/Animated)</label>
+                              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-700 block">Animated background detail</label>
                               <div className="flex bg-slate-50 p-1.5 rounded-2xl w-full max-w-md border border-slate-100">
                                   {['low', 'balanced', 'ultra'].map(q => (
                                       <button
                                          key={q}
                                          onClick={() => updateSetting('wallpaperQuality', q as any)}
-                                         className={cn("flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all", settings.wallpaperQuality === q ? "bg-white text-slate-950 shadow-premium" : "text-slate-400 hover:text-slate-600")}
+                                         aria-pressed={settings.wallpaperQuality === q}
+                                         className={cn("flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all", settings.wallpaperQuality === q ? "bg-white text-slate-950 shadow-premium" : "text-slate-600 hover:text-slate-900")}
                                       >{q}</button>
                                   ))}
                               </div>
-                              <p className="text-[10px] text-slate-400 font-medium">Higher fidelity increases node density and interaction complexity.</p>
+                              {/* Read from WallpaperCanvas: the level sets how many points the
+                                  Network, Constellation and Polymetric patterns draw and how far
+                                  apart they join up. The other patterns ignore it. */}
+                              <p className="text-[10px] text-slate-600 font-medium">More points on the Network, Constellation and Polymetric backgrounds. Lower is easier on older devices.</p>
                            </div>
                         </div>
                      )}
@@ -369,7 +483,7 @@ export default function SettingsPanel() {
                         <div className="space-y-12 pb-10 animate-in fade-in slide-in-from-right-4 duration-500">
                            <div className="space-y-3">
                              <h2 className="text-3xl font-display font-medium text-slate-900 tracking-tight">Visual Engine Controls</h2>
-                             <p className="text-slate-500 font-light text-base leading-relaxed">Customize the rendering intensity and aesthetic profile of the interface.</p>
+                             <p className="text-slate-600 font-light text-base leading-relaxed">Choose how busy and colourful the site looks.</p>
                            </div>
 
                            <div className="space-y-10">
@@ -407,15 +521,29 @@ export default function SettingsPanel() {
                                </div>
 
                                <div className="space-y-6">
-                                  <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-600 block">System Accent Color</label>
-                                  <div className="flex flex-wrap gap-4">
-                                     {['#14b8a6', '#0ea5e9', '#6366f1', '#f43f5e', '#f59e0b', '#10b981'].map(color => (
-                                        <button 
+                                  <div className="space-y-2">
+                                     <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-700 block">Animated background colour</label>
+                                     <p className="text-sm text-slate-600 font-light leading-relaxed">Used by the animated backgrounds (Fluid, Network and the others), not the film.</p>
+                                  </div>
+                                  <div className="flex flex-wrap gap-4" role="group" aria-label="Animated background colour">
+                                     {[
+                                        { hex: '#14b8a6', name: 'Teal' },
+                                        { hex: '#0ea5e9', name: 'Sky blue' },
+                                        { hex: '#6366f1', name: 'Indigo' },
+                                        { hex: '#f43f5e', name: 'Rose' },
+                                        { hex: '#f59e0b', name: 'Amber' },
+                                        { hex: '#10b981', name: 'Green' },
+                                     ].map(({ hex: color, name }) => (
+                                        <button
                                           key={color}
+                                          type="button"
                                           onClick={() => {
                                              updateSetting('colorAccent', color);
                                              updateSetting('wallpaperColor', color);
                                           }}
+                                          aria-label={`Animated background colour: ${name}`}
+                                          aria-pressed={settings.colorAccent === color}
+                                          title={name}
                                           className={cn("w-12 h-12 rounded-2xl border-4 transition-all shadow-lg flex items-center justify-center", settings.colorAccent === color ? "border-slate-900 scale-110" : "border-white hover:scale-105")}
                                           style={{ backgroundColor: color }}
                                         >
@@ -426,28 +554,43 @@ export default function SettingsPanel() {
                                </div>
 
                                <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pt-10 border-t border-slate-100">
+                                  {/* These two were saved and read by nothing. They now drive
+                                      decoration only (rules in the style block at the foot of
+                                      this file), so no colour under any text changes. The
+                                      stored values keep their old names; only the labels
+                                      say what each one really does. */}
                                   <div className="space-y-4">
-                                     <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-600 block">Card Geometry</label>
-                                     <div className="flex bg-slate-50 p-1.5 rounded-2xl w-full border border-slate-100">
-                                         {['glass', 'solid', 'minimal'].map(style => (
+                                     <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-700 block">Card glow</label>
+                                        <p className="text-sm text-slate-600 font-light leading-relaxed">The soft light around the glass cards.</p>
+                                     </div>
+                                     <div className="flex bg-slate-50 p-1.5 rounded-2xl w-full border border-slate-100" role="group" aria-label="Card glow">
+                                         {([['glass', 'Breathing'], ['solid', 'Still'], ['minimal', 'Off']] as const).map(([style, name]) => (
                                              <button
                                                 key={style}
-                                                onClick={() => updateSetting('cardStyle', style as any)}
-                                                className={cn("flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all", settings.cardStyle === style ? "bg-white text-slate-950 shadow-premium" : "text-slate-400 hover:text-slate-600")}
-                                             >{style}</button>
+                                                type="button"
+                                                onClick={() => updateSetting('cardStyle', style)}
+                                                aria-pressed={settings.cardStyle === style}
+                                                className={cn("flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all", settings.cardStyle === style ? "bg-white text-slate-950 shadow-premium" : "text-slate-600 hover:text-slate-900")}
+                                             >{name}</button>
                                          ))}
                                      </div>
                                   </div>
 
                                   <div className="space-y-4">
-                                     <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-600 block">UI Complexity</label>
-                                     <div className="flex bg-slate-50 p-1.5 rounded-2xl w-full border border-slate-100">
-                                         {['high', 'medium', 'minimal'].map(intensity => (
+                                     <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-700 block">Grid pattern</label>
+                                        <p className="text-sm text-slate-600 font-light leading-relaxed">The fine grid drawn behind some panels.</p>
+                                     </div>
+                                     <div className="flex bg-slate-50 p-1.5 rounded-2xl w-full border border-slate-100" role="group" aria-label="Grid pattern">
+                                         {([['high', 'Full'], ['medium', 'Faint'], ['minimal', 'Off']] as const).map(([intensity, name]) => (
                                              <button
                                                 key={intensity}
-                                                onClick={() => updateSetting('uiIntensity', intensity as any)}
-                                                className={cn("flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all", settings.uiIntensity === intensity ? "bg-white text-slate-950 shadow-premium" : "text-slate-400 hover:text-slate-600")}
-                                             >{intensity}</button>
+                                                type="button"
+                                                onClick={() => updateSetting('uiIntensity', intensity)}
+                                                aria-pressed={settings.uiIntensity === intensity}
+                                                className={cn("flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all", settings.uiIntensity === intensity ? "bg-white text-slate-950 shadow-premium" : "text-slate-600 hover:text-slate-900")}
+                                             >{name}</button>
                                          ))}
                                      </div>
                                   </div>
@@ -455,14 +598,14 @@ export default function SettingsPanel() {
 
                                <div className="space-y-6 pt-10 border-t border-slate-100">
                                    <ToggleOption
-                                      label="Motion Transitions"
-                                      description="Fluid page and route animations for a cohesive clinical experience."
+                                      label="Page movement and film"
+                                      description="Pages glide as they change, and the background film, the logo film and the animated backgrounds move. Turn it off and pages change without sliding, still pictures take their place, and the opening film is skipped. Films you choose to play still play. For the least movement everywhere, also turn on Reduce movement under Accessibility."
                                       enabled={settings.animationsEnabled}
                                       onToggle={() => updateSetting('animationsEnabled', !settings.animationsEnabled)}
                                    />
                                    <ToggleOption
                                       label="Clean View"
-                                      description="Hide the microphone, assistant and this settings button, leaving the page on its own. A small control by the microphone brings them back."
+                                      description="Swap the round settings button for a small 'Settings' tab, so less sits over the page. Press the tab to come back here."
                                       enabled={settings.hideOverlays}
                                       onToggle={() => updateSetting('hideOverlays', !settings.hideOverlays)}
                                    />
@@ -475,27 +618,29 @@ export default function SettingsPanel() {
                         <div className="space-y-12 pb-10 animate-in fade-in slide-in-from-right-4 duration-500">
                            <div className="space-y-3">
                              <h2 className="text-3xl font-display font-medium text-slate-900 tracking-tight">Accessibility & Inclusivity</h2>
-                             <p className="text-slate-500 font-light text-base leading-relaxed">Adjust text, colour and motion to suit how you see and read.</p>
+                             <p className="text-slate-600 font-light text-base leading-relaxed">Adjust text, colour and motion to suit how you see and read.</p>
                            </div>
 
                            <div className="space-y-10">
                                <div className="space-y-6">
                                   <div className="flex justify-between items-center">
-                                      <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-600">Font Dimension</label>
-                                      <span className="text-xs font-black text-slate-400">{Math.round(settings.fontSizeMultiplier * 100)}%</span>
+                                      <label htmlFor="setting-text-size" className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-700">Text size</label>
+                                      <span className="text-xs font-black text-slate-600">{Math.round(settings.fontSizeMultiplier * 100)}%</span>
                                   </div>
-                                  <input 
+                                  <input
+                                     id="setting-text-size"
                                      type="range" min="0.8" max="1.5" step="0.05"
                                      value={settings.fontSizeMultiplier}
                                      onChange={(e) => updateSetting('fontSizeMultiplier', parseFloat(e.target.value))}
+                                     aria-valuetext={`${Math.round(settings.fontSizeMultiplier * 100)} per cent`}
                                      className="w-full accent-teal-600 h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer"
                                   />
                                </div>
 
                                <div className="space-y-6 pt-10 border-t border-slate-100">
                                    <ToggleOption
-                                      label="Reduce UI Fluidity"
-                                      description="Minimalize animations and transitions for sensitive users."
+                                      label="Reduce movement"
+                                      description="Turns off moving and sliding effects. Helpful if movement on screen is distracting or makes you feel unwell."
                                       enabled={settings.reduceMotion}
                                       onToggle={() => updateSetting('reduceMotion', !settings.reduceMotion)}
                                    />
@@ -556,13 +701,15 @@ export default function SettingsPanel() {
                                    {settings.readAloudEnabled && (
                                       <div className="space-y-4">
                                          <div className="flex justify-between items-center">
-                                            <label className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-800">Reading Speed</label>
+                                            <label htmlFor="setting-reading-speed" className="text-[10px] font-black uppercase tracking-[0.3em] text-teal-800">Reading Speed</label>
                                             <span className="text-xs font-black text-slate-600">{settings.readAloudRate.toFixed(2)}x</span>
                                          </div>
                                          <input
+                                            id="setting-reading-speed"
                                             type="range" min="0.7" max="1.4" step="0.05"
                                             value={settings.readAloudRate}
                                             onChange={(e) => updateSetting('readAloudRate', parseFloat(e.target.value))}
+                                            aria-valuetext={`${settings.readAloudRate.toFixed(2)} times normal speed`}
                                             className="w-full accent-teal-600 h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer"
                                          />
                                       </div>
@@ -575,8 +722,8 @@ export default function SettingsPanel() {
                      {activeTab === 'diagnostics' && (
                         <div className="space-y-12 pb-10 animate-in fade-in slide-in-from-right-4 duration-500">
                            <div className="space-y-3">
-                             <h2 className="text-3xl font-display font-medium text-slate-900 tracking-tight">System Health & Diagnostics</h2>
-                             <p className="text-slate-500 font-light text-base leading-relaxed">Run core hardware checks, communication link latency scans, and verify local storage configurations.</p>
+                             <h2 className="text-3xl font-display font-medium text-slate-900 tracking-tight">Diagnostics</h2>
+                             <p className="text-slate-600 font-light text-base leading-relaxed">Checks what this browser can do with the site: saving your settings, reading aloud, and whether the contact form's server answers and says sending is set up.</p>
                            </div>
                            {/* Which build is actually in front of you. The 30-second
                                answer to "why can I not see the change I just made". */}
@@ -594,93 +741,117 @@ export default function SettingsPanel() {
                            <div className="space-y-8">
                               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 p-6 rounded-3xl bg-slate-50 border border-slate-100">
                                  <div className="space-y-1">
-                                    <div className="font-bold text-slate-900 text-sm">Diagnostic Integrity Pass</div>
-                                    <div className="text-slate-400 font-light text-xs">Analyze clinical endpoint routes and secure local caches.</div>
+                                    <div className="font-bold text-slate-900 text-sm">Check this device</div>
+                                    <div className="text-slate-600 font-light text-xs">Runs the checks below on this device.</div>
                                  </div>
-                                 <button 
+                                 <button
+                                    type="button"
                                     onClick={runSystemDiagnostic}
                                     disabled={scanState === 'running'}
                                     className="px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all text-white flex items-center gap-3 bg-teal-700 hover:bg-teal-800 hover:shadow-teal-500/25 active:scale-95 shadow-lg cursor-pointer"
                                  >
                                     <RefreshCw size={14} className={scanState === 'running' ? "animate-spin" : ""} />
-                                    {scanState === 'running' ? 'Scanning...' : scanState === 'completed' ? 'Re-Run Scan' : 'Execute Diagnostic'}
+                                    {scanState === 'running' ? 'Checking...' : scanState === 'completed' ? 'Run it again' : 'Run the check'}
                                  </button>
                               </div>
 
-                              {/* Grid stats */}
-                              <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
-                                 <div className="p-6 rounded-3xl border border-slate-100 bg-white shadow-sm flex flex-col justify-between h-36">
-                                    <div className="flex items-center gap-3 text-slate-400">
+                              {/* Each tile is a real reading. The first two come from the
+                                  check above; the rest are read live from this browser and
+                                  these settings, so they never wait on a button. */}
+                              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                 <div className="p-6 rounded-3xl border border-slate-100 bg-white shadow-sm flex flex-col justify-between gap-4 min-h-36">
+                                    <div className="flex items-center gap-3 text-slate-600">
                                        <Server size={16} />
-                                       <span className="text-[10px] font-black uppercase tracking-wider">Clinical Backend</span>
+                                       <span className="text-[10px] font-black uppercase tracking-wider">Contact form service</span>
                                     </div>
                                     <div className="space-y-1">
-                                       <div className="font-bold text-lg text-slate-900 tracking-tight">{diagnostics.apiStatus}</div>
-                                       {diagnostics.apiLatency > 0 && (
-                                          <div className="text-[10px] font-bold text-teal-600 uppercase tracking-widest">{diagnostics.apiLatency}ms Latency</div>
+                                       <div className="font-bold text-lg text-slate-900 tracking-tight">{contactValue[contactState]}</div>
+                                       {(contactState === 'down' || contactState === 'not-set-up') && (
+                                          <div className="text-xs font-medium text-slate-700">
+                                             Call <a href={`tel:${CLINIC.telephoneLink}`} className="font-bold text-teal-800 underline">{CLINIC.telephone}</a>
+                                          </div>
+                                       )}
+                                       {(contactState === 'ready' || contactState === 'running') && (
+                                          <div className="text-xs font-medium text-slate-700">
+                                             No test message is sent.
+                                          </div>
                                        )}
                                     </div>
                                  </div>
 
-                                 <div className="p-6 rounded-3xl border border-slate-100 bg-white shadow-sm flex flex-col justify-between h-36">
-                                    <div className="flex items-center gap-3 text-slate-400">
-                                       <Cpu size={16} />
-                                       <span className="text-[10px] font-black uppercase tracking-wider">Storage Integrity</span>
-                                    </div>
-                                    <div className="space-y-1">
-                                       <div className="font-bold text-lg text-slate-900 tracking-tight">{diagnostics.localStorageCheck}</div>
-                                       <div className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">Persistent Web Storage</div>
-                                    </div>
-                                 </div>
-
-                                 <div className="p-6 rounded-3xl border border-slate-100 bg-white shadow-sm flex flex-col justify-between h-36">
-                                    <div className="flex items-center gap-3 text-slate-400">
-                                       <Radio size={16} />
-                                       <span className="text-[10px] font-black uppercase tracking-wider">Microphone Node</span>
-                                    </div>
-                                    <div className="space-y-1">
-                                       <div className="font-bold text-lg text-slate-900 tracking-tight">{diagnostics.micStatus}</div>
-                                       <div className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">Audio Consultation Node</div>
-                                    </div>
-                                 </div>
-
-                                 <div className="p-6 rounded-3xl border border-slate-100 bg-white shadow-sm flex flex-col justify-between h-36">
-                                    <div className="flex items-center gap-3 text-slate-400">
+                                 <div className="p-6 rounded-3xl border border-slate-100 bg-white shadow-sm flex flex-col justify-between gap-4 min-h-36">
+                                    <div className="flex items-center gap-3 text-slate-600">
                                        <HardDrive size={16} />
-                                       <span className="text-[10px] font-black uppercase tracking-wider">Canvas Nodes</span>
+                                       <span className="text-[10px] font-black uppercase tracking-wider">Saving your settings</span>
                                     </div>
                                     <div className="space-y-1">
-                                       <div className="font-bold text-lg text-slate-900 tracking-tight">{diagnostics.activeCanvasNodes} Nodes</div>
-                                       <div className="text-[10px] font-semibold text-teal-600 uppercase tracking-widest">{diagnostics.renderingFidelity} FIDELITY</div>
+                                       <div className="font-bold text-lg text-slate-900 tracking-tight">
+                                          {storageState === 'unchecked' ? 'Not checked yet' : storageState === 'ok' ? 'Works on this device' : 'Blocked by this browser'}
+                                       </div>
+                                       <div className="text-xs font-medium text-slate-600">
+                                          {storageState === 'blocked' ? 'Your choices last until you leave or reload the page.' : 'Kept in this browser only.'}
+                                       </div>
                                     </div>
                                  </div>
 
-                                 <div className="p-6 rounded-3xl border border-slate-100 bg-white shadow-sm flex flex-col justify-between h-36 lg:col-span-2">
-                                    <div className="flex items-center gap-3 text-slate-400">
-                                       <ShieldCheck size={16} />
-                                       <span className="text-[10px] font-black uppercase tracking-wider">App Operations Scope</span>
+                                 <div className="p-6 rounded-3xl border border-slate-100 bg-white shadow-sm flex flex-col justify-between gap-4 min-h-36">
+                                    <div className="flex items-center gap-3 text-slate-600">
+                                       <Volume2 size={16} />
+                                       <span className="text-[10px] font-black uppercase tracking-wider">Read aloud</span>
                                     </div>
                                     <div className="space-y-1">
-                                       <div className="font-bold text-lg text-slate-900 tracking-tight">Active Clinical Sandbox</div>
-                                       <div className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">Production Deploy Ready</div>
+                                       <div className="font-bold text-lg text-slate-900 tracking-tight">
+                                          {canReadAloud ? 'Available on this device' : 'Not available in this browser'}
+                                       </div>
+                                       {canReadAloud && (
+                                          <div className="text-xs font-medium text-slate-600">
+                                             {settings.readAloudEnabled ? 'Switched on under Accessibility.' : 'Switched off under Accessibility.'}
+                                          </div>
+                                       )}
+                                    </div>
+                                 </div>
+
+                                 <div className="p-6 rounded-3xl border border-slate-100 bg-white shadow-sm flex flex-col justify-between gap-4 min-h-36">
+                                    <div className="flex items-center gap-3 text-slate-600">
+                                       <ImageIcon size={16} />
+                                       <span className="text-[10px] font-black uppercase tracking-wider">Background</span>
+                                    </div>
+                                    <div className="space-y-1">
+                                       <div className="font-bold text-lg text-slate-900 tracking-tight">{backgroundName}</div>
+                                       <div className="text-xs font-medium text-slate-600">Change it under Canvas & Art.</div>
+                                    </div>
+                                 </div>
+
+                                 <div className="p-6 rounded-3xl border border-slate-100 bg-white shadow-sm flex flex-col justify-between gap-4 min-h-36 sm:col-span-2">
+                                    <div className="flex items-center gap-3 text-slate-600">
+                                       <Eye size={16} />
+                                       <span className="text-[10px] font-black uppercase tracking-wider">Text size and movement</span>
+                                    </div>
+                                    <div className="space-y-1">
+                                       <div className="font-bold text-lg text-slate-900 tracking-tight">Text size {textSizePercent}%</div>
+                                       <div className="text-xs font-medium text-slate-600">
+                                          Reduce movement is {settings.reduceMotion ? 'on' : 'off'} (Accessibility). Page movement and film is {settings.animationsEnabled ? 'on' : 'off'} (Visual Engine).
+                                       </div>
                                     </div>
                                  </div>
                               </div>
 
-                              {/* Console / Log Terminal */}
-                              {consoleLogs.length > 0 && (
+                              {/* Always mounted, so a screen reader hears the findings arrive. */}
+                              <div aria-live="polite">
+                              {checkLog.length > 0 && (
                                  <div className="space-y-3">
-                                    <div className="flex items-center gap-3 text-slate-400">
+                                    <div className="flex items-center gap-3 text-slate-700">
                                        <Terminal size={14} />
-                                       <label className="text-[10px] font-black uppercase tracking-widest block text-slate-400">Telemetry Log Output</label>
+                                       <h3 className="text-[10px] font-black uppercase tracking-widest">What the check found</h3>
                                     </div>
-                                    <div className="bg-slate-950 font-mono text-[11px] p-5 rounded-2xl block text-emerald-400 max-h-[220px] overflow-y-auto border border-slate-900 scroll-smooth leading-relaxed">
-                                       {consoleLogs.map((log, i) => (
-                                          <div key={i} className="whitespace-pre-wrap select-text">{log}</div>
+                                    <ul className="bg-white text-sm text-slate-800 p-5 rounded-2xl border border-slate-200 leading-relaxed space-y-1.5 list-disc pl-9">
+                                       {checkLog.map((line, i) => (
+                                          <li key={i} className="select-text">{line}</li>
                                        ))}
-                                    </div>
+                                    </ul>
                                  </div>
                               )}
+                              </div>
                            </div>
                         </div>
                      )}
@@ -688,13 +859,13 @@ export default function SettingsPanel() {
 
                   <div className="mt-8 pt-8 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-6 shrink-0 bg-white/50 backdrop-blur-sm -mx-8 -mb-8 px-8 py-8 md:-mx-12 md:-mb-12 md:px-12 md:py-8">
                       <div className="flex flex-col">
-                        <span className="text-sm font-bold text-slate-900">System Reset</span>
-                        <span className="text-xs text-slate-400 font-light italic">Clear all local overrides.</span>
+                        <span className="text-sm font-bold text-slate-900">Reset all settings</span>
+                        <span className="text-xs text-slate-600">Puts every setting back to how it started.</span>
                       </div>
                       <div className="flex gap-4 w-full sm:w-auto">
                          <button 
                             onClick={handleReset}
-                            className="flex-1 sm:flex-none px-6 py-3.5 bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-900 rounded-2xl font-bold uppercase tracking-widest text-[10px] transition-all border border-slate-100"
+                            className="flex-1 sm:flex-none px-6 py-3.5 bg-slate-50 text-slate-700 hover:bg-slate-100 hover:text-slate-900 rounded-2xl font-bold uppercase tracking-widest text-[10px] transition-all border border-slate-100"
                          >
                             Reset
                          </button>
@@ -717,6 +888,32 @@ export default function SettingsPanel() {
          .custom-scrollbar::-webkit-scrollbar { width: 6px; }
          .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
          .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+         /*
+          * Card glow + Grid pattern (Visual Engine). SettingsContext puts the
+          * choice on <html> as data-card-style / data-ui-intensity. Decoration
+          * only: the glow is box-shadow outside each card and the grid is a
+          * faint line pattern, so no colour under any text changes.
+          * Unlayered, so they win over the layered .crystal-glass and
+          * .neural-grid rules in index.css. :not(:focus-visible) keeps the
+          * focus ring's white band on glass tiles that take keyboard focus.
+          */
+         [data-card-style="solid"] .crystal-glass:not(:focus-visible) {
+           animation: none !important;
+           box-shadow: 0 0 42px -12px rgba(45, 212, 191, 0.28);
+         }
+         [data-card-style="minimal"] .crystal-glass:not(:focus-visible) {
+           animation: none !important;
+           box-shadow: none !important;
+         }
+         [data-ui-intensity="medium"] .neural-grid {
+           background-image:
+             linear-gradient(to right, rgba(13, 148, 136, 0.02) 1px, transparent 1px),
+             linear-gradient(to bottom, rgba(13, 148, 136, 0.02) 1px, transparent 1px);
+         }
+         [data-ui-intensity="minimal"] .neural-grid {
+           background-image: none;
+         }
       `}} />
     </>
   );
@@ -724,15 +921,19 @@ export default function SettingsPanel() {
 
 function TabButton({ active, onClick, icon, label }: { active: boolean, onClick: () => void, icon: React.ReactNode, label: string }) {
    return (
-      <button 
+      <button
+         type="button"
          onClick={onClick}
+         aria-pressed={active}
          className={cn(
             "flex items-center gap-4 px-5 py-4 rounded-2xl text-sm font-bold transition-all w-fit md:w-full shrink-0",
-            active ? "bg-white text-slate-950 shadow-premium ring-4 ring-slate-100" : "text-slate-400 hover:bg-slate-100/50 hover:text-slate-600"
+            active ? "bg-white text-slate-950 shadow-premium ring-4 ring-slate-100" : "text-slate-600 hover:bg-slate-100/50 hover:text-slate-900"
          )}
       >
-         <span className={cn("shrink-0 p-2 rounded-xl transition-all", active ? "bg-teal-500 text-white shadow-lg shadow-teal-500/20" : "bg-slate-200 text-slate-400")}>{icon}</span>
-         <span className="hidden md:inline tracking-tight">{label}</span>
+         <span className={cn("shrink-0 p-2 rounded-xl transition-all", active ? "bg-teal-500 text-white shadow-lg shadow-teal-500/20" : "bg-slate-200 text-slate-600")}>{icon}</span>
+         {/* On phones the words are hidden to save room, but kept for screen
+             readers - display:none left four nameless buttons. */}
+         <span className="sr-only md:not-sr-only tracking-tight">{label}</span>
       </button>
    )
 }
@@ -754,7 +955,7 @@ function ToggleOption({ label, description, enabled, onToggle }: { label: string
       >
          <div className="flex-1">
             <div className="font-bold text-slate-900 text-sm tracking-tight">{label}</div>
-            <div className="text-slate-500 font-light text-xs leading-relaxed mt-0.5">{description}</div>
+            <div className="text-slate-600 font-light text-xs leading-relaxed mt-0.5">{description}</div>
          </div>
          <div className={cn("relative w-14 h-8 rounded-full shrink-0 transition-all duration-500 border-2 shadow-inner mt-1", enabled ? "bg-teal-500 border-teal-600 ring-4 ring-teal-500/10" : "bg-slate-200 border-slate-300 ring-4 ring-slate-200/5")}>
              <div className={cn("absolute top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-white shadow-xl transition-all duration-500", enabled ? "left-[calc(100%-24px)]" : "left-1.5")}></div>

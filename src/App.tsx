@@ -16,7 +16,8 @@ import {
   BookOpen,
   Menu,
   ShieldCheck,
-  Zap,
+  Facebook,
+  Youtube,
   Users,
   MessageSquare,
   Calendar,
@@ -70,8 +71,17 @@ import { Logo, REPLAY_INTRO_EVENT } from './components/Logo';
 import { EmblemWatermark, SpineMotif } from './components/AnatomyMotif';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { ToastProvider, useToast } from './components/ToastSystem';
-import { FirebaseInitializer } from './components/FirebaseInitializer';
-import { SettingsProvider } from './context/SettingsContext';
+/*
+ * FirebaseInitializer is deliberately NOT imported or mounted (2026-09-27).
+ * The site reads nothing from Firebase, and the config it carried was a
+ * template placeholder ("remixed-project-id"). Mounted, it downloaded about
+ * 600KB of Google code on every visit, kept a connection open to
+ * firestore.googleapis.com, tried to upload the treatments and practitioners,
+ * and left two IndexedDB databases on the visitor's device without asking.
+ * Nothing a visitor could see depended on it. The file is kept in case the
+ * clinic ever wants a real database - read the warning at its top first.
+ */
+import { SettingsProvider, useSettings } from './context/SettingsContext';
 import { AnalyticsProvider } from './context/AnalyticsContext';
 import { CommandProvider, useCommand } from './context/CommandContext';
 import { PageContextBridgeProvider } from './context/PageContextContext';
@@ -83,12 +93,39 @@ const NAV_ITEMS = [
   { id: 'health-dashboard', label: 'Recovery Tools', icon: Activity, path: '/dashboard' },
   { id: 'treatments', label: 'Treatments', icon: HeartPulse, path: '/treatments' },
   { id: 'practitioners', label: 'Practitioners', icon: Users, path: '/practitioners' },
-  { id: 'gallery', label: 'Gallery', icon: ImageIcon, path: '/gallery' },
+  // Named as its page is headed ("Patient guides"), as the footer and the
+  // breadcrumb now name it too.
+  { id: 'gallery', label: 'Patient Guides', icon: ImageIcon, path: '/gallery' },
   { id: 'resources', label: 'Resources', icon: BookOpen, path: '/resources' },
   { id: 'locations', label: 'Locations', icon: MapPin, path: '/locations' },
   { id: 'faq', label: 'Questions', icon: HelpCircle, path: '/faq' },
   { id: 'contact', label: 'Contact', icon: Mail, path: '/contact' },
 ];
+
+/*
+ * The page routes are keyed by address, so the whole frame - menu, header,
+ * footer - is rebuilt on every change of page. These two remember what the
+ * visitor has already been through, so that:
+ *  - the menu's staggered fade-in plays once per visit, not on every click;
+ *  - keyboard focus moves to the new page after a real change of page, and
+ *    never on the very first load (or on React's development double-run).
+ */
+let shellHasAppeared = false;
+let lastFocusedPath: string | null = null;
+
+/*
+ * Less movement is asked for three ways: the visitor's device setting, the
+ * site's own "Reduce movement" switch, and "Page movement and film" turned
+ * off. useReducedMotion() alone heard only the first, so the two switches in
+ * Settings left this frame's ribbon tracing and its pages sliding. Everything
+ * in this file that moves on its own asks here. (The same three signals the
+ * door, the idle screen, the home page and the backgrounds obey.)
+ */
+function useStillMotion(): boolean {
+  const deviceCalm = useReducedMotion();
+  const { settings } = useSettings();
+  return !!deviceCalm || !!settings.reduceMotion || settings.animationsEnabled === false;
+}
 
 /**
  * Ornament for the foot of the navigation.
@@ -98,7 +135,7 @@ const NAV_ITEMS = [
  * more. This is a rhythm, not a reading.
  */
 const PulseRibbon = () => {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useStillMotion();
   return (
     <div className="px-5 pb-4 shrink-0" aria-hidden="true">
       <div className="relative h-16 rounded-2xl overflow-hidden bg-slate-950 border border-slate-800/80 shadow-inner">
@@ -121,7 +158,13 @@ const PulseRibbon = () => {
   );
 };
 
-const Sidebar = ({ isCollapsed, onToggle, isMobile, isOpenMobile, onCloseMobile }: { isCollapsed: boolean; onToggle: () => void; isMobile: boolean; isOpenMobile: boolean; onCloseMobile: () => void }) => (
+const Sidebar = ({ isCollapsed, onToggle, isMobile, isOpenMobile, onCloseMobile }: { isCollapsed: boolean; onToggle: () => void; isMobile: boolean; isOpenMobile: boolean; onCloseMobile: () => void }) => {
+  /* Less movement, by any of the three routes (see useStillMotion): the
+     emblem no longer spins on hover, and the current page's icon and dot
+     stop pulsing. With only "Page movement and film" off, all three kept
+     moving, because the CSS stillness rule hears the other two routes only. */
+  const still = useStillMotion();
+  return (
   <>
     {/* Mobile backdrop */}
     <AnimatePresence>
@@ -137,8 +180,13 @@ const Sidebar = ({ isCollapsed, onToggle, isMobile, isOpenMobile, onCloseMobile 
         />
       )}
     </AnimatePresence>
-    <aside 
+    {/* On phones and tablets the closed drawer is only slid off-screen, so
+        its ten controls used to sit in the Tab order straight after the skip
+        link - ten presses with nothing visible happening. inert takes the
+        closed drawer out of the keyboard's path and out of screen readers'. */}
+    <aside
       id="main-sidebar"
+      inert={isMobile && !isOpenMobile}
       className="fixed left-0 top-0 h-full bg-[var(--panel-bg)] backdrop-blur-3xl border-r border-[var(--panel-border)] text-[var(--panel-text)] flex flex-col overflow-hidden origin-left will-change-transform shadow-premium group/sidebar"
       style={{
         zIndex: 'var(--z-sidebar)',
@@ -156,23 +204,32 @@ const Sidebar = ({ isCollapsed, onToggle, isMobile, isOpenMobile, onCloseMobile 
         <div className="absolute inset-0 bg-gradient-to-r from-teal-500/5 to-transparent -translate-x-full group-hover/header:translate-x-0 transition-transform duration-700"></div>
         <div className="flex items-center gap-4 relative z-10">
           <div className="relative">
-             <Logo size={42} replayIntroOnClick className="shrink-0 shadow-lg shadow-teal-500/10 group-hover/sidebar:rotate-[360deg] transition-transform duration-1000" variant="gradient" />
-             <div className="absolute -inset-2 bg-teal-400/20 blur-xl rounded-full opacity-0 group-hover/sidebar:opacity-100 transition-opacity"></div>
+             <Logo size={42} replayIntroOnClick className={cn("shrink-0 shadow-lg shadow-teal-500/10", !still && "group-hover/sidebar:rotate-[360deg] transition-transform duration-1000")} variant="gradient" />
+             {/* pointer-events-none: this glow sits on top of the emblem, and
+                 it used to swallow every click, so pressing the emblem in the
+                 menu never replayed the film (only the footer's worked). */}
+             <div className="absolute -inset-2 bg-teal-400/20 blur-xl rounded-full opacity-0 group-hover/sidebar:opacity-100 transition-opacity pointer-events-none" aria-hidden="true"></div>
           </div>
           {/* The practice trademark, not just the postcode mark. */}
           {(!isCollapsed || isMobile) && (
-            <span className="flex flex-col leading-tight whitespace-nowrap">
-              <span className="font-display font-bold text-[var(--panel-text)] tracking-tight text-[15px]">Osteopathy &amp; Wellbeing</span>
-              <span className="text-[10px] font-black uppercase tracking-[0.35em] text-teal-800">@CT6 · Herne Bay</span>
+            <span className="flex flex-col leading-tight min-w-0">
+              <span className="font-display font-bold text-[var(--panel-text)] tracking-tight text-[15px] whitespace-nowrap">Osteopathy &amp; Wellbeing</span>
+              {/* Theme colour, not a fixed teal-800: on the four dark panels
+                  (Midnight, Ocean, Forest, Graphite) teal-800 all but vanished.
+                  Allowed to wrap: it grows with Settings > Text size, and on
+                  one line at 150% the fixed-width menu cut off "Herne Bay". */}
+              <span className="text-[10px] font-black uppercase tracking-[0.35em] text-[var(--panel-text-muted)]">@CT6 · Herne Bay</span>
             </span>
           )}
         </div>
       </div>
-      <nav id="main-navigation" className="flex-1 py-12 px-5 space-y-3 overflow-y-auto custom-scrollbar" aria-label="Main Navigation">
-        <AnimatePresence mode="popLayout">
+      <nav id="main-navigation" className="flex-1 py-6 px-5 space-y-2 overflow-y-auto custom-scrollbar" aria-label="Main Navigation">
+        {/* initial: the fade-in plays on the first frame of the visit only,
+            not again every time a page change rebuilds the menu. */}
+        <AnimatePresence mode="popLayout" initial={!shellHasAppeared}>
           {NAV_ITEMS.map((item, index) => (
-            <motion.div 
-              layout 
+            <motion.div
+              layout
               key={item.id}
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
@@ -183,7 +240,7 @@ const Sidebar = ({ isCollapsed, onToggle, isMobile, isOpenMobile, onCloseMobile 
                 end={item.path === '/'}
                 onClick={() => isMobile && onCloseMobile()}
                 className={({ isActive }) => cn(
-                  "w-full flex items-center gap-4 px-4 py-4 rounded-2xl transition-all group relative focus-visible:outline-teal-500 overflow-hidden border",
+                  "w-full flex items-center gap-4 px-4 py-3 rounded-2xl transition-all group relative focus-visible:outline-teal-500 overflow-hidden border",
                   isActive
                     ? "bg-slate-900 border-slate-800 shadow-xl text-white scale-[1.02]"
                     : "text-[var(--panel-text-muted)] hover:bg-[var(--panel-hover)] hover:text-[var(--panel-text)] border-transparent"
@@ -201,20 +258,26 @@ const Sidebar = ({ isCollapsed, onToggle, isMobile, isOpenMobile, onCloseMobile 
                     )}
                     <div className={cn(
                       "p-1.5 rounded-xl transition-all shrink-0",
-                      isActive ? "calm-active bg-teal-500/10 text-teal-400" : "text-slate-400 group-hover:text-teal-500 group-hover:bg-teal-500/5"
+                      isActive ? "calm-active bg-teal-500/10 text-teal-400" : "text-[var(--panel-text-muted)] group-hover:text-teal-500 group-hover:bg-teal-500/5"
                     )}>
-                      <item.icon size={22} className={isActive ? "animate-pulse" : ""} strokeWidth={isActive ? 2.5 : 2} />
+                      <item.icon size={22} className={isActive && !still ? "animate-pulse" : ""} strokeWidth={isActive ? 2.5 : 2} />
                     </div>
-                    <AnimatePresence mode="wait">
+                    {/* Still fades in when the menu is expanded again. */}
+                    <AnimatePresence mode="wait" initial={!shellHasAppeared}>
                       {(!isCollapsed || isMobile) && (
-                        <motion.span 
+                        <motion.span
                           initial={{ opacity: 0, x: -10 }}
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: -10 }}
                           transition={{ duration: 0.2 }}
                           className={cn(
                             "font-black uppercase tracking-[0.3em] text-[9.5px] flex-1",
-                            isActive ? "text-white" : "text-slate-700 group-hover:text-slate-900"
+                            // The panel's own text colour for every theme. A
+                            // fixed slate-700 measured about 1.9:1 on the dark
+                            // panels (Midnight, Ocean, Forest, Graphite) - only
+                            // the active item could be read. On the default
+                            // light panel this is darker than before, not lighter.
+                            isActive ? "text-white" : "text-[var(--panel-text)]"
                           )}
                         >
                           {item.label}
@@ -222,7 +285,7 @@ const Sidebar = ({ isCollapsed, onToggle, isMobile, isOpenMobile, onCloseMobile 
                       )}
                     </AnimatePresence>
                     {isActive && (
-                       <div className="ml-auto w-1 h-1 bg-teal-400 rounded-full animate-ping mr-2"></div>
+                       <div className={cn("ml-auto w-1 h-1 bg-teal-400 rounded-full mr-2", !still && "animate-ping")}></div>
                     )}
                   </>
                 )}
@@ -247,7 +310,47 @@ const Sidebar = ({ isCollapsed, onToggle, isMobile, isOpenMobile, onCloseMobile 
       )}
     </aside>
   </>
-);
+  );
+};
+
+/*
+ * iPhone Safari has no element full screen (only iPad does): calling it threw
+ * before anything happened, so the button did nothing and said nothing. The
+ * control is shown only where the browser can actually do it.
+ */
+const canGoFullscreen = () =>
+  typeof document !== 'undefined' &&
+  !!document.fullscreenEnabled &&
+  typeof document.documentElement.requestFullscreen === 'function';
+
+/* "08:00" -> "8am", "12:00" -> "12 noon", the way the footer writes hours. */
+function formatClock(hhmm: string): string {
+  const [h, m] = hhmm.split(':').map(Number);
+  if (h === 12 && m === 0) return '12 noon';
+  const suffix = h < 12 ? 'am' : 'pm';
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  return m ? `${h12}.${String(m).padStart(2, '0')}${suffix}` : `${h12}${suffix}`;
+}
+
+/*
+ * The bell used to answer "No new notifications at this time." on every
+ * press - the site has no notifications, so it could never say anything
+ * else. It now gives today's opening hours, read from the clinic's own
+ * published hours in clinic.ts. "Usual", because bank holidays and closures
+ * are not recorded anywhere on this site.
+ */
+function todaysHoursNotice(): string {
+  let day: string;
+  try {
+    day = new Intl.DateTimeFormat('en-GB', { weekday: 'long', timeZone: 'Europe/London' }).format(new Date());
+  } catch {
+    day = new Date().toLocaleDateString('en-GB', { weekday: 'long' });
+  }
+  const slot = CLINIC.openingHoursSpec.find((s) => (s.days as readonly string[]).includes(day));
+  return slot
+    ? `Today (${day}) the clinic's usual hours are ${formatClock(slot.opens)} to ${formatClock(slot.closes)}. Call ${CLINIC.telephone} or book online.`
+    : `The clinic is usually closed on ${day}s. You can still book online.`;
+}
 
 const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile, onEnterImmersive }: { isCollapsed: boolean; isMobile: boolean; onOpenMobile: () => void; isOpenMobile: boolean; onEnterImmersive: () => void }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -274,6 +377,7 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile, onEnterImme
 
   const toggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
+      if (!canGoFullscreen()) return;
       document.documentElement.requestFullscreen().catch(err => {
         console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
       });
@@ -302,7 +406,13 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile, onEnterImme
    * content" - while displaying nothing at all. There was no database and no
    * search, and the dropdown openly invited it: "Press Enter to perform a
    * clinical search". This searches what the site actually holds: the
-   * treatments, the conditions each one lists, and the practitioners.
+   * treatments, the lists each one carries from the clinic's own service page
+   * (conditions, and "who is this for"), and the practitioners.
+   *
+   * The "who is this for" lists are searched too, as the Treatments page
+   * already does: only Osteopathy carries a conditions list, so "insomnia"
+   * found nothing here although Hypnotherapy lists "Sleep Issues and
+   * Insomnia", and "corns" missed Footcare's "Removal of corns and hard skin".
    */
   const contentMatches = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
@@ -310,13 +420,16 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile, onEnterImme
     const hits: { label: string; hint: string; path: string }[] = [];
     for (const t of TREATMENTS) {
       const byCondition = t.conditions?.some((c) => c.toLowerCase().includes(q)) ?? false;
+      const byWhoFor = t.whoFor?.some((c) => c.toLowerCase().includes(q)) ?? false;
       const byName = t.title.toLowerCase().includes(q) || t.desc.toLowerCase().includes(q);
-      if (byName || byCondition) {
+      if (byName || byCondition || byWhoFor) {
         hits.push({
           label: t.title,
           // Say why it matched when the word is not in the title, or a result
-          // for "sciatica" sitting under "Osteopathy" reads as a mistake.
-          hint: byCondition && !byName ? 'Treats this' : 'Treatment',
+          // for "sciatica" sitting under "Osteopathy" reads as a mistake. A
+          // "who is this for" match says so in the words its page uses, not
+          // as a claim that the treatment treats it.
+          hint: byName ? 'Treatment' : byCondition ? 'Treats this' : 'Who it is for',
           path: '/treatments/' + t.id,
         });
       }
@@ -362,8 +475,8 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile, onEnterImme
         <div className="flex items-center flex-1 gap-6 max-w-2xl relative">
           {isMobile && (
             <button 
-              onClick={onOpenMobile} 
-              className="p-3 -ml-3 rounded-xl text-slate-600 hover:bg-slate-100 focus-visible:outline-teal-500 cursor-pointer transition-colors" 
+              onClick={onOpenMobile}
+              className="p-3 -ml-3 rounded-xl text-[var(--panel-text-muted)] hover:bg-[var(--panel-hover)] hover:text-[var(--panel-text)] focus-visible:outline-teal-500 cursor-pointer transition-colors"
               aria-label="Open menu"
               aria-expanded={isOpenMobile}
               aria-controls="main-sidebar"
@@ -379,7 +492,7 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile, onEnterImme
           */}
           <button
             onClick={onEnterImmersive}
-            className="p-2.5 -ml-1 shrink-0 rounded-xl text-slate-400 hover:text-teal-600 hover:bg-slate-100 focus-visible:outline-teal-500 cursor-pointer transition-colors"
+            className="p-2.5 -ml-1 shrink-0 rounded-xl text-[var(--panel-text-muted)] hover:text-[var(--panel-text)] hover:bg-[var(--panel-hover)] focus-visible:outline-teal-500 cursor-pointer transition-colors"
             aria-label="Hide the menus for a clear, full-screen view"
             title="Hide the menus (Esc to bring them back)"
           >
@@ -429,10 +542,13 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile, onEnterImme
                   }
                 }
               }}
-              className="w-full bg-slate-100/80 hover:bg-slate-200/80 focus:bg-white border-2 border-transparent focus:border-teal-100 rounded-2xl py-2.5 sm:py-3 pl-12 pr-6 text-sm focus:ring-8 focus:ring-teal-500/5 transition-all outline-none" 
+              // The field is always light, so its words are always dark. It
+              // used to inherit the panel's text colour, which on the dark
+              // themes meant near-white typing on a near-white box.
+              className="w-full bg-slate-100 hover:bg-slate-200 focus:bg-white text-slate-900 placeholder:text-slate-600 border-2 border-transparent focus:border-teal-100 rounded-2xl py-2.5 sm:py-3 pl-12 pr-6 text-sm focus:ring-8 focus:ring-teal-500/5 transition-all outline-none"
             />
             <AnimatePresence>
-              {isSearchFocused && searchQuery && (
+              {isSearchFocused && searchQuery.trim() && (
                 <motion.div
                   ref={resultsRef}
                   initial={{ opacity: 0, y: 10, scale: 0.98 }}
@@ -495,14 +611,18 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile, onEnterImme
                       >
                         <div className="flex items-center justify-between">
                           <span className="text-sm font-bold text-slate-800">{cmd.label}</span>
-                          <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">{cmd.category}</span>
+                          <span className="text-[10px] uppercase font-bold tracking-widest text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full">{cmd.category}</span>
                         </div>
                         <span className="text-xs text-slate-500">{cmd.description}</span>
                       </button>
                     ))
                   ) : (
-                    <div className="px-4 py-6 text-center text-sm text-slate-500">
-                      Nothing matches "{searchQuery}". Try a treatment, a condition we treat, or a practitioner’s name.
+                    // Both lists wait for two letters, so after one letter
+                    // "Nothing matches" was said before a word was finished.
+                    <div className="px-4 py-6 text-center text-sm text-slate-600">
+                      {searchQuery.trim().length < 2
+                        ? 'Keep typing: a treatment, a condition or a name.'
+                        : `Nothing matches "${searchQuery.trim()}". Try a treatment, a condition we treat, or a practitioner’s name.`}
                     </div>
                   )}
                 </motion.div>
@@ -513,9 +633,10 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile, onEnterImme
         <div className="flex items-center gap-3 sm:gap-6 ml-4">
           <ThemePicker />
           <button
-            onClick={() => showToast("No new notifications at this time.", "info")}
+            onClick={() => showToast(todaysHoursNotice(), "info")}
             className="p-3 rounded-full hover:bg-[var(--panel-hover)] text-[var(--panel-text-muted)] hover:text-[var(--panel-text)] relative transition-all cursor-pointer focus-visible:outline-teal-500 group"
-            aria-label="Notifications"
+            aria-label="Clinic notices: today's opening hours"
+            title="Today's opening hours"
           >
             <Bell size={21} className="group-hover:rotate-12 transition-transform" />
           </button>
@@ -530,22 +651,28 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile, onEnterImme
             target="_blank"
             rel="noopener noreferrer"
             className="calm-cta hidden sm:flex items-center gap-2 px-5 py-2.5 bg-teal-700 text-white rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-teal-500/25 hover:bg-teal-700 hover:shadow-teal-500/40 transition-all active:scale-95 focus-visible:outline-teal-500 group"
-            aria-label="Book an appointment online — opens our booking system in a new tab"
+            // Starts with the words on the button, so "click Book Online"
+            // works for voice-control users (WCAG 2.5.3).
+            aria-label="Book Online — opens our booking system in a new tab"
           >
             <Calendar size={16} className="group-hover:rotate-12 transition-transform" />
             <span>Book Online</span>
             <ExternalLink size={12} className="opacity-60" aria-hidden="true" />
           </a>
           
-          <div className="h-8 w-px bg-slate-100 mx-1 hidden sm:block"></div>
-          
-          <button 
-            onClick={toggleFullscreen}
-            className="p-3 rounded-xl hover:bg-slate-100 text-slate-500 hover:text-slate-900 transition-all cursor-pointer focus-visible:outline-teal-500 group"
-            aria-label={isFullscreen ? "Exit full screen" : "Enter full screen"}
-          >
-            {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
-          </button>
+          {canGoFullscreen() && (
+            <>
+              <div className="h-8 w-px bg-slate-100 mx-1 hidden sm:block"></div>
+
+              <button
+                onClick={toggleFullscreen}
+                className="p-3 rounded-xl hover:bg-[var(--panel-hover)] text-[var(--panel-text-muted)] hover:text-[var(--panel-text)] transition-all cursor-pointer focus-visible:outline-teal-500 group"
+                aria-label={isFullscreen ? "Exit full screen" : "Enter full screen"}
+              >
+                {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
+              </button>
+            </>
+          )}
         </div>
       </div>
     </header>
@@ -553,7 +680,8 @@ const Header = ({ isCollapsed, isMobile, onOpenMobile, isOpenMobile, onEnterImme
 };
 
 const PageWrapper = ({ children }: { children: React.ReactNode }) => {
-  const reduceMotion = useReducedMotion();
+  // Either switch in Settings, or the device, turns the slide into a short fade.
+  const reduceMotion = useStillMotion();
 
   // Routes animate with mode="wait": the outgoing page must finish exiting
   // before the incoming one mounts, so both durations are paid in sequence on
@@ -575,8 +703,15 @@ const PageWrapper = ({ children }: { children: React.ReactNode }) => {
 };
 
 const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () => void }) => {
-  const [isMobile, setIsMobile] = useState(false);
+  /*
+   * Start from the real width. This frame is rebuilt on every change of page,
+   * and starting from "not a phone" drew the full desktop menu over the page
+   * (and squeezed the page to a sliver) for a few frames on every tap, before
+   * the resize check below corrected it.
+   */
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 1024);
   const [isOpenMobile, setIsOpenMobile] = useState(false);
+  const location = useLocation();
   /*
    * Immersive mode: everything the app draws around the page - the top bar,
    * the left menu, the mobile dock - is taken off the screen so the content
@@ -597,6 +732,27 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // From now on the menu has been seen: rebuilt frames skip its fade-in.
+  useEffect(() => {
+    shellHasAppeared = true;
+  }, []);
+
+  /*
+   * After a change of page, put keyboard focus at the start of the new page.
+   * Otherwise the pressed link is destroyed with the old frame, focus falls to
+   * the top of the document, and a keyboard or screen-reader user has to Tab
+   * through the whole menu again - and hears nothing to say the page changed.
+   * Keyed on the address, not on "second render": the frame is rebuilt on
+   * every page, so each one is a first render.
+   */
+  useEffect(() => {
+    const path = location.pathname;
+    if (lastFocusedPath !== null && lastFocusedPath !== path) {
+      document.getElementById('main-content')?.focus({ preventScroll: true });
+    }
+    lastFocusedPath = path;
+  }, [location.pathname]);
 
   // Escape is the reflex for "give me the normal screen back", and it is the
   // way out for anyone who cannot see or reach the restore button.
@@ -685,11 +841,19 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
           className="flex-1 px-[var(--layout-shell-padding)] pb-[calc(100px+var(--layout-safe-area))] max-w-[var(--layout-content-max-width)] mx-auto w-full relative z-[var(--z-content)]"
           role="main"
           id="main-content"
+          // Focusable by script (after a change of page, or the skip link)
+          // but never a Tab stop. The page itself is not a control, so the
+          // two-band focus ring is not drawn around all of it: an inline
+          // style is the one thing that outranks the unlayered :focus-visible
+          // rule in index.css. Every control inside keeps its ring.
+          tabIndex={-1}
           style={{
             // The top offset exists only to clear the fixed header. With the
             // header gone it would be a band of empty space at the top of the
             // page, which is the opposite of what this mode is for.
             paddingTop: isImmersive ? 'calc(var(--layout-safe-area) + 1.5rem)' : 'var(--layout-main-offset-top)',
+            outline: 'none',
+            boxShadow: 'none',
           }}
         >
           <Breadcrumbs />
@@ -713,40 +877,58 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
                   <Logo size={44} variant="gradient" replayIntroOnClick />
                   <span className="font-display font-medium text-slate-900 text-2xl tracking-tighter">{CLINIC.name}</span>
                 </div>
+                {/* The same list of services as the Treatments page: hypnotherapy
+                    (Alexandra) used to be missing from this one. */}
                 <p className="text-slate-600 text-lg leading-relaxed font-light">
-                  Osteopathy, acupuncture, massage and foot care on the High Street in Herne Bay. Committed to your long-term health and mobility.
+                  Osteopathy, acupuncture, massage, foot care and hypnotherapy on the High Street in Herne Bay. Committed to your long-term health and mobility.
                 </p>
                 {/* Only profiles with a real address appear. An icon that
                     announces "Opening Instagram…" and then does nothing is
                     worse than no icon. */}
                 {SOCIAL_LINKS.some((s) => s.url) && (
-                  <div className="flex gap-4">
-                    {SOCIAL_LINKS.filter((s) => s.url).map((social) => (
-                      <a
-                        key={social.label}
-                        href={social.url}
-                        target="_blank"
-                        rel="noopener noreferrer me"
-                        className="w-11 h-11 rounded-xl bg-slate-50 flex items-center justify-center text-slate-600 hover:bg-teal-700 hover:text-white hover:scale-110 transition-all shadow-sm focus-visible:outline-teal-500"
-                        aria-label={`Visit our ${social.label} page — opens in a new tab`}
-                      >
-                        <Zap size={18} />
-                      </a>
-                    ))}
+                  <div className="flex flex-wrap gap-4">
+                    {/* Each network in its own mark, with its name beside it.
+                        Both used to be the same lightning bolt with no words,
+                        so nobody could tell Facebook from YouTube. */}
+                    {SOCIAL_LINKS.filter((s) => s.url).map((social) => {
+                      const Mark = social.label === 'Facebook' ? Facebook : social.label === 'YouTube' ? Youtube : ExternalLink;
+                      return (
+                        <a
+                          key={social.label}
+                          href={social.url}
+                          target="_blank"
+                          rel="noopener noreferrer me"
+                          className="min-h-11 px-4 rounded-xl bg-slate-50 flex items-center justify-center gap-2 text-slate-700 hover:bg-teal-700 hover:text-white transition-all shadow-sm focus-visible:outline-teal-500"
+                          aria-label={`${social.label}: visit our page — opens in a new tab`}
+                        >
+                          <Mark size={18} aria-hidden="true" />
+                          <span className="text-sm font-bold">{social.label}</span>
+                        </a>
+                      );
+                    })}
                   </div>
                 )}
               </div>
               
+              {/* Level-2 headings: they sit straight under each page's h1 in
+                  the outline, and a level-4 there skipped two levels for
+                  anyone moving by heading. The classes set the look, so
+                  nothing on screen changes. */}
               <div className="space-y-8">
-                <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-600">Navigation</h4>
+                <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-600">Navigation</h2>
                 <nav className="flex flex-col gap-1 -my-2">
+                  {/* Every page in the menu is here too: on a phone the footer
+                      is where people look, and the dock has no room for
+                      Questions. The guides go by the name their page uses. */}
                   {[
                     { label: 'Home', path: '/' },
                     { label: 'Treatments', path: '/treatments' },
                     { label: 'Our Team', path: '/practitioners' },
-                    { label: 'Clinic Gallery', path: '/gallery' },
+                    { label: 'Patient Guides', path: '/gallery' },
                     { label: 'Patient Resources', path: '/resources' },
+                    { label: 'Recovery Tools', path: '/dashboard' },
                     { label: 'Locations', path: '/locations' },
+                    { label: 'Questions', path: '/faq' },
                     { label: 'Contact Us', path: '/contact' }
                   ].map((link) => (
                     <Link key={link.path} to={link.path} className="text-slate-600 hover:text-teal-800 font-medium transition-colors flex items-center gap-2 group min-h-11 py-2">
@@ -758,7 +940,7 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
               </div>
 
               <div className="space-y-8">
-                <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-600">The Clinic</h4>
+                <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-600">The Clinic</h2>
                 <div className="space-y-6">
                   <div className="flex gap-4">
                     <div className="mt-1 text-teal-800 shrink-0"><MapPin size={20} /></div>
@@ -783,7 +965,7 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
               </div>
 
               <div className="space-y-8">
-                <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-600">Opening Hours</h4>
+                <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-600">Opening Hours</h2>
                 <div className="space-y-6">
                   <div className="flex gap-4">
                     <div className="mt-1 text-teal-800 shrink-0"><Clock size={20} /></div>
@@ -881,7 +1063,7 @@ const Layout = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () 
             zIndex: 'var(--z-toast)',
             top: 'calc(1rem + var(--layout-safe-area))',
           }}
-          aria-label="Show the menus again"
+          aria-label="Show menus"
           title="Show the menus again (Esc)"
         >
           <Eye size={18} />
@@ -927,16 +1109,30 @@ function AppContent() {
   };
   const location = useLocation();
 
+  /*
+   * True only while the film is showing because the visitor pressed the
+   * emblem to play it again. On arrival the film yields to any request for
+   * less movement (device, "Reduce movement", or "Page movement and film"
+   * off) and goes straight to the door; a film the visitor has asked for by
+   * name plays - otherwise the emblem's "Play the introduction film again"
+   * would do nothing at all for exactly those visitors.
+   */
+  const [introRequested, setIntroRequested] = useState(false);
+
   const completeIntroVideo = () => {
     try {
       markSeenThisVisit('ct6-intro-film-seen');
     } catch { /* private mode — just carry on */ }
     setShowIntroVideo(false);
+    setIntroRequested(false);
   };
 
   // The emblem in the header and the footer plays the opening film again.
   useEffect(() => {
-    const replay = () => setShowIntroVideo(true);
+    const replay = () => {
+      setIntroRequested(true);
+      setShowIntroVideo(true);
+    };
     window.addEventListener(REPLAY_INTRO_EVENT, replay);
     return () => window.removeEventListener(REPLAY_INTRO_EVENT, replay);
   }, []);
@@ -944,12 +1140,11 @@ function AppContent() {
   return (
     <AnalyticsProvider>
       <ToastProvider>
-        <FirebaseInitializer />
         <SettingsProvider>
           <CommandProvider>
             <PageContextBridgeProvider>
             <AnimatePresence>
-              {showIntroVideo && <IntroVideo key="intro-film" onComplete={completeIntroVideo} />}
+              {showIntroVideo && <IntroVideo key="intro-film" requested={introRequested} onComplete={completeIntroVideo} />}
             </AnimatePresence>
             <AnimatePresence>
               {!showIntroVideo && showIntro && <IntroPage onComplete={completeEntrance} />}
@@ -993,25 +1188,29 @@ function AppContent() {
                   <PageWrapper>
                     <div className="flex flex-col items-center justify-center min-h-[70vh] text-center space-y-10 py-20 relative bg-white/60 backdrop-blur-3xl crystal-glass rounded-[4rem] holographic-border shadow-premium mt-12 mx-4 sm:mx-0 overflow-hidden">
                       <div className="absolute inset-0 neural-grid opacity-20 pointer-events-none mix-blend-screen" />
-                      <div className="relative">
-                        <h2 className="text-[12rem] font-display font-black text-slate-100 leading-none select-none drop-shadow-sm">404</h2>
+                      {/* The big "404" is decoration; the page's one main
+                          heading says what happened in plain words. */}
+                      <div className="relative" aria-hidden="true">
+                        <p className="text-[12rem] font-display font-black text-slate-100 leading-none select-none drop-shadow-sm">404</p>
                         <div className="absolute inset-0 flex items-center justify-center">
                           <div className="w-48 h-48 bg-teal-500/10 rounded-full blur-3xl animate-pulse" />
                         </div>
                       </div>
                       <div className="space-y-4 relative z-10">
-                        <h3 className="text-4xl font-display font-bold text-slate-900 tracking-tight">Lost in the Wellbeing Journey?</h3>
-                        <p className="text-slate-500 max-w-md mx-auto font-light text-lg">
-                          This page seems to have taken a quiet retreat. Let's get you back to the center of your health journey.
+                        <h1 className="text-4xl font-display font-bold text-slate-900 tracking-tight">Page not found</h1>
+                        <p className="text-slate-800 max-w-md mx-auto text-lg">
+                          We cannot find that page. It may have moved. Use the menu, or go back to the home page.
                         </p>
                       </div>
                       <Link 
                         to="/" 
                         className="group flex items-center gap-3 px-10 py-5 bg-teal-700 text-white rounded-2xl font-bold text-lg shadow-2xl shadow-teal-900/20 hover:bg-teal-800 hover:-translate-y-1 transition-all active:scale-[0.98] cinematic-glow z-10 relative"
                       >
-                        <Home size={20} />
-                        Return to Dashboard
-                        <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                        <Home size={20} aria-hidden="true" />
+                        {/* It goes to the home page, so it says so. "Dashboard"
+                            is what people call Recovery Tools. */}
+                        Back to the home page
+                        <ChevronRight size={20} aria-hidden="true" className="group-hover:translate-x-1 transition-transform" />
                       </Link>
                     </div>
                   </PageWrapper>

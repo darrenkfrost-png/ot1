@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '../lib/utils';
 import { motion, useReducedMotion } from 'motion/react';
+import { useSettings } from '../context/SettingsContext';
 
 /** Ask the application to play the opening film again. */
 export const REPLAY_INTRO_EVENT = 'ct6:replay-intro';
@@ -35,7 +36,16 @@ export const Logo: React.FC<LogoProps> = ({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const prefersReducedMotion = useReducedMotion();
+  const { settings } = useSettings();
   const [inView, setInView] = useState(true);
+
+  /* Less movement, asked for any of three ways - the device setting, the
+     site's "Reduce movement" switch, or "Page movement and film" turned off -
+     gives the still frame. Only the device setting used to count, so the
+     header and footer emblems kept playing their film for a visitor who had
+     switched movement off in Settings. */
+  const calm =
+    !!prefersReducedMotion || !!settings.reduceMotion || settings.animationsEnabled === false;
 
   /* Data saver yields here too, exactly as the wallpaper and the opening film
      do. The mark still appears — it is the still frame rather than the film,
@@ -43,7 +53,7 @@ export const Logo: React.FC<LogoProps> = ({
   const saveData =
     typeof navigator !== 'undefined' &&
     (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true;
-  const showStill = still || prefersReducedMotion || saveData;
+  const showStill = still || calm || saveData;
 
   useEffect(() => {
     const el = wrapperRef.current;
@@ -97,13 +107,14 @@ export const Logo: React.FC<LogoProps> = ({
     >
       <motion.div
         ref={wrapperRef}
-        initial={{ opacity: 0, scale: 0.8, filter: 'blur(10px)' }}
+        initial={calm ? false : { opacity: 0, scale: 0.8, filter: 'blur(10px)' }}
         animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
         className="w-full h-full flex items-center justify-center relative"
       >
-          {/* Glow Effect */}
-          <div className="absolute inset-0 bg-teal-500/20 rounded-full blur-xl scale-150 animate-pulse" />
+          {/* Glow Effect - breathes only while movement is welcome; the CSS
+              stillness rule does not hear "Page movement and film". */}
+          <div className={cn("absolute inset-0 bg-teal-500/20 rounded-full blur-xl scale-150", !calm && "animate-pulse")} />
 
           <div className={cn(
             "w-full h-full rounded-[28%] overflow-hidden flex items-center justify-center shadow-xl border-2 transition-all duration-500",

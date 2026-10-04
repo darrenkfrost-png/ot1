@@ -1,7 +1,9 @@
-import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
-import { useState, useEffect } from 'react';
+import { motion, AnimatePresence, useReducedMotion, useIsPresent } from 'motion/react';
+import { useState, useEffect, useRef, type RefObject } from 'react';
 import { Sparkles, ArrowRight } from 'lucide-react';
 import { GALLERY_IMAGES } from '../data/images';
+import { CLINIC } from '../data/clinic';
+import { useSettings } from '../context/SettingsContext';
 import Logo from './Logo';
 
 /**
@@ -53,15 +55,169 @@ const BACKDROP_MODES: { id: BackdropMode; label: string; hint: string }[] = [
 
 const BACKDROP_STORAGE_KEY = 'ct6-intro-backdrop';
 
+/*
+ * THE SITE BEHIND THE DOOR IS ASLEEP.
+ *
+ * The door and the opening film cover the whole screen, but the site beneath
+ * them used to stay fully live: after the door's own buttons, Tab walked on
+ * into the hidden menu, settings and page, and a screen reader read straight
+ * past the door into the page underneath. While an overlay is up, everything
+ * beside it - at every level up to <body> - is made inert: it cannot be
+ * focused, clicked or read out. Nothing inside the overlay is touched, and
+ * anything React adds behind it while it is up (a page finishing loading) is
+ * put to sleep as it arrives.
+ *
+ * Elements marked data-keep-live are never put to sleep: the film, the door
+ * and the idle screen can each sit over one another, and none of them may
+ * disable another - the idle screen's emblem must always stay pressable.
+ *
+ * Holds are counted, so the film handing over to the door never lets the site
+ * wake in between, and an element that was already inert for its own reasons
+ * is never woken by this.
+ */
+const inertHolds = new Map<HTMLElement, number>();
+
+const holdInert = (el: HTMLElement): boolean => {
+  const count = inertHolds.get(el);
+  if (count === undefined) {
+    if (el.hasAttribute('inert')) return false;
+    el.setAttribute('inert', '');
+    inertHolds.set(el, 1);
+  } else {
+    inertHolds.set(el, count + 1);
+  }
+  return true;
+};
+
+const releaseInert = (el: HTMLElement) => {
+  const count = inertHolds.get(el);
+  if (count === undefined) return;
+  if (count > 1) {
+    inertHolds.set(el, count - 1);
+    return;
+  }
+  inertHolds.delete(el);
+  el.removeAttribute('inert');
+};
+
+/**
+ * Makes everything except `ref`'s element inert while `active` is true, and
+ * wakes it again - handing keyboard focus back to where it was, if the
+ * overlay took it - when `active` turns false or the overlay unmounts.
+ */
+export function useInertBehind(ref: RefObject<HTMLElement | null>, active: boolean) {
+  useEffect(() => {
+    const overlay = ref.current;
+    if (!active || !overlay) return;
+
+    const focused = document.activeElement;
+    const returnTo =
+      focused instanceof HTMLElement && focused !== document.body && !overlay.contains(focused)
+        ? focused
+        : null;
+
+    const held = new Set<HTMLElement>();
+    const sleep = (node: Node) => {
+      if (!(node instanceof HTMLElement) || held.has(node) || node.hasAttribute('data-keep-live')) return;
+      if (holdInert(node)) held.add(node);
+    };
+
+    const observers: MutationObserver[] = [];
+    let level: HTMLElement = overlay;
+    while (level !== document.body && level.parentElement) {
+      const parent: HTMLElement = level.parentElement;
+      const awake = level;
+      Array.from(parent.children).forEach((sibling) => {
+        if (sibling !== awake) sleep(sibling);
+      });
+      const observer = new MutationObserver((records) => {
+        records.forEach((record) => record.addedNodes.forEach(sleep));
+      });
+      observer.observe(parent, { childList: true });
+      observers.push(observer);
+      level = parent;
+    }
+
+    return () => {
+      observers.forEach((observer) => observer.disconnect());
+      held.forEach(releaseInert);
+      const now = document.activeElement;
+      const focusLost = !now || now === document.body || overlay.contains(now);
+      if (returnTo && returnTo.isConnected && focusLost) returnTo.focus({ preventScroll: true });
+    };
+  }, [ref, active]);
+}
+
 interface IntroPageProps {
   onComplete: () => void;
 }
 
 const IntroPage = ({ onComplete }: IntroPageProps) => {
   /* The full-screen cascade is atmosphere. For anyone who has asked for
-     stillness it simply does not loop — the entrance still works, it is
-     just calm. */
-  const calm = !!useReducedMotion();
+     stillness it does not move at all — the artwork is laid out and held
+     still, and the entrance still works; it is just calm. "Asked" means the
+     device's reduce-motion setting OR the site's own switches in Settings
+     ("Reduce movement", or page movement turned off). It used to read only
+     the device, and even then played the whole 40-98 second slide once. */
+  const { settings } = useSettings();
+  const calm = !!useReducedMotion() || !!settings.reduceMotion || settings.animationsEnabled === false;
+
+  /* While the door is up the site behind it is asleep (see useInertBehind).
+     It wakes the moment the door starts to leave, not after the fade. */
+  const doorRef = useRef<HTMLDivElement>(null);
+  const isPresent = useIsPresent();
+  useInertBehind(doorRef, isPresent);
+
+  /* "Enter to begin" must mean the Enter key too. The button takes focus as
+     the door opens, so Enter and Space work natively, a screen reader lands on
+     the one action, and the focus ring shows where the keyboard is. */
+  const enterRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    enterRef.current?.focus({ preventScroll: true });
+  }, []);
+
+  /*
+   * On most laptops the door is taller than the window, so its content
+   * scrolls (see the scrolling layer below) - and starting at the top left
+   * "Enter to begin", the one way in, just below the bottom edge. On anything
+   * wider than a phone the layer starts scrolled just far enough to show the
+   * whole button, and never so far that the headline is cut. Phones keep the
+   * top: there the door is read from the headline down. Measured by layout
+   * (offsetTop), not on-screen position, because the entrance slides are
+   * still mid-flight when this runs. Web fonts arriving can change the
+   * heights, so it is placed again then - unless the visitor has scrolled.
+   */
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    const scroller = scrollerRef.current;
+    const button = enterRef.current;
+    const title = titleRef.current;
+    if (!scroller || !button || !title) return;
+    const topWithin = (el: HTMLElement) => {
+      let y = 0;
+      let node: HTMLElement | null = el;
+      while (node && node !== scroller) {
+        y += node.offsetTop;
+        node = node.offsetParent as HTMLElement | null;
+      }
+      return y;
+    };
+    let placed = scroller.scrollTop;
+    let cancelled = false;
+    const place = () => {
+      if (cancelled || window.innerWidth < 640 || scroller.scrollTop !== placed) return;
+      const overhang = topWithin(button) + button.offsetHeight + 16 - scroller.clientHeight;
+      const headroom = topWithin(title) - 8;
+      scroller.scrollTop = Math.max(0, Math.min(overhang, headroom));
+      placed = scroller.scrollTop;
+    };
+    place();
+    document.fonts?.ready.then(place).catch(() => { /* fonts never settled - the first placing stands */ });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const [quoteIndex, setQuoteIndex] = useState(0);
   const [mode, setMode] = useState<BackdropMode>(() => {
@@ -100,9 +256,16 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
   const panel = PANELS[quoteIndex];
 
   return (
-    <motion.div 
+    <motion.div
+      ref={doorRef}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="ct6-door-title"
+      data-keep-live=""
       className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden bg-slate-950"
-      style={{ zIndex: 'var(--z-intro)' }}
+      /* Once leaving, the fading door no longer catches clicks meant for the
+         site, which is already awake again underneath it. */
+      style={{ zIndex: 'var(--z-intro)', pointerEvents: isPresent ? undefined : 'none' }}
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 1 }}
@@ -133,8 +296,8 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
               <motion.div
                 key={rowIndex}
                 className="flex gap-4 sm:gap-6 w-max"
-                animate={{ x: rowIndex % 2 === 0 ? [0, -2400] : [-2400, 0] }}
-                transition={{ repeat: calm ? 0 : Infinity, duration: 60 + rowIndex * 8, ease: 'linear' }}
+                animate={calm ? undefined : { x: rowIndex % 2 === 0 ? [0, -2400] : [-2400, 0] }}
+                transition={{ repeat: Infinity, duration: 60 + rowIndex * 8, ease: 'linear' }}
               >
                 {tiles.map((img, index) => (
                   <div
@@ -167,9 +330,9 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
                     ? 'w-1/7 max-w-[190px] flex flex-col gap-3 sm:gap-4'
                     : 'w-1/4 max-w-[340px] flex flex-col gap-4 sm:gap-8'
                 }
-                animate={{ y: colIndex % 2 === 0 ? [0, -1500] : [-1500, 0] }}
+                animate={calm ? undefined : { y: colIndex % 2 === 0 ? [0, -1500] : [-1500, 0] }}
                 transition={{
-                  repeat: calm ? 0 : Infinity,
+                  repeat: Infinity,
                   duration: (mode === 'wall' ? 70 : 40) + colIndex * 5,
                   ease: 'linear',
                 }}
@@ -216,35 +379,63 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
       <div className="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-transparent to-slate-950/70" />
 
       {/* Ultra subtle background logo watermark */}
-      <Logo size={800} variant="dark" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] scale-150 pointer-events-none" />
+      <Logo size={800} variant="dark" still={calm} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] scale-150 pointer-events-none" />
 
-      {/* Content */}
-      <div className="relative z-10 w-full max-w-4xl px-8 flex flex-col items-center text-center">
-        {/* Boot Sequence Overlay */}
-        <div className="absolute -top-40 -left-64 hidden xl:block text-left font-mono text-[10px] space-y-1 text-teal-500/40 select-none">
-           <div>{">"} INITIALIZING NEURAL UPLINK...</div>
-           <div>{">"} OS_VERSION: CT6_GEN_NEXT (4K_OPT)</div>
-           <div>{">"} SYSTEM_ENTROPY: NOMINAL</div>
-           <div>{">"} BIOMETRIC_SYNC: AUTO_TUNING</div>
-           <div>{">"} VISION_SYSTEM: ACTIVE</div>
-           <div>{">"} CORE_TEMP: 32.4K</div>
-           <div>{">"} MODULE_X: LOADED</div>
-        </div>
+      {/*
+        * The monospace ornament, kept for its look - but every line is now a
+        * true fact read from CLINIC. It used to be a made-up "boot sequence"
+        * (NEURAL UPLINK, BIOMETRIC_SYNC, VISION_SYSTEM: ACTIVE, CORE_TEMP) that
+        * read as if the page were sensing the visitor's body or camera. It
+        * does not, and never did. It sits in the top corner of large screens,
+        * where it is never cut in half by the edge. Hidden from screen
+        * readers: the same facts are on every page of the site, and read out
+        * here they were a jumble.
+        */}
+      <div
+        aria-hidden="true"
+        className="absolute top-8 left-8 z-10 hidden xl:block text-left font-mono text-[11px] space-y-1 text-teal-400 select-none whitespace-nowrap pointer-events-none"
+      >
+        <div>{'>'} {CLINIC.name}</div>
+        <div>{'>'} {CLINIC.address.line1}, {CLINIC.address.town}</div>
+        {CLINIC.openingHours.map((slot) => (
+          <div key={slot.days}>{'>'} {slot.days}: {slot.hours}</div>
+        ))}
+        <div>{'>'} {CLINIC.regulator.abbreviation} registered osteopaths</div>
+        <div>{'>'} Tel {CLINIC.telephone}</div>
+      </div>
 
+      {/*
+        * Content, in its own scrolling layer. The door is taller than most
+        * screens (measured: about 1,400px of content on a 375x812 phone), and
+        * it used to be centred inside a box that clips and cannot scroll - so
+        * on a phone the headline was cut off at the top and "Enter to begin"
+        * sat below the bottom edge, where no swipe could reach it: a visitor
+        * on a phone had no way into the site. Now the content is centred when
+        * it fits and simply scrolls when it does not; the artwork stays put.
+        */}
+      <div ref={scrollerRef} className="absolute inset-0 z-10 overflow-y-auto overflow-x-hidden overscroll-contain">
+        <div className="min-h-full w-full flex flex-col items-center justify-center py-8 short-screen:py-4">
+      <div className="relative w-full max-w-4xl px-8 flex flex-col items-center text-center">
         <motion.div
-           initial={{ opacity: 0, y: 30 }}
+           initial={{ opacity: 0, y: calm ? 0 : 30 }}
            animate={{ opacity: 1, y: 0 }}
            transition={{ delay: 0.5, duration: 1 }}
-           className="mb-16 flex flex-col items-center"
+           className="mb-16 short-screen:mb-8 flex flex-col items-center"
         >
-          <div className="relative mb-8 group">
+          <div className="relative mb-8 short-screen:mb-4 group">
              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-teal-500/20 blur-3xl rounded-full opacity-50"></div>
-             <Logo size={88} variant="gradient" className="relative z-10 shadow-glow-teal cinematic-glow" />
+             <Logo size={88} variant="gradient" still={calm} className="relative z-10 shadow-glow-teal cinematic-glow" />
           </div>
-          <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-teal-500/10 border border-teal-500/30 text-teal-400 text-[10px] font-black uppercase tracking-[0.4em] backdrop-blur-md mb-8 shadow-2xl cinematic-glow">
-            <Sparkles size={14} className="animate-pulse" /> Clinical Matrix Online
+          {/*
+            * Where you are, in words a patient can use. This chip once read
+            * "Clinical Matrix Online" - the status of a system that does not
+            * exist. The town and the year the practice began are both read
+            * from CLINIC, never typed.
+            */}
+          <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-teal-500/10 border border-teal-500/30 text-teal-400 text-[10px] font-black uppercase tracking-[0.4em] backdrop-blur-md mb-8 short-screen:mb-5 shadow-2xl cinematic-glow">
+            <Sparkles size={14} className="animate-pulse" /> {CLINIC.address.town} · since {CLINIC.establishedYear}
           </span>
-          <h1 className="text-4xl md:text-7xl font-display font-medium text-white tracking-tighter leading-[0.95]">
+          <h1 ref={titleRef} id="ct6-door-title" className="text-4xl md:text-7xl short-screen:md:text-6xl font-display font-medium text-white tracking-tighter leading-[0.95]">
             Something feels wrong.
             <br />
             <span className="text-teal-300">We take that seriously.</span>
@@ -252,11 +443,15 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
         </motion.div>
 
         {/*
-          Three tiers following the patient, not the process: the worry that
-          brings someone here, the attention it gets, and the life they want
-          back. Each states something the clinic can stand behind — no figures,
-          no outcome promises, nothing that pretends pain is trivial.
-        */}
+          * Three tiers following the patient, not the process: the worry that
+          * brings someone here, the attention it gets, and the work done
+          * together. Each states something the clinic can stand behind — no
+          * figures, no outcome promises, nothing that pretends pain is trivial.
+          * (The third once promised "You get your life back" and habits "that
+          * keep it from returning" - a result no clinician can guarantee, and
+          * the clinic's own osteopathy page says only that it aims to help
+          * prevent pain recurring. "Hands-on" was untrue for hypnotherapy.)
+          */}
         <motion.ol
           initial="hidden"
           animate="visible"
@@ -264,7 +459,7 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
             hidden: {},
             visible: { transition: { staggerChildren: 0.18, delayChildren: 1 } },
           }}
-          className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-14 text-left"
+          className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-14 short-screen:mb-8 text-left"
         >
           {[
             {
@@ -279,17 +474,17 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
             },
             {
               step: '03',
-              title: 'You get your life back',
-              body: 'Hands-on treatment at a pace your body accepts, and the movement and habits that keep it from returning.',
+              title: 'We work on it together',
+              body: 'Treatment at a pace you are comfortable with, and advice on the movement and habits that can help stop it coming back.',
             },
           ].map((tier) => (
             <motion.li
               key={tier.step}
               variants={{
-                hidden: { opacity: 0, y: 16 },
+                hidden: { opacity: 0, y: calm ? 0 : 16 },
                 visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
               }}
-              className="relative rounded-[1.75rem] border border-white/10 bg-slate-950/55 backdrop-blur-md p-6 shadow-2xl"
+              className="relative rounded-[1.75rem] border border-white/10 bg-slate-950/55 backdrop-blur-md p-6 short-screen:p-5 shadow-2xl"
             >
               <span className="block text-[10px] font-black tracking-[0.35em] text-teal-400 mb-3">
                 {tier.step}
@@ -302,15 +497,21 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
           ))}
         </motion.ol>
 
-        {/* Quotations and real answers take turns, so the wait teaches
-            something as often as it decorates. */}
-        <div className="h-36 sm:h-28 flex items-center justify-center w-full mb-12" aria-live="polite">
+        {/*
+          * Quotations and real answers take turns, so the wait teaches
+          * something as often as it decorates. The turning panel is for the
+          * eye only: it used to be a live region, so a screen reader was
+          * interrupted with a new quotation every seven seconds for as long
+          * as the door was up. Listeners get all eight, once, in the list
+          * below it instead.
+          */}
+        <div className="h-36 sm:h-28 flex items-center justify-center w-full mb-12 short-screen:mb-6" aria-hidden="true">
           <AnimatePresence mode="wait">
             <motion.div
               key={quoteIndex}
-              initial={{ opacity: 0, y: 10, filter: 'blur(5px)' }}
+              initial={{ opacity: 0, y: calm ? 0 : 10, filter: 'blur(5px)' }}
               animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, y: -10, filter: 'blur(5px)' }}
+              exit={{ opacity: 0, y: calm ? 0 : -10, filter: 'blur(5px)' }}
               transition={{ duration: 0.8 }}
               className="max-w-3xl"
             >
@@ -331,12 +532,25 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
             </motion.div>
           </AnimatePresence>
         </div>
+        <ul className="sr-only">
+          {PANELS.map((item) => (
+            <li key={item.text}>
+              {item.kind === 'quote' ? `"${item.text}"` : `${item.question} ${item.text}`}
+            </li>
+          ))}
+        </ul>
 
         <motion.button
-          initial={{ opacity: 0, scale: 0.9 }}
+          ref={enterRef}
+          initial={{ opacity: 0, scale: calm ? 1 : 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 1.5, duration: 0.8 }}
           onClick={onComplete}
+          /* A held Enter key repeats. Without this, the press that skipped the
+             film could carry straight on through the door as well. */
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && e.repeat) e.preventDefault();
+          }}
           className="group relative px-10 py-5 bg-teal-600 hover:bg-teal-500 text-slate-950 rounded-2xl font-black text-lg uppercase tracking-widest overflow-hidden transition-all shadow-glow-teal active:scale-[0.98] flex items-center gap-4 focus-visible:outline-teal-400 outline-offset-4 cinematic-glow"
         >
           <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
@@ -349,9 +563,9 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 2, duration: 0.8 }}
-          className="mt-8 flex flex-col items-center gap-3"
+          className="mt-8 short-screen:mt-5 flex flex-col items-center gap-3"
         >
-          <span className="text-[9px] font-black uppercase tracking-[0.35em] text-slate-500">
+          <span className="text-[9px] font-black uppercase tracking-[0.35em] text-slate-400">
             Background
           </span>
           <div className="flex flex-wrap items-center justify-center gap-2" role="group" aria-label="Choose the background style">
@@ -372,6 +586,8 @@ const IntroPage = ({ onComplete }: IntroPageProps) => {
             ))}
           </div>
         </motion.div>
+      </div>
+        </div>
       </div>
 
       {/* Decorative Particles / Blur */}

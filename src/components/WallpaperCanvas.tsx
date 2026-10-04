@@ -1,8 +1,27 @@
 import React, { useRef, useEffect } from 'react';
+import { useReducedMotion } from 'motion/react';
 import { useSettings } from '../context/SettingsContext';
+
+/*
+ * Frames drawn, all at once and off screen, to make the still picture: enough
+ * for the trails and fades to settle into what the background normally looks
+ * like, few enough to cost a moment once.
+ */
+const STILL_FRAMES = 48;
 
 const WallpaperCanvas: React.FC = () => {
   const { settings } = useSettings();
+  /*
+   * Less movement, asked for any of three ways: the device setting, the
+   * site's "Reduce movement" switch, or "Page movement and film" turned off.
+   * The animated backgrounds used to hear only the device - and even then
+   * they kept crawling at a twentieth of their speed - while both switches in
+   * Settings left them running at full pace. Now each one draws a single
+   * still picture of itself instead. useReducedMotion also follows a device
+   * setting changed while the page is open.
+   */
+  const deviceCalm = useReducedMotion();
+  const still = !!deviceCalm || !!settings.reduceMotion || settings.animationsEnabled === false;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
 
@@ -32,12 +51,11 @@ const WallpaperCanvas: React.FC = () => {
     let width = window.innerWidth;
     let height = window.innerHeight;
     let time = 0;
-    
-    // Accessibility: Reduced motion check
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    
+
     const rgb = hexToRgb(settings.wallpaperColor);
-    const speedMult = prefersReducedMotion ? 0.05 : settings.wallpaperSpeed;
+    // Stillness is handled below by drawing one picture and stopping, not by
+    // slowing the animation down: slow movement is still movement.
+    const speedMult = settings.wallpaperSpeed;
     const brightMult = settings.wallpaperBrightness;
     const quality = settings.wallpaperQuality;
 
@@ -467,7 +485,7 @@ const WallpaperCanvas: React.FC = () => {
         ctx.globalAlpha = 1.0;
     };
 
-    const animate = () => {
+    const drawFrame = () => {
         time += 1;
         const m = settings.activeWallpaper;
         switch (m) {
@@ -489,19 +507,53 @@ const WallpaperCanvas: React.FC = () => {
             case 'dna': renderDna(); break;
             default: renderPolymetric(); break;
         }
+    };
+
+    const animate = () => {
+        drawFrame();
         animationRef.current = requestAnimationFrame(animate);
     };
 
-    animate();
+    /*
+     * The still picture: the same background, drawn frame by frame out of
+     * sight until it looks like itself, then left alone. Nothing runs after
+     * it, so nothing moves and the machine does no further work. Resizing the
+     * window clears a canvas, so the picture is drawn again once the resizing
+     * stops.
+     */
+    let stillTimer: number | undefined;
+    const paintStill = () => {
+        mouse.x = -1000;
+        mouse.y = -1000;
+        clearBg(1);
+        for (let i = 0; i < STILL_FRAMES; i++) drawFrame();
+    };
+    const repaintStillAfterResize = () => {
+        window.clearTimeout(stillTimer);
+        stillTimer = window.setTimeout(paintStill, 150);
+    };
+
+    if (animationRef.current) cancelAnimationFrame(animationRef.current);
+    animationRef.current = null;
+    if (still) {
+        paintStill();
+        // Added after the resize listener above, so the canvas has already
+        // been cleared and resized when this runs.
+        window.addEventListener('resize', repaintStillAfterResize);
+    } else {
+        animate();
+    }
 
     return () => {
         window.removeEventListener('resize', resize);
+        window.removeEventListener('resize', repaintStillAfterResize);
         window.removeEventListener('mousemove', mouseMove);
         window.removeEventListener('touchstart', touchMove);
         window.removeEventListener('touchmove', touchMove);
+        window.clearTimeout(stillTimer);
         if (animationRef.current) cancelAnimationFrame(animationRef.current);
     };
-  }, [settings.activeWallpaper, settings.wallpaperColor, settings.wallpaperSpeed, settings.wallpaperBrightness, settings.wallpaperQuality]);
+  }, [settings.activeWallpaper, settings.wallpaperColor, settings.wallpaperSpeed, settings.wallpaperBrightness, settings.wallpaperQuality, still]);
 
   return (
     settings.activeWallpaper === 'static-image' || settings.activeWallpaper === 'video' ? null : (

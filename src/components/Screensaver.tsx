@@ -42,6 +42,33 @@ const DEFAULT_IDLE_SECONDS = 60;
 const IMAGE_COUNT = 26;
 const LAYOUT_ROTATE_MS = 45000;
 
+/*
+ * A FILM BEING WATCHED IS NOT IDLE.
+ * Once someone presses play inside one of the clinic's films, every click and
+ * movement goes to the video player's own frame, so the page itself hears
+ * nothing - and at the default minute the idle screen rose over a patient
+ * part-way through a three-and-a-half-minute film, with the film still
+ * playing underneath. The same goes for someone sitting still while the page
+ * reads itself aloud. So when the countdown runs out, the screen only rises if
+ * nothing is being watched or listened to; otherwise it waits another full
+ * delay and looks again.
+ *
+ * The hold is capped, so a film pop-up left open on an empty waiting-room
+ * screen cannot keep the idle screen away for ever.
+ */
+const WATCHING_HOLD_MAX_MS = 15 * 60 * 1000;
+
+function somethingIsPlaying(): boolean {
+  // Clicking into a film moves the page's focus onto the player's frame.
+  if (document.activeElement instanceof HTMLIFrameElement) return true;
+  // A film pop-up is open (Resources' films, the clinic's film).
+  if (document.querySelector('[role="dialog"][aria-modal="true"]:not(.screensaver-field) iframe')) return true;
+  // The page is reading itself aloud.
+  if (typeof window.speechSynthesis !== 'undefined' && window.speechSynthesis.speaking) return true;
+  // A film with its sound on, playing on the page (never the silent wallpaper).
+  return Array.from(document.querySelectorAll('video')).some((v) => !v.paused && !v.ended && !v.muted);
+}
+
 type Mode = 'images' | 'polymetric' | 'film';
 
 const MODES: { id: Mode; label: string; Icon: typeof Images }[] = [
@@ -58,8 +85,15 @@ export default function Screensaver({ onDismiss }: { onDismiss: () => void }) {
   const [videoIndex, setVideoIndex] = useState(0);
   const [muted, setMuted] = useState(true);
   const prefersReducedMotion = useReducedMotion();
-  const still = !!prefersReducedMotion;
   const { settings } = useSettings();
+  /* Stillness is asked for on the device, with the site's own "Reduce
+     movement" switch, or by turning "Page movement and film" off - the same
+     three signals the door, the home page and the wallpaper obey. The falling
+     guides and the floating emblem are motion's JavaScript, which the
+     .reduce-motion CSS class cannot reach, so the switches have to be read
+     here too - they used to be ignored on this screen. (A film the viewer
+     picks with the Films button still plays: that is asked for, not ambient.) */
+  const still = !!prefersReducedMotion || !!settings.reduceMotion || settings.animationsEnabled === false;
   const idleMs = Math.max(5, settings.screensaverDelaySeconds || DEFAULT_IDLE_SECONDS) * 1000;
 
   /* The timer closes over the delay, so a ref keeps the live value without
@@ -76,19 +110,42 @@ export default function Screensaver({ onDismiss }: { onDismiss: () => void }) {
   const idleRef = useRef(false);
   idleRef.current = isIdle;
 
+  /* When the current stretch of watching or listening began (0 = not holding). */
+  const holdingSince = useRef(0);
+
+  /* Start the countdown afresh. When it runs out, the screen rises - unless a
+     film is being watched or the page is being read aloud (see
+     somethingIsPlaying), in which case it waits another delay and looks again. */
+  const arm = useCallback(() => {
+    clearTimeout(idleTimer.current);
+    const fire = () => {
+      if (somethingIsPlaying()) {
+        const now = Date.now();
+        if (!holdingSince.current) holdingSince.current = now;
+        if (now - holdingSince.current < WATCHING_HOLD_MAX_MS) {
+          idleTimer.current = window.setTimeout(fire, idleMsRef.current);
+          return;
+        }
+      }
+      holdingSince.current = 0;
+      setIsIdle(true);
+    };
+    idleTimer.current = window.setTimeout(fire, idleMsRef.current);
+  }, []);
+
   const resetTimer = useCallback(() => {
     if (idleRef.current) return;
-    clearTimeout(idleTimer.current);
-    idleTimer.current = window.setTimeout(() => setIsIdle(true), idleMsRef.current);
-  }, []);
+    holdingSince.current = 0;
+    arm();
+  }, [arm]);
 
   const wake = useCallback(() => {
     setIsIdle(false);
     setMuted(true); // never leave sound playing behind the app
-    clearTimeout(idleTimer.current);
-    idleTimer.current = window.setTimeout(() => setIsIdle(true), idleMsRef.current);
+    holdingSince.current = 0;
+    arm();
     onDismiss?.();
-  }, [onDismiss]);
+  }, [arm, onDismiss]);
 
   useEffect(() => {
     const events: (keyof WindowEventMap)[] = [
@@ -151,6 +208,10 @@ export default function Screensaver({ onDismiss }: { onDismiss: () => void }) {
     <div
       className="screensaver-field fixed inset-0 bg-slate-950 overflow-hidden"
       style={{ zIndex: 'var(--z-screensaver)' }}
+      /* Never put to sleep by the door or the opening film (see
+         useInertBehind in IntroPage): the idle screen can rise over them, and
+         its emblem is the only way back. */
+      data-keep-live=""
       role="dialog"
       aria-modal="true"
       aria-label={`${CLINIC.name} idle screen. Select the emblem to return to the site.`}
@@ -239,10 +300,12 @@ export default function Screensaver({ onDismiss }: { onDismiss: () => void }) {
           >
             <Logo size={112} variant="gradient" still={still} />
           </motion.span>
-          <span className="text-white/90 font-display font-medium text-xl sm:text-2xl tracking-tight drop-shadow text-center">
+          {/* Solid colours: this sits over moving guides and films, where a
+              see-through colour's contrast changes from frame to frame. */}
+          <span className="text-white font-display font-medium text-xl sm:text-2xl tracking-tight drop-shadow text-center">
             {CLINIC.name}
           </span>
-          <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.4em] font-black text-teal-300/80 text-center">
+          <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.4em] font-black text-teal-300 text-center">
             Touch the emblem to continue
           </span>
         </button>

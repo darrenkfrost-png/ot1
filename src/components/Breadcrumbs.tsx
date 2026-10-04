@@ -17,13 +17,30 @@ export default function Breadcrumbs() {
 
   const pathParts = location.pathname.split('/').filter(Boolean);
 
+  /*
+   * Only addresses the site really has get a trail. An unknown address used
+   * to be title-cased into invented crumbs - /services/osteopathy showed
+   * "Home / Services / osteopathy", and "Services" was itself a link to
+   * another missing page. Visitors from the clinic's old Google links will
+   * arrive on addresses like that, so they get Home and a plain
+   * "Page not found" instead.
+   */
+  const SECTIONS = ['treatments', 'practitioners', 'gallery', 'resources', 'locations', 'contact', 'dashboard', 'faq'];
+  // Lower-cased because the router matches addresses regardless of case.
+  const first = (pathParts[0] || '').toLowerCase();
+  const isRealAddress =
+    (pathParts.length === 1 && SECTIONS.includes(first)) ||
+    (pathParts.length === 2 && (first === 'treatments' || first === 'practitioners'));
+
   const getBreadcrumbLabel = (path: string, index: number, parts: string[]) => {
     if (index === 0) {
       // First level categories
       switch (path) {
         case 'treatments': return 'Treatments';
         case 'practitioners': return 'Our Team';
-        case 'gallery': return 'Clinic Gallery';
+        // The page is headed "Patient guides"; it holds the illustrated
+        // guides, not photographs of the clinic.
+        case 'gallery': return 'Patient Guides';
         case 'resources': return 'Patient Resources';
         case 'locations': return 'Locations';
         case 'contact': return 'Contact Us';
@@ -65,7 +82,16 @@ export default function Breadcrumbs() {
           </Link>
         </li>
         
-        {pathParts.map((part, index) => {
+        {!isRealAddress && (
+          <li className="flex items-center">
+            <ChevronRight size={14} className="mx-1 text-slate-400 shrink-0" />
+            <span className="font-semibold text-white ml-1 px-1" aria-current="page">
+              Page not found
+            </span>
+          </li>
+        )}
+
+        {isRealAddress && pathParts.map((part, index) => {
           const isLast = index === pathParts.length - 1;
           const href = `/${pathParts.slice(0, index + 1).join('/')}`;
           

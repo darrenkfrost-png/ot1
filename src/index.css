@@ -284,6 +284,14 @@
   }
 }
 
+/*
+ * A laptop-shaped window: wider than a phone, but under 960px tall - which,
+ * once the browser's own bars are taken off, is most laptops and many desk
+ * monitors. The entrance door tightens its spacing here so "Enter to begin"
+ * sits on screen instead of below the bottom edge (see IntroPage.tsx).
+ */
+@custom-variant short-screen (@media (min-width: 640px) and (max-height: 959px));
+
 @theme {
   --font-sans: "Inter", system-ui, sans-serif;
   --font-display: "Outfit", system-ui, sans-serif;
@@ -376,6 +384,24 @@
       animation: none;
       box-shadow: 0 0 42px -12px rgba(45, 212, 191, 0.28);
     }
+  }
+
+  /*
+   * FILM GRAIN, FROM THIS SITE. A 120px tile of SVG turbulence written into
+   * the stylesheet as a data URI: nothing is fetched, from anywhere. Pages
+   * used to hotlink a noise image from grainy-gradients.vercel.app (and
+   * carbon fibre from transparenttextures.com) - strangers' demo sites, sent
+   * every visitor's address on every visit, and free to change or vanish.
+   * Defined here once so every page has it; it only lived in HomePage's own
+   * <style>, so it existed only while Home was on screen.
+   *
+   * Use it with an opacity: <div class="absolute inset-0 noise-tile
+   * opacity-10 pointer-events-none">. In the COMPONENTS layer (the
+   * crystal-glass law): an explicit bg- utility on the same element still wins.
+   */
+  .noise-tile {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
   }
 }
 
@@ -497,17 +523,58 @@
   }
 
   /*
+   * THE SMALL TEXT FOLLOWS THE TEXT-SIZE SETTING.
+   * Settings > Accessibility > Text size scales the root font size, which
+   * moves everything measured in rem - and nothing measured in px. About 150
+   * labels were written as fixed pixels (text-[7px] to text-[11px]): the
+   * menu words, the phone dock, the Recovery Tools buttons, the disclaimers.
+   * So the text that most needed enlarging was the only text that never got
+   * bigger when a patient moved the slider to 150%.
+   *
+   * Each is now counted in rem, with a floor of 11px: at the normal size all
+   * of them read at 11px, and they grow with the slider from there - 16.5px
+   * at 150%. The menu's 9.5px is
+   * remapped to its exact rem equivalent instead (never smaller than it was),
+   * so the fixed-width menu keeps its look at the normal size and still grows
+   * with the slider; 11px text is unchanged at the normal size and now grows
+   * too.
+   *
+   * ORDER MATTERS: these must stay ABOVE the phone floor below. At equal
+   * specificity the later rule wins, so placed after it they would cancel
+   * the floor on phones. Same layer as Tailwind's own utilities and later in
+   * the source, so these beat the generated px rules.
+   */
+  .text-\[7px\],
+  .text-\[8px\],
+  .text-\[8\.5px\],
+  .text-\[9px\],
+  .text-\[9\.3px\],
+  .text-\[10px\],
+  .text-\[11px\] {
+    font-size: max(11px, 0.6875rem);
+  }
+  .text-\[9\.5px\] {
+    font-size: max(9.5px, 0.59375rem);
+  }
+
+  /*
    * Legibility floor for phones.
    * The micro-label type reads as refined detail on a large screen, but at
    * 8-10px on a 375px handset it is genuinely hard to read — and a sizeable
-   * share of this clinic's patients are older. Desktop keeps the original
-   * scale; only small screens get the floor. Remove this block to revert.
+   * share of this clinic's patients are older. Written in rem so it follows
+   * the text-size setting too, never smaller than 11px. The menu's 9.5px
+   * keeps the floor it always had on phones.
    */
   @media (max-width: 640px) {
-    .text-\[8px\] { font-size: 10px; }
-    .text-\[9px\] { font-size: 11px; }
-    .text-\[9\.5px\] { font-size: 11px; }
-    .text-\[10px\] { font-size: 11px; }
+    .text-\[7px\],
+    .text-\[8px\],
+    .text-\[8\.5px\],
+    .text-\[9px\],
+    .text-\[9\.3px\],
+    .text-\[9\.5px\],
+    .text-\[10px\] {
+      font-size: max(11px, 0.6875rem);
+    }
   }
 }
 
@@ -642,11 +709,21 @@
 }
 
 /*
- * Honoured when the visitor turns on "Reduce UI Fluidity" in Settings - the
- * switch existed for months wired to nothing. Everything that moves stops:
- * keyframe animation, transitions, smooth scrolling, the calm halo included.
- * (The OS-level preference is already respected separately via the
- * prefers-reduced-motion media queries above.)
+ * STILLNESS, BY EITHER ROUTE.
+ * Honoured when the visitor turns on the site's own reduce-movement switch in
+ * Settings - it existed for months wired to nothing - AND when their phone or
+ * computer is set to reduce motion. Everything that moves stops: keyframe
+ * animation, transitions, smooth scrolling, the calm halo included.
+ *
+ * The device setting used to be trusted to the handful of media queries above
+ * (calm halo, gradient, pulse trace, route progress, reading aura, calm CTA).
+ * Nothing covered Tailwind's animate-pulse, animate-ping and animate-spin, so
+ * a visitor who had asked their device for stillness still saw the menu icon
+ * pulse and its dot ping on every page, and the entrance's glows breathe.
+ * Both routes now use this one rule. 0.01ms rather than "none", so anything
+ * waiting for an animation or transition to END still hears it end.
+ * (motion's JavaScript animations are not CSS and this rule cannot reach
+ * them; the entrance door and the idle screen read both settings themselves.)
  */
 .reduce-motion *,
 .reduce-motion *::before,
@@ -655,6 +732,16 @@
   animation-iteration-count: 1 !important;
   transition-duration: 0.01ms !important;
   scroll-behavior: auto !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /*

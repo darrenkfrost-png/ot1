@@ -58,8 +58,11 @@ const resolveModuleMetadata = (pathname: string): Partial<PageContextData> => {
       };
     case 'gallery':
       return {
-        moduleTitle: 'Clinic Gallery',
-        moduleDescription: 'Visual gallery of the clinic facilities and therapy rooms.',
+        // The name the menu, footer, breadcrumb and page heading use. The
+        // page holds illustrated patient guides and the clinic's film, not
+        // photographs of the rooms, so the old description is gone too.
+        moduleTitle: 'Patient Guides',
+        moduleDescription: 'Illustrated guides to the problems the clinic treats, and a short film from the clinic.',
         category: 'Media',
         selectedItemId: null,
         availableActions: ['view_images', 'start_slideshow']

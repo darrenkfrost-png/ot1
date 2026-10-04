@@ -87,9 +87,17 @@ export const CommandProvider = ({ children }: { children: ReactNode }) => {
         category: 'system',
         handler: () => {
           if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen();
+            // iPhone Safari has no element full screen (only iPad does). The
+            // call used to throw and surface as "Command failed".
+            if (!document.fullscreenEnabled || typeof document.documentElement.requestFullscreen !== 'function') {
+              showToast('Full screen is not available on this device.', 'info');
+              return;
+            }
+            document.documentElement.requestFullscreen().catch(() => {
+              showToast('Full screen is not available on this device.', 'info');
+            });
           } else {
-            document.exitFullscreen();
+            document.exitFullscreen().catch(() => {});
           }
         },
         voicePhrases: ['fullscreen', 'enter full screen', 'full screen mode']
@@ -125,29 +133,37 @@ export const CommandProvider = ({ children }: { children: ReactNode }) => {
          voicePhrases: ['open settings', 'show settings', 'preferences'],
          shortcut: ['ctrl', ',']
       },
+      /*
+       * These used to write a 'themeMode' setting that nothing reads, so
+       * choosing one closed the list and changed nothing. The look of the
+       * panels is 'appTheme' - the same setting the palette menu in the
+       * header changes. "theme" stays in the labels: search matches labels.
+       */
       {
          id: 'theme.dark',
-         label: 'Activate Dark Theme',
-         description: 'Force dark theme UI colors.',
+         label: 'Dark theme (Midnight)',
+         description: 'Dark panels, easier at night.',
          category: 'settings',
-         handler: () => updateSetting('themeMode', 'dark'),
+         handler: () => updateSetting('appTheme', 'midnight'),
          voicePhrases: ['dark mode', 'enable dark mode', 'turn on dark mode']
       },
       {
          id: 'theme.light',
-         label: 'Activate Light Theme',
-         description: 'Force light theme UI colors.',
+         label: 'Light theme (Clinical)',
+         description: 'The original light panels.',
          category: 'settings',
-         handler: () => updateSetting('themeMode', 'light'),
+         handler: () => updateSetting('appTheme', 'clinical'),
          voicePhrases: ['light mode', 'enable light mode', 'turn on light mode']
       },
       {
          id: 'nav.home',
          label: 'Go Home',
-         description: 'Navigates to the home dashboard.',
+         description: 'Opens the home page.',
          category: 'navigation',
          handler: () => navigate('/'),
-         voicePhrases: ['go home', 'home page', 'open dashboard', 'main screen']
+         // "open dashboard" used to be here and took people to the home page;
+         // the page people call the dashboard is Recovery Tools.
+         voicePhrases: ['go home', 'home page', 'main screen']
       },
       {
          id: 'nav.treatments',
@@ -173,13 +189,25 @@ export const CommandProvider = ({ children }: { children: ReactNode }) => {
     return () => {
       builtInCommands.forEach(c => unregisterCommand(c.id));
     };
-  }, [registerCommand, unregisterCommand, updateSetting, navigate]);
+  }, [registerCommand, unregisterCommand, updateSetting, navigate, showToast]);
 
   // Keyboard Shortcuts Listener
   useEffect(() => {
      const down = (e: KeyboardEvent) => {
-        // Prevent matching if user is typing in an input
-        if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        // Leave the browser's own keys alone wherever they mean something.
+        // In a field, every key belongs to the field. On links and buttons,
+        // Enter and Space are theirs - Ctrl+Enter is the keyboard's "open
+        // this link in a new tab", and it used to send the visitor to Contact
+        // instead. Other shortcuts (Ctrl+, for Settings) still work there.
+        const target = e.target instanceof HTMLElement ? e.target : null;
+        if (target && (target.isContentEditable || target.closest('input, textarea, select'))) {
+           return;
+        }
+        if (
+          target &&
+          (e.key === 'Enter' || e.key === ' ') &&
+          target.closest('a, button, summary, [role="button"], [role="link"]')
+        ) {
            return;
         }
 

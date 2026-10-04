@@ -5,6 +5,21 @@ import { cn } from '../lib/utils';
 
 export type ToastType = 'success' | 'error' | 'info' | 'warning' | 'loading' | 'system';
 
+/*
+ * The small tag above each message, in plain words. It used to print the
+ * internal type name ("INFO", "SUCCESS", "ERROR") beside the word "ACTIVE" on
+ * every message - faint jargon, and read aloud too, because the stack is a
+ * live region.
+ */
+const TOAST_WORD: Record<ToastType, string> = {
+  success: 'Done',
+  error: 'Problem',
+  warning: 'Please check',
+  info: 'Note',
+  loading: 'Working',
+  system: 'Note',
+};
+
 interface Toast {
   id: number;
   message: string;
@@ -52,7 +67,8 @@ export const ToastProvider: React.FC<{children: React.ReactNode}> = ({ children 
           message without being cut off; errors escalate on the toast itself. */}
       <div role="status" aria-live="polite" className="fixed top-8 right-4 sm:right-12 flex flex-col items-end gap-4 pointer-events-none" style={{ zIndex: 'var(--z-toast, 9999)' }}>
         <AnimatePresence mode="popLayout">
-          {toasts.length > 0 && (
+          {/* "Dismiss all" only means something when there is more than one. */}
+          {toasts.length > 1 && (
             <motion.div
               layout
               initial={{ opacity: 0, y: -20, scale: 0.9 }}
@@ -84,7 +100,7 @@ export const ToastProvider: React.FC<{children: React.ReactNode}> = ({ children 
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-teal-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 <X size={14} className="group-hover:rotate-90 transition-transform relative z-10" />
-                <span className="relative z-10">Dismiss All</span>
+                <span className="relative z-10">Dismiss all</span>
               </motion.button>
             </motion.div>
           )}
@@ -150,14 +166,12 @@ export const ToastProvider: React.FC<{children: React.ReactNode}> = ({ children 
                 <div className="flex items-center gap-2">
                   <span className={cn(
                     "text-[10px] font-black uppercase tracking-[0.25em] px-2 py-0.5 rounded-full",
-                    toast.type === 'loading' ? "bg-teal-500/20 text-teal-400" : 
-                    toast.type === 'system' ? "bg-indigo-500/20 text-indigo-400" :
-                    "opacity-40"
+                    toast.type === 'loading' ? "bg-teal-500/20 text-teal-400" :
+                    toast.type === 'system' ? "bg-indigo-500/20 text-indigo-300" :
+                    "bg-black/5"
                   )}>
-                    {toast.type}
+                    {TOAST_WORD[toast.type]}
                   </span>
-                  <div className="w-1 h-1 rounded-full bg-current opacity-20" />
-                  <span className="text-[10px] font-bold opacity-30 uppercase tracking-widest leading-none">Active</span>
                 </div>
                 <div className="text-xl font-display font-bold tracking-tight leading-tight truncate-multiline">
                   {toast.message}
@@ -167,7 +181,7 @@ export const ToastProvider: React.FC<{children: React.ReactNode}> = ({ children 
               <button
                 onClick={() => setToasts(prev => prev.filter(t => t.id !== toast.id))}
                 aria-label="Dismiss notification"
-                className="shrink-0 p-2.5 rounded-2xl hover:bg-black/5 transition-all text-slate-400 hover:text-slate-950 active:scale-90 hover:rotate-90"
+                className="shrink-0 p-2.5 rounded-2xl hover:bg-black/5 transition-all text-current active:scale-90 hover:rotate-90"
               >
                 <X size={20} strokeWidth={3} />
               </button>

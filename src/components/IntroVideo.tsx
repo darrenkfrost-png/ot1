@@ -1,9 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { motion } from 'motion/react';
+import { motion, useIsPresent } from 'motion/react';
 import { SkipForward, Volume2, VolumeX } from 'lucide-react';
+import { useInertBehind } from './IntroPage';
+import { useSettings } from '../context/SettingsContext';
 
 interface IntroVideoProps {
   onComplete: () => void;
+  /**
+   * The visitor pressed the emblem to play the film again. A film asked for
+   * by name plays; only the unasked opening film yields to the settings.
+   */
+  requested?: boolean;
 }
 
 /**
@@ -11,23 +18,43 @@ interface IntroVideoProps {
  * Starts muted because browsers refuse to autoplay audio, with a control to
  * turn sound on. Always skippable — by button, Escape, or Enter.
  */
-const IntroVideo: React.FC<IntroVideoProps> = ({ onComplete }) => {
+const IntroVideo: React.FC<IntroVideoProps> = ({ onComplete, requested = false }) => {
+  const { settings } = useSettings();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [muted, setMuted] = useState(true);
   const [progress, setProgress] = useState(0);
   const finished = useRef(false);
 
+  /* Like the door, the film puts the site behind it to sleep while it plays,
+     so Tab and a screen reader stay with the film's own two buttons. The site
+     wakes the moment the film starts to leave. */
+  const filmRef = useRef<HTMLDivElement>(null);
+  const isPresent = useIsPresent();
+  useInertBehind(filmRef, isPresent);
+
   /*
    * ~4.5MB of film before a patient has read a word, often on a phone in a
-   * waiting room. Anyone who has asked their device for less motion, or
-   * switched on data saver, goes straight to the site: the component
-   * returns before the <video> is ever rendered, so nothing is fetched.
-   * The film is decoration, and decoration yields.
+   * waiting room. Anyone who has asked for less movement - on their device,
+   * with the site's own "Reduce movement" switch, or by turning "Page
+   * movement and film" off - or has switched on data saver, goes straight to
+   * the door: the component returns before the <video> is ever rendered, so
+   * nothing is fetched. The film is decoration, and decoration yields. The
+   * two switches in Settings used to be ignored here, so the film played on
+   * for the very visitors who had turned movement off.
+   *
+   * Decided once, when the film opens: a choice that changed while it was
+   * showing would unmount the film without finishing it and leave the door
+   * waiting for a hand-over that never came.
    */
-  const skipFilm =
-    typeof window !== 'undefined' &&
-    (window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
-      (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true);
+  const [skipFilm] = useState(
+    () =>
+      !requested &&
+      typeof window !== 'undefined' &&
+      (!!settings.reduceMotion ||
+        settings.animationsEnabled === false ||
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+        (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true)
+  );
 
   const finish = () => {
     if (finished.current) return;
@@ -98,14 +125,17 @@ const IntroVideo: React.FC<IntroVideoProps> = ({ onComplete }) => {
 
   return (
     <motion.div
+      ref={filmRef}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
       className="fixed inset-0 bg-slate-950 flex items-center justify-center"
-      style={{ zIndex: 'var(--z-screensaver)' }}
+      style={{ zIndex: 'var(--z-screensaver)', pointerEvents: isPresent ? undefined : 'none' }}
       role="dialog"
+      aria-modal="true"
       aria-label="Introduction film"
+      data-keep-live=""
     >
       <video
         ref={videoRef}
