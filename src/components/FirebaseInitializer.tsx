@@ -1,6 +1,26 @@
 import { useEffect } from "react";
 import { TREATMENTS, PRACTITIONERS } from "../data";
 
+/*
+ * NOT MOUNTED - DO NOT RE-MOUNT WITHOUT READING THIS (2026-09-27).
+ *
+ * App.tsx no longer imports this, so neither this file nor ../lib/firebase.ts
+ * reaches the built site. Mounted, it downloaded about 600KB of Firebase code
+ * on every visit, opened a long-lived connection to firestore.googleapis.com
+ * for a PLACEHOLDER project ("remixed-project-id" in
+ * firebase-applet-config.json), tried to upload the treatments and
+ * practitioners there, and created two IndexedDB databases on the visitor's
+ * device without asking. Nothing on the site reads Firestore.
+ *
+ * Before ever connecting a real project:
+ *  - firestore.rules allows `write: if true` on treatments and practitioners,
+ *    so anyone on the internet could rewrite them. Change it to
+ *    `allow write: if false` (seed from a trusted admin script instead).
+ *  - Google receiving every visitor's IP address, and the device storage,
+ *    must be named in the privacy notice, and non-essential storage needs
+ *    consent (UK PECR reg. 6).
+ */
+
 /**
  * Seeds the treatment and practitioner collections the first time the database
  * is found empty.

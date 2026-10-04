@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { MotionConfig } from 'motion/react';
 
 type WallpaperType = 'none' | 'fluid' | 'hyperspace' | 'network' | 'waves' | 'grid' | 'matrix' | 'rain' | 'circuit' | 'aurora' | 'particles' | 'constellation' | 'orbs' | 'ripple' | 'polyrhythm' | 'dna' | 'polymetric' | 'static-image' | 'video';
 
@@ -53,9 +54,11 @@ interface Settings {
   colorAccent: string;
   enableVoiceWake: boolean;
   /**
-   * Hides the floating controls — microphone, assistant, settings — so the page
-   * is the only thing on screen. A small restore control stays, because a
-   * clean view that cannot be undone is a trap rather than a feature.
+   * "Clean View": swaps the round floating settings button for a small
+   * 'Settings' tab in the same corner, so less sits over the page. The tab is
+   * the way back (SettingsPanel renders it while this is on), because a clean
+   * view that cannot be undone is a trap rather than a feature. The microphone
+   * and assistant this once also hid no longer exist.
    */
   hideOverlays: boolean;
   /** Look of the header, sidebar and the ground behind them. */
@@ -132,13 +135,40 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
       const saved = localStorage.getItem('ct6-settings');
       return saved ? { ...defaultSettings, ...JSON.parse(saved) } : defaultSettings;
     } catch (e) {
-      console.error("Failed to parse settings", e);
+      // Storage blocked (a browser set to refuse site data throws on the mere
+      // touch of localStorage) or unreadable: start from the defaults.
+      console.warn("Saved settings could not be read; using the defaults", e);
       return defaultSettings;
     }
   });
 
   useEffect(() => {
-     localStorage.setItem('ct6-settings', JSON.stringify(settings));
+     /*
+      * SAVING MUST NEVER TAKE THE SITE DOWN. In a browser that blocks site
+      * data, touching localStorage throws a SecurityError; unguarded, it threw
+      * inside this effect and the error screen replaced every page for those
+      * visitors. Now the settings simply last for this visit.
+      *
+      * Only what the visitor has actually changed is stored, and nothing at
+      * all until they change something - a first-time visitor who never opens
+      * Settings leaves no 'ct6-settings' entry on their device. Reading merges
+      * over the defaults, so a partial entry reads back exactly the same.
+      */
+     try {
+       const changed = Object.fromEntries(
+         Object.entries(settings).filter(
+           ([key, value]) => value !== (defaultSettings as unknown as Record<string, unknown>)[key]
+         )
+       );
+       if (Object.keys(changed).length > 0) {
+         localStorage.setItem('ct6-settings', JSON.stringify(changed));
+       } else {
+         localStorage.removeItem('ct6-settings');
+       }
+     } catch {
+       /* Storage blocked or full: settings last for this visit only. */
+     }
+
      // Apply some global styles based on settings if needed
      if (settings.highContrastMode) {
          document.documentElement.classList.add('high-contrast');
@@ -149,6 +179,16 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
      // The panel theme drives CSS variables from a single attribute on <html>,
      // so every surface changes together rather than each component deciding.
      document.documentElement.setAttribute('data-app-theme', settings.appTheme);
+
+     /*
+      * "Card glow" and "Grid pattern" in Settings > Visual Engine. Both are
+      * decoration only - the glow round the glass cards and the fine grid
+      * behind some panels - so no colour under any text changes and the
+      * measured contrast cannot move. The rules that read these attributes
+      * sit with the controls in SettingsPanel.
+      */
+     document.documentElement.dataset.cardStyle = settings.cardStyle;
+     document.documentElement.dataset.uiIntensity = settings.uiIntensity;
 
      // Set body background to wallpaper color to avoid white flashes and support transparent themes
      document.body.style.backgroundColor = settings.activeWallpaper === 'none' ? '#f8fafc' : 'var(--app-bg)';
@@ -176,9 +216,19 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
       setSettings(defaultSettings);
   };
 
+  /*
+   * The page and card animations are motion's JavaScript, which a CSS class
+   * cannot stop. Either switch - "Page movement and film" off, or "Reduce
+   * movement" on - tells every motion component beneath to drop its sliding
+   * and scaling; otherwise the visitor's own device setting decides.
+   */
+  const stillPages = !settings.animationsEnabled || settings.reduceMotion;
+
   return (
     <SettingsContext.Provider value={{ settings, updateSetting, resetSettings }}>
-      {children}
+      <MotionConfig reducedMotion={stillPages ? 'always' : 'user'}>
+        {children}
+      </MotionConfig>
     </SettingsContext.Provider>
   );
 };

@@ -30,18 +30,61 @@
   RewriteEngine On
   RewriteBase /
 
+  # The clinic's previous website's addresses. Its sitemap listed these, so
+  # they are what Google shows and what patients have bookmarked. Without
+  # these lines every one of them landed on "Page not found" on launch day,
+  # and the search standing those pages had built up was thrown away.
+  # server.ts carries the same map for when the Node server is running.
+  # (The old policy pages have no new page yet - see the README.)
+  RewriteRule ^services/?$ /treatments [R=301,L]
+  RewriteRule ^services/(osteopathy|acupuncture|sports-massage|swedish-massage|footcare)/?$ /treatments/$1 [R=301,L]
+  RewriteRule ^services/hypnothereapy/?$ /treatments/hypnotherapy [R=301,L]
+  RewriteRule ^services/(alternative-massage-therapies|physiotherapy)/?$ /treatments [R=301,L]
+  RewriteRule ^practitioners/alexandra-gibson-2/?$ /practitioners/alexandra-gibson [R=301,L]
+  RewriteRule ^meet-our-experienced-practitioners-at-herne-bay-osteopathy-wellbeing-clinic/?$ /practitioners [R=301,L]
+  RewriteRule ^herne-bay-osteopathy-wellbeing-clinic-holistic-care-for-optimal-health/?$ / [R=301,L]
+  RewriteRule ^(contact-us|book-a-treatment-online)/?$ /contact [R=301,L]
+
   # Leave real files and directories alone.
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
+
+  # One address per page. The old site ended every address with a slash
+  # (/practitioners/adrian-hatcher/), and the new pages have none. The first
+  # character may not be a slash or backslash: a redirect to "//somewhere.com"
+  # is read by browsers as another website.
+  RewriteRule ^([^/\\].*)/$ /$1 [R=301,L]
 
   # Never answer an API call with the app shell. If the Node server is not
   # running, /api/* should fail plainly rather than return a page of HTML that
   # the client will try to parse as JSON.
   RewriteRule ^api/ - [R=404,L]
 
+  # Never answer a missing FILE with the app shell either. A tab left open
+  # across a deploy asks for page code that no longer exists; handed the HTML
+  # page instead, the browser cannot run it and the site crashed. A plain 404
+  # lets the page's own recovery (src/utils/lazyWithRetry.ts) reload cleanly.
+  RewriteRule ^assets/ - [R=404,L]
+  RewriteRule \.[A-Za-z0-9]{2,5}$ - [R=404,L]
+
   RewriteRule ^ index.html [L]
 </IfModule>
+
+# ----------------------------------------------------------------------
+# The server's own code is not a page. The build writes it into the same
+# folder as the site (dist/server.cjs and its source map, which contains the
+# whole of server.ts), so a static host would otherwise hand it to anyone.
+# ----------------------------------------------------------------------
+<FilesMatch "^server\.cjs(\.map)?$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
 
 # ----------------------------------------------------------------------
 # Caching. Hashed assets never change under the same name, so they can be held
